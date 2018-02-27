@@ -2,8 +2,8 @@ object frmTtnParserMain: TfrmTtnParserMain
   Left = 0
   Top = 0
   Caption = #1056#1072#1079#1073#1086#1088' '#1058#1058#1053
-  ClientHeight = 557
-  ClientWidth = 1114
+  ClientHeight = 555
+  ClientWidth = 1095
   Color = clBtnFace
   Font.Charset = RUSSIAN_CHARSET
   Font.Color = clWindowText
@@ -20,8 +20,8 @@ object frmTtnParserMain: TfrmTtnParserMain
   TextHeight = 16
   object lblInpFile: TLabel
     Left = 0
-    Top = 541
-    Width = 1114
+    Top = 539
+    Width = 1095
     Height = 16
     Align = alBottom
     Caption = #1042#1093#1086#1076#1085#1086#1081' '#1092#1072#1081#1083':'
@@ -36,8 +36,8 @@ object frmTtnParserMain: TfrmTtnParserMain
   object pnlWait: TPanel
     Left = 0
     Top = 39
-    Width = 1114
-    Height = 502
+    Width = 1095
+    Height = 500
     Align = alClient
     Caption = #1054#1073#1088#1072#1073#1086#1090#1082#1072'...'
     Font.Charset = RUSSIAN_CHARSET
@@ -51,7 +51,7 @@ object frmTtnParserMain: TfrmTtnParserMain
   object tlbMain: TToolBar
     Left = 0
     Top = 0
-    Width = 1114
+    Width = 1095
     Height = 39
     AutoSize = True
     ButtonHeight = 39
@@ -84,8 +84,8 @@ object frmTtnParserMain: TfrmTtnParserMain
   object vstTtn: TVirtualStringTree
     Left = 0
     Top = 39
-    Width = 1114
-    Height = 502
+    Width = 1095
+    Height = 500
     Align = alClient
     Colors.FocusedSelectionColor = clSkyBlue
     Header.AutoSizeIndex = 0
@@ -206,7 +206,7 @@ object frmTtnParserMain: TfrmTtnParserMain
     Left = 336
     Top = 48
     Bitmap = {
-      494C010105000800380010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C010105000800500010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000100202028F010101DF010101FF010101FF010101FF010101DF0202

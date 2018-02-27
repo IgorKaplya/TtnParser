@@ -5,12 +5,11 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Grids, Vcl.DBGrids, Data.DB, dmMain, Vcl.StdCtrls, Vcl.Buttons, Vcl.ExtCtrls,
-  Vcl.ComCtrls, Data.Win.ADODB, Vcl.ActnList, Vcl.Menus;
+  Vcl.ComCtrls, Data.Win.ADODB, Vcl.ActnList, Vcl.Menus, System.Actions, Vcl.DBCtrls, System.ImageList, Vcl.ImgList,
+  uCodBook;
 
 type
   TfrmSett = class(TForm)
-    dsKod: TDataSource;
-    dbgKod: TDBGrid;
     pnlTools: TPanel;
     btnClose: TBitBtn;
     pgSetting: TPageControl;
@@ -30,11 +29,15 @@ type
     mniDub: TMenuItem;
     mniN1: TMenuItem;
     mniDel: TMenuItem;
+    imlSettings: TImageList;
+    frmCodBook: TFrameCodBook;
     procedure actDelExecute(Sender: TObject);
     procedure actDubExecute(Sender: TObject);
     procedure actInsExecute(Sender: TObject);
     procedure actInsUpdate(Sender: TObject);
     function CurTbl(out tbl: TADOTable): Boolean;
+    procedure edtFilterRightButtonClick(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCreate(Sender: TObject);
   private
     { Private declarations }
@@ -111,6 +114,16 @@ if pgSetting.ActivePage=tsStrPr then
 if pgSetting.ActivePage=tsUni then
   tbl:=dm.tblUni;
 Result:=Assigned(tbl);
+end;
+
+procedure TfrmSett.edtFilterRightButtonClick(Sender: TObject);
+begin
+(Sender as TButtonedEdit).Clear;
+end;
+
+procedure TfrmSett.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+frmCodBook.KodTxtFilter:='';
 end;
 
 procedure TfrmSett.FormCreate(Sender: TObject);

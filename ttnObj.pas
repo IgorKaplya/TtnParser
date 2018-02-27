@@ -2,12 +2,21 @@ unit ttnObj;
 
 interface
 
+uses
+  Vcl.Graphics;
+
 type
+
+  TTtnObjErr = (
+    errCommon, //Общая ошибка
+    errWeight  //Ошибка цвета
+  );
 
   // Рабочий объект программы. В него загружаем входные данные потом обрабатываем и сохраняем.
   TTtnObj = class
   private
     FCOST: Double;
+    FError: TTTnObjErr;
     FErrorMsg: string;
     FKOD: string;
     FNAME: string;
@@ -22,6 +31,7 @@ type
   protected
   public
     property COST: Double read FCOST write FCOST;
+    property Error: TTTnObjErr read FError write FError;
     property ErrorMsg: string read FErrorMsg write FErrorMsg;
     property KOD: string read FKOD write FKOD;
     property NAME: string read FNAME write FNAME;
@@ -34,6 +44,9 @@ type
     property WEIGHT2: Double read FWEIGHT2 write FWEIGHT2;
     property WEIGHT3: Double read FWEIGHT3 write FWEIGHT3;
   end;
+
+const
+  C_TTN_ERR_CLR : array[TTtnObjErr] of Integer = (clRed,clHighlight);
 
 implementation
 

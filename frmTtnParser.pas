@@ -4,7 +4,8 @@ interface
 
 uses
   Forms,IniFiles, Vcl.Controls, Vcl.StdCtrls, System.Classes, Vcl.ActnList, Vcl.StdActns, Vcl.ExtCtrls, Vcl.ComCtrls, Vcl.ImgList,
-  Vcl.ToolWin, ttnObjLst, VirtualTrees, Vcl.Graphics, Types, ttnObj, Vcl.Menus;
+  Vcl.ToolWin, ttnObjLst, VirtualTrees, Vcl.Graphics, Types, ttnObj, Vcl.Menus,
+  System.ImageList, System.Actions;
 
 type
   TfrmTtnParserMain = class(TForm)
@@ -66,7 +67,7 @@ var
 implementation
 
 uses
-  Dialogs, SysUtils, TtnParserErrors, dmMain, System.Variants, DB, frmTtnSettings;
+  Dialogs, SysUtils, TtnParserErrors, dmMain, System.Variants, DB, frmTtnSettings, System.Math, frmAddCod;
 
 const
   C_ERR_NO_KOD = 'не найден код';
@@ -87,23 +88,20 @@ procedure TfrmTtnParserMain.actAddKodExecute(Sender: TObject);
 {Добавление кода в базу прямо из отчета}
 var
   obj: TTtnObj;
-  sKod: string;
-  sPrompt: string;
 begin
   try
   TestErr(dm.tblKod.State=dsBrowse,'Таблица кодов в состоянии редактирования. Сохраните или отмените изменения');
   TestErr(CurTtnObj(obj),'Не выбран элемент по которому добавить код');
-  if Length(obj.SIGN)>0 then
-    Format('Введите код с которым добавить в базу "%s;%s"', [obj.SIGN, obj.NAME])
-  else
-    sPrompt:=Format('Введите код с которым добавить в базу "%s"', [obj.NAME]);
-  if InputQuery('Добавление кода',sPrompt,sKod) then
+  frmAddCode.CodTxt:=obj.NAME;
+  frmAddCode.CodSign:=obj.SIGN;
+  if frmAddCode.ShowModal=mrOk then
     begin
-    sKod:=Trim(sKod);
     dm.tblKod.Insert;
-      dm.tblKod.FieldByName(F_Kod_sign).AsString:=obj.SIGN;
-      dm.tblKod.FieldByName(F_Kod_txt).AsString:=obj.NAME;
-      dm.tblKod.FieldByName(F_Kod_val).AsString:=sKod;
+      dm.tblKod.FieldByName(F_Kod_sign).AsString:=Trim(frmAddCode.CodSign);
+      dm.tblKod.FieldByName(F_Kod_txt).AsString:=Trim(frmAddCode.CodTxt);
+      dm.tblKod.FieldByName(F_Kod_val).AsString:=Trim(frmAddCode.Cod);
+      dm.tblKod.FieldByName(F_Kod_Weight_Standart).AsFloat:=frmAddCode.CodWeight;
+      dm.tblKod.FieldByName(F_Kod_Weight_Koef).AsFloat:=frmAddCode.CodKoeff;
     dm.tblKod.Post;
     end;
   except on e: Exception do ShowMessage(format('Добавление кода: %s',[e.Message]));
@@ -270,9 +268,16 @@ const
     end;
   end;
 
-  function ParseKod(sSign,sName: string; iLine: integer): string;
+  procedure ParseKod(const AObj: TTtnObj; iLine: integer);
   {Найти соответствие кода ТНВЭД по имени и признаку}
+  const
+    C_EPSILON = 0.00001;
+  var
+    sSign,sName: string;
+    weightMin,weightMax, weight: Double;
   begin
+  sSign:=AObj.SIGN;
+  sName:=AObj.NAME;
   if Length(sSign)>0 then
     TestErr(
       dm.tblKod.Locate(F_kod_sign+';'+F_kod_txt,VarArrayOf([sSign,sName]),[loPartialKey]),
@@ -283,7 +288,19 @@ const
       dm.tblKod.Locate(F_Kod_txt,sName,[loPartialKey]),
       Format('%d: %s', [iLine,C_ERR_NO_KOD])
     );
-  Result:=dm.tblKod.FieldByName(F_Kod_val).AsString;
+  AObj.KOD:=dm.tblKod.FieldByName(F_Kod_val).AsString;
+  //Контроль по эталонному весу
+  TestErr(not dm.tblKod.FieldByName(F_Kod_Weight_Standart).IsNull,'Не задан эталонный вес');
+  TestErr(not dm.tblKod.FieldByName(F_Kod_Weight_Koef).IsNull,'Не задан эталонный вес коэфф');
+  TestErr(not SameValue(dm.tblKod.FieldByName(F_Kod_Weight_Koef).AsFloat,0,C_EPSILON),'Эталонный вес коэфф значение слишком мало или равно 0');
+  weightMin:=dm.tblKod.FieldByName(F_Kod_Weight_Standart).AsFloat/dm.tblKod.FieldByName(F_Kod_Weight_Koef).AsFloat;
+  weightMax:=dm.tblKod.FieldByName(F_Kod_Weight_Standart).AsFloat*dm.tblKod.FieldByName(F_Kod_Weight_Koef).AsFloat;
+  weight:=AObj.WEIGHT1/Aobj.QUANTITY;
+  if (CompareValue(weight,weightMin,C_EPSILON)=LessThanValue) or (CompareValue(weight,weightMax,C_EPSILON)=GreaterThanValue) then
+    begin
+    AObj.Error:=errWeight;
+    AObj.ErrorMsg:=Format( '%d: вес (%.3f) не укладывается в эталонный [%.3f..%.3f]', [iLine,weight,weightMin,weightMax]);
+    end;
   end;
 
   procedure Unify();
@@ -345,27 +362,28 @@ slLine:=TStringList.Create;
     ParseInpLine(sl[2*iLine],slLine);
     obj:=Ttn.Add;
       try
-      TestErr(slLine.Count=C_Inp_Arg_Cnt,Format('%d: должно быть %d столбцов', [2*iLine,C_Inp_Arg_Cnt]));
+      TestErr(slLine.Count=C_Inp_Arg_Cnt,Format('%d: должно быть %d столбцов', [2*iLine+2,C_Inp_Arg_Cnt]));
         //Данные во входном файле
         obj.SIGN:=slLine[C_Inp_Sign];
         obj.NAME:=slLine[C_Inp_Name];
-        TestErr(TryStrToFloat(slLine[C_Inp_Cost],dCost),Format('%d: стоимость некорректна', [2*iLine]));
+        TestErr(TryStrToFloat(slLine[C_Inp_Cost],dCost),Format('%d: стоимость некорректна', [2*iLine+2]));
         obj.COST:=dCost;
-        TestErr(TryStrToInt(slLine[C_Inp_Quantity],iQuantity),Format('%d: количество некорректно', [2*iLine]));
+        TestErr(TryStrToInt(slLine[C_Inp_Quantity],iQuantity),Format('%d: количество некорректно', [2*iLine+2]));
         obj.QUANTITY:=iQuantity;
-        TestErr(TryStrToFloat(slLine[C_Inp_Weight],dWeight),Format('%d: вес некорректен', [2*iLine]));
+        TestErr(TryStrToFloat(slLine[C_Inp_Weight],dWeight),Format('%d: вес некорректен', [2*iLine+2]));
         obj.WEIGHT1:=1000*dWeight;
         obj.WEIGHT2:=obj.WEIGHT1;
         obj.WEIGHT3:=obj.WEIGHT1;
         //Страна проихождения
         ParseInpLine(sl[2*iLine+1],slLine);
-        TestErr(slLine.Count=C_Inp_Arg_Cnt-1,Format('%d: должно быть %d столбцов', [2*iLine+1,C_Inp_Arg_Cnt-1]));
-        TestErr(dm.tblStrPr.Locate(F_Str_pr_txt,slLine[C_Inp_Str_Pr],[]),Format('%d: не найдена страна происхождения', [2*iLine+1,C_Inp_Arg_Cnt-1]));
+        TestErr(slLine.Count=C_Inp_Arg_Cnt-1,Format('%d: должно быть %d столбцов', [2*iLine+3,C_Inp_Arg_Cnt-1]));
+        TestErr(dm.tblStrPr.Locate(F_Str_pr_txt,slLine[C_Inp_Str_Pr],[loCaseInsensitive]),Format('%d: не найдена страна происхождения', [2*iLine+3,C_Inp_Arg_Cnt-1]));
         obj.STR_PR:=dm.tblStrPr.FieldByName(F_Str_pr_val).AsString;
         //Валюта
         obj.VAL:=Valuta;
         //КОД
-        obj.KOD:=ParseKod(obj.SIGN, obj.NAME,2*iLine);
+        ParseKod(obj,2*iLine+2);
+        //Унификация
         Unify();
       except on e: Exception do
         begin
@@ -378,6 +396,7 @@ slLine:=TStringList.Create;
   finally
     FreeAndNil(sl);
     FreeAndNil(slLine);
+    dm.TablesFirst;
   end;
 pnlWait.SendToBack;
 end;
@@ -406,7 +425,7 @@ procedure TfrmTtnParserMain.vstTtnDrawText(Sender: TBaseVirtualTree;
 {Отрисовка элементов с ошибками}
 begin
 if length(ttn[node.Index].ErrorMsg)>0 then
-  TargetCanvas.Font.Color:=clRed;
+  TargetCanvas.Font.Color:=C_TTN_ERR_CLR[ttn[node.Index].Error];
 end;
 
 procedure TfrmTtnParserMain.vstTtnGetHint(Sender: TBaseVirtualTree; Node:

@@ -21,11 +21,15 @@ type
     tblUniuni_key: TGuidField;
     tblUniuni_kod: TWideStringField;
     tblUniuni_etal_txt: TWideStringField;
+    tblKodkod_weight_standart: TFloatField;
+    tblKodkod_weight_koef: TFloatField;
     procedure DataModuleCreate(Sender: TObject);
+    procedure tblKodkod_weight_standartSetText(Sender: TField; const Text: string);
     procedure tblUniAfterInsert(DataSet: TDataSet);
   private
     { Private declarations }
   public
+    procedure TablesFirst;
     { Public declarations }
   end;
 
@@ -38,6 +42,8 @@ const
     F_Kod_sign = 'kod_sign';
     F_Kod_txt = 'kod_txt';
     F_Kod_val = 'kod_val';
+    F_Kod_Weight_Standart = 'kod_weight_standart';
+    F_Kod_Weight_Koef = 'kod_weight_koef';
 
   T_UNI = 'T_UNI';
     F_Uni_Key = 'uni_key';
@@ -55,10 +61,33 @@ implementation
 
 {$R *.dfm}
 
+procedure Tdm.TablesFirst;
+var
+  i: Integer;
+  t: TADOTable;
+begin
+for i:=0 to ComponentCount-1 do
+  if Components[i] is TADOTable then
+    begin
+    t:=Components[i] as TADOTable;
+    t.First;
+    end;
+end;
+
 procedure Tdm.DataModuleCreate(Sender: TObject);
 {На случай если забуду закрыть объекты}
 begin
 conMain.Connected:=False;
+end;
+
+procedure Tdm.tblKodkod_weight_standartSetText(Sender: TField; const Text:
+    string);
+begin
+if FormatSettings.DecimalSeparator='.' then
+  Sender.Value:=StringReplace(Text,',',FormatSettings.DecimalSeparator,[rfReplaceAll])
+else
+  if FormatSettings.DecimalSeparator=',' then
+    Sender.Value:=StringReplace(Text,'.',FormatSettings.DecimalSeparator,[rfReplaceAll])
 end;
 
 procedure Tdm.tblUniAfterInsert(DataSet: TDataSet);
