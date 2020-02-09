@@ -1,0 +1,48 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{484290A0-5D0B-4FA3-926C-CF05DFF5F33D}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="TtnParser.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="test\TtnParserTest.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="TtnParser">
+        <MSBuild Projects="TtnParser.dproj"/>
+    </Target>
+    <Target Name="TtnParser:Clean">
+        <MSBuild Projects="TtnParser.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="TtnParser:Make">
+        <MSBuild Projects="TtnParser.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="TtnParserTest">
+        <MSBuild Projects="test\TtnParserTest.dproj"/>
+    </Target>
+    <Target Name="TtnParserTest:Clean">
+        <MSBuild Projects="test\TtnParserTest.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="TtnParserTest:Make">
+        <MSBuild Projects="test\TtnParserTest.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="TtnParser;TtnParserTest"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="TtnParser:Clean;TtnParserTest:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="TtnParser:Make;TtnParserTest:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>

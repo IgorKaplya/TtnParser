@@ -50,15 +50,17 @@ type
     FInpFile: string;
     FTtn: TTtnObjLst;
     FValuta: string;
+    procedure ClearUnNames;
     function CurTtnObj(out obj: TTtnObj): Boolean;
-    procedure ProcessInpFile;
     procedure SetInpFile(const Value: string);
     property IniFile: TMemIniFile read FIniFile;
     property Inited: Boolean read FInited;
-    property InpFile: string read FInpFile write SetInpFile;
-    property Ttn: TTtnObjLst read FTtn write FTtn;
     property Valuta: string read FValuta;
   public
+    procedure ProcessInpFile;
+    procedure StartUp;
+    property InpFile: string read FInpFile write SetInpFile;
+    property Ttn: TTtnObjLst read FTtn;
   end;
 
 var
@@ -133,6 +135,25 @@ else
   frmSett.Show;
 end;
 
+procedure TfrmTtnParserMain.ClearUnNames;
+{Нужно очистить неиспользуемые имена.}
+var
+  lnt,nt: Integer;
+  i: integer;
+  obj: TTtnObj;
+begin
+  lnt:=-1;
+  for i:=0 to Ttn.Count-1 do
+    begin
+    obj:=ttn[i];
+    nt:=obj.NUMBER;
+    if lnt<>nt then
+      lnt:=obj.NUMBER
+    else
+      obj.NAME:='';
+    end;
+end;
+
 function TfrmTtnParserMain.CurTtnObj(out obj: TTtnObj): Boolean;
 begin
   obj:=nil;
@@ -162,30 +183,11 @@ end;
 procedure TfrmTtnParserMain.FileSaveAsAccept(Sender: TObject);
 {Сохранение результата в файл}
 var
-  i: Integer;
-  obj: TTtnObj;
   sl: TStringList;
 begin
 sl:=TStringList.Create;
   try
-  for i:=0 to ttn.Count-1 do
-    begin
-    obj:=Ttn[i];
-    sl.Add(
-      Format('%d;"%s";"%s";%.3f;%.3f;%.3f;%.2f;"%s";"%s";%d;',[
-        obj.NUMBER,
-        obj.KOD ,
-        obj.NAME ,
-        obj.WEIGHT1 ,
-        obj.WEIGHT2 ,
-        obj.WEIGHT3 ,
-        obj.COST ,
-        obj.VAL ,
-        obj.STR_PR ,
-        obj.QUANTITY
-      ])
-    );
-    end;
+  Ttn.Save(sl);
   sl.SaveToFile((Sender as TFileSaveAs).Dialog.FileName);
   finally
   FreeAndNil(sl);
@@ -193,42 +195,8 @@ sl:=TStringList.Create;
 end;
 
 procedure TfrmTtnParserMain.FormActivate(Sender: TObject);
-
-  procedure IniRead();
-  {Чтение ini в память}
-  var
-    sIni: string;
-  begin
-  sIni:=ChangeFileExt(ParamStr(0),'.ini');
-  TestErr(FileExists(sIni),'Не найден файл настроек: '+sIni);
-  FIniFile:=TMemIniFile.Create(sIni);
-  FormatSettings.DecimalSeparator:=IniFile.ReadString('Настройки','ДесятичныйРазделитель',FormatSettings.DecimalSeparator)[1];
-  FValuta:=IniFile.ReadString('Настройки','Валюта','');
-  end;
-
-  procedure DbConnect();
-  {Соединение с БД по ADO из INI}
-  begin
-  dm.conMain.ConnectionString:=IniFile.ReadString('БазаДанных','СтрокаПодключенияAdo','');
-  dm.conMain.Open();
-  TestErr(dm.conMain.Connected,'Не установлено соединение с базой данных');
-  dm.tblKod.Open();
-  dm.tblStrPr.Open();
-  dm.tblUni.Open();
-  end;
-
 begin
-if not Inited then
-  try
-  IniRead();
-  DbConnect();
-  FInited:=True;
-  except on e: Exception do
-    begin
-    ShowMessage(format('Инициализация программы: %s',[e.Message]));
-    Close();
-    end;
-  end;
+  StartUp();
 end;
 
 procedure TfrmTtnParserMain.ProcessInpFile;
@@ -392,6 +360,7 @@ slLine:=TStringList.Create;
       end;
     Inc(iLine);
     end;
+  ClearUnNames();
   vstTtn.RootNodeCount:=Ttn.Count;
   finally
     FreeAndNil(sl);
@@ -417,6 +386,45 @@ if FInpFile<>Value then
     lblInpFile.Caption:='Входной файл: Входные данные не выбраны';
     end;
   end;
+end;
+
+procedure TfrmTtnParserMain.StartUp;
+
+  procedure IniRead();
+  {Чтение ini в память}
+  var
+    sIni: string;
+  begin
+  sIni:=ChangeFileExt(ParamStr(0),'.ini');
+  TestErr(FileExists(sIni),'Не найден файл настроек: '+sIni);
+  FIniFile:=TMemIniFile.Create(sIni);
+  FormatSettings.DecimalSeparator:=IniFile.ReadString('Настройки','ДесятичныйРазделитель',FormatSettings.DecimalSeparator)[1];
+  FValuta:=IniFile.ReadString('Настройки','Валюта','');
+  end;
+
+  procedure DbConnect();
+  {Соединение с БД по ADO из INI}
+  begin
+  dm.conMain.ConnectionString:=IniFile.ReadString('БазаДанных','СтрокаПодключенияAdo','');
+  dm.conMain.Open();
+  TestErr(dm.conMain.Connected,'Не установлено соединение с базой данных');
+  dm.tblKod.Open();
+  dm.tblStrPr.Open();
+  dm.tblUni.Open();
+  end;
+
+begin
+  if not Inited then
+    try
+    IniRead();
+    DbConnect();
+    FInited:=True;
+    except on e: Exception do
+      begin
+      ShowMessage(format('Инициализация программы: %s',[e.Message]));
+      Close();
+      end;
+    end;
 end;
 
 procedure TfrmTtnParserMain.vstTtnDrawText(Sender: TBaseVirtualTree;

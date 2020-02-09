@@ -89,11 +89,7 @@ object frmTtnParserMain: TfrmTtnParserMain
     Align = alClient
     Colors.FocusedSelectionColor = clSkyBlue
     Header.AutoSizeIndex = 0
-    Header.Font.Charset = DEFAULT_CHARSET
-    Header.Font.Color = clWindowText
-    Header.Font.Height = -11
-    Header.Font.Name = 'Tahoma'
-    Header.Font.Style = []
+    Header.Height = 20
     Header.Options = [hoColumnResize, hoDrag, hoShowSortGlyphs, hoVisible]
     HintMode = hmHint
     LineStyle = lsSolid
@@ -206,7 +202,7 @@ object frmTtnParserMain: TfrmTtnParserMain
     Left = 336
     Top = 48
     Bitmap = {
-      494C010105000800500010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C010105000800540010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000100202028F010101DF010101FF010101FF010101FF010101DF0202

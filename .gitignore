@@ -4,3 +4,5 @@ _out/
 *.local
 
 *.res
+
+test/Win32/Debug/dunitx-results.xml

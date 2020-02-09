@@ -23,6 +23,7 @@ type
     destructor Destroy; override;
     function Add: TTtnObj;
     procedure Clear;
+    procedure Save(const AStrings: TStrings);
     procedure Sort;
     property Count: Integer read GetCount;
     property Items[Index: Integer]: TTtnObj read GetItems; default;
@@ -80,6 +81,32 @@ begin
   Result:=nil;
   if (index>=0) and (index<FItems.Count) then
     Result := FItems[Index];
+end;
+
+procedure TTtnObjLst.Save(const AStrings: TStrings);
+var
+  i: Integer;
+  obj: TTtnObj;
+begin
+  AStrings.Clear();
+  for i:=0 to Count-1 do
+    begin
+    obj:=Items[i];
+    AStrings.Add(
+      Format('%d;"%s";"%s";%.3f;%.3f;%.3f;%.2f;"%s";"%s";%d;',[
+        obj.NUMBER,
+        obj.KOD ,
+        obj.NAME ,
+        obj.WEIGHT1 ,
+        obj.WEIGHT2 ,
+        obj.WEIGHT3 ,
+        obj.COST ,
+        obj.VAL ,
+        obj.STR_PR ,
+        obj.QUANTITY
+      ])
+    );
+    end;
 end;
 
 procedure TTtnObjLst.Sort;
