@@ -293,7 +293,7 @@ const
       Ttn[i].NAME:=dm.tblUni.FieldByName(F_Uni_etal_txt).AsString;
       Ttn[i].NUMBER:=iNum;
       Inc(i);
-      until (i>=Ttn.Count-1) or not SameText(sKod,Ttn[i].KOD) or not SameText(sCountry,Ttn[i].STR_PR)
+      until (i>=Ttn.Count) or not SameText(sKod,Ttn[i].KOD) or not SameText(sCountry,Ttn[i].STR_PR)
     else
       Inc(i);
     Inc(iNum);
@@ -303,6 +303,18 @@ const
   function RemoveSpaces(const s: string): string;
   begin
   Result:=StringReplace(s,' ','',[rfReplaceAll]);
+  end;
+
+  function FindCountry(const ALine: string): Boolean;
+  //Loop through table and find match for F_Str_pr_txt field data in ALine
+  begin
+  Result:=False;
+  dm.tblStrPr.First;
+  while (not dm.tblStrPr.Eof) and (not Result) do
+    if (pos(dm.tblStrPr.FieldByName(F_Str_pr_txt).AsString.ToLower, ALine)<>0) then
+      Result:=True
+    else
+      dm.tblStrPr.Next();
   end;
 
 var
@@ -345,7 +357,7 @@ slLine:=TStringList.Create;
         //Страна проихождения
         ParseInpLine(sl[2*iLine+1],slLine);
         TestErr(slLine.Count=C_Inp_Arg_Cnt-1,Format('%d: должно быть %d столбцов', [2*iLine+3,C_Inp_Arg_Cnt-1]));
-        TestErr(dm.tblStrPr.Locate(F_Str_pr_txt,slLine[C_Inp_Str_Pr],[loCaseInsensitive]),Format('%d: не найдена страна происхождения', [2*iLine+3,C_Inp_Arg_Cnt-1]));
+        TestErr(FindCountry(slLine[C_Inp_Str_Pr].ToLower),Format('%d: не найдена страна происхождения', [2*iLine+3,C_Inp_Arg_Cnt-1]));
         obj.STR_PR:=dm.tblStrPr.FieldByName(F_Str_pr_val).AsString;
         //Валюта
         obj.VAL:=Valuta;
@@ -360,6 +372,7 @@ slLine:=TStringList.Create;
       end;
     Inc(iLine);
     end;
+  // Удаление лишних имен
   ClearUnNames();
   vstTtn.RootNodeCount:=Ttn.Count;
   finally
@@ -395,7 +408,7 @@ procedure TfrmTtnParserMain.StartUp;
   var
     sIni: string;
   begin
-  sIni:=ChangeFileExt(ParamStr(0),'.ini');
+  sIni:='.\TtnParser.ini';
   TestErr(FileExists(sIni),'Не найден файл настроек: '+sIni);
   FIniFile:=TMemIniFile.Create(sIni);
   FormatSettings.DecimalSeparator:=IniFile.ReadString('Настройки','ДесятичныйРазделитель',FormatSettings.DecimalSeparator)[1];
