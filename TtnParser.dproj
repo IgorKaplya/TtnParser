@@ -63,6 +63,7 @@
         <SanitizedProjectName>TtnParser</SanitizedProjectName>
         <VerInfo_MinorVer>3</VerInfo_MinorVer>
         <VerInfo_Release>4</VerInfo_Release>
+        <DCC_UnitSearchPath>Virtual-TreeView\Source;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
         <Icon_MainIcon>TtnParser_Icon.ico</Icon_MainIcon>
