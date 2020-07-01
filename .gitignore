@@ -74,7 +74,10 @@ modules/
 *.log
  
 # Output folder for application
-_out/
+#_out/
 
 # DunitX result files
-test/Win32/Debug/dunitx-results.xml
+dunitx-results.xml
+
+# MS Access files
+*.ldb
