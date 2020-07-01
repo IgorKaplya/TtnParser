@@ -408,7 +408,7 @@ procedure TfrmTtnParserMain.StartUp;
   var
     sIni: string;
   begin
-  sIni:='.\TtnParser.ini';
+  sIni:=ExpandFileName('.\TtnParser.ini');
   TestErr(FileExists(sIni),'Не найден файл настроек: '+sIni);
   FIniFile:=TMemIniFile.Create(sIni);
   FormatSettings.DecimalSeparator:=IniFile.ReadString('Настройки','ДесятичныйРазделитель',FormatSettings.DecimalSeparator)[1];
