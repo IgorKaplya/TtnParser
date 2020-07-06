@@ -76,7 +76,7 @@
         <UsingDelphiRTL>true</UsingDelphiRTL>
         <Icon_MainIcon>$(BDS)\bin\delphi_PROJECTICON.ico</Icon_MainIcon>
         <Icns_MainIcns>$(BDS)\bin\delphi_PROJECTICNS.icns</Icns_MainIcns>
-        <DCC_UnitSearchPath>$(DUnitX);..\Virtual-TreeView\Source;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+        <DCC_UnitSearchPath>..\Virtual-TreeView\Source;..;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <SanitizedProjectName>TtnParserTest</SanitizedProjectName>
         <VerInfo_Locale>1049</VerInfo_Locale>
         <DCC_ExeOutput>..\_out\</DCC_ExeOutput>
@@ -119,6 +119,7 @@
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
         <DCC_RemoteDebug>false</DCC_RemoteDebug>
         <VerInfo_Locale>1033</VerInfo_Locale>
+        <DCC_Define>TESTINSIGHT;$(DCC_Define)</DCC_Define>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
         <DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
@@ -130,36 +131,10 @@
         <DelphiCompile Include="$(MainSource)">
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
+        <DCCReference Include="uMainConsole.pas"/>
+        <DCCReference Include="uMainTestinsight.pas"/>
+        <DCCReference Include="uTestParser.pas"/>
         <DCCReference Include="uTestTtnParser.pas"/>
-        <DCCReference Include="..\frmTtnParser.pas">
-            <Form>frmTtnParserMain</Form>
-            <FormType>dfm</FormType>
-        </DCCReference>
-        <DCCReference Include="..\ttnObjLst.pas"/>
-        <DCCReference Include="..\ttnObj.pas"/>
-        <DCCReference Include="..\TtnParserErrors.pas"/>
-        <DCCReference Include="..\dmMain.pas">
-            <Form>dm</Form>
-            <FormType>dfm</FormType>
-            <DesignClass>TDataModule</DesignClass>
-        </DCCReference>
-        <DCCReference Include="..\frmTtnSettings.pas">
-            <Form>frmSett</Form>
-            <FormType>dfm</FormType>
-        </DCCReference>
-        <DCCReference Include="..\uCodBook.pas">
-            <Form>FrameCodBook</Form>
-            <FormType>dfm</FormType>
-            <DesignClass>TFrame</DesignClass>
-        </DCCReference>
-        <DCCReference Include="..\frmAddCod.pas">
-            <Form>frmAddCode</Form>
-            <FormType>dfm</FormType>
-        </DCCReference>
-        <DCCReference Include="..\frmCodBookHlp.pas">
-            <Form>frmCodBookHelp</Form>
-            <FormType>dfm</FormType>
-        </DCCReference>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
@@ -186,6 +161,12 @@
                 </Excluded_Packages>
             </Delphi.Personality>
             <Deployment Version="3">
+                <DeployFile LocalName="..\_out\TtnParserTest.exe" Configuration="Debug" Class="ProjectOutput">
+                    <Platform Name="Win32">
+                        <RemoteName>TtnParserTest.exe</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
                 <DeployFile LocalName="$(BDS)\Redist\osx32\libcgunwind.1.0.dylib" Class="DependencyModule">
                     <Platform Name="OSX32">
                         <Overwrite>true</Overwrite>
@@ -203,12 +184,6 @@
                 </DeployFile>
                 <DeployFile LocalName="$(BDS)\Redist\osx32\libcgsqlite3.dylib" Class="DependencyModule">
                     <Platform Name="OSX32">
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="Win32\Debug\TtnParserTest.exe" Configuration="Debug" Class="ProjectOutput">
-                    <Platform Name="Win32">
-                        <RemoteName>TtnParserTest.exe</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
