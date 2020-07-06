@@ -37,11 +37,7 @@ end;
 
 procedure TTtnParser.Configure(const AFile: TStrings);
 begin
-  {
-  if AFile.Count <= 1 then
-    raise ETtnParserEmptyInput.Create('Файл данных пуст');
-  }
-  TestErr(AFile.Count > 1, 'Файл данных пуст', ETtnParserEmptyInput);
+  ETtnParserEmptyInput.Test(AFile.Count > 1, 'Файл данных пуст.');
 end;
 
 function TTtnParser.GetConfiguration: TTtnParserConfiguration;
