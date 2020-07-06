@@ -66,7 +66,6 @@ begin
     end;
   finally
     SampleInput.Free();
-    SampleInput := nil;
   end;
 end;
 
@@ -99,7 +98,6 @@ procedure TTestParser.TestConfigureEmpty;
           Parser.Configure(sl)
         finally
           sl.Free();
-          sl := nil;
         end;
       end;
   end;
