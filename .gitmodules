@@ -1,3 +1,6 @@
 [submodule "Virtual-TreeView"]
 	path = Virtual-TreeView
 	url = https://github.com/JAM-Software/Virtual-TreeView.git
+[submodule "spring4d"]
+	path = spring4d
+	url = https://IgorKaplya@bitbucket.org/sglienke/spring4d.git
