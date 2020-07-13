@@ -3,7 +3,7 @@ program TtnParser;
 uses
   Forms,
   frmTtnParser in 'frmTtnParser.pas' {frmTtnParserMain},
-  TtnParserErrors in 'TtnParserErrors.pas',
+  uTtnErrors in 'uTtnErrors.pas',
   dmMain in 'dmMain.pas' {dm: TDataModule},
   ttnObj in 'ttnObj.pas',
   ttnObjLst in 'ttnObjLst.pas',

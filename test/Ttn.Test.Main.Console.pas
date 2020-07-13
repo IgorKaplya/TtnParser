@@ -1,4 +1,4 @@
-unit uMainConsole;
+unit Ttn.Test.Main.Console;
 
 interface
 

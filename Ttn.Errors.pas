@@ -1,4 +1,4 @@
-unit TtnParserErrors;
+unit Ttn.Errors;
 
 interface
 
@@ -11,6 +11,14 @@ type
     class procedure Test(const ATrue: Boolean; const AMsg: string); overload;
     class procedure Test(const ATrue: Boolean; const AMsgFmt: string; const AArguments: array of const); overload;
   end;
+
+  ETtnParserEmptyInput = class(ETtnParserExc);
+  ETtnParserWrongConfig = class(ETtnParserExc);
+  ETtnParserWrongHeader = class(ETtnParserExc);
+  ETtnParserWrongMotorLines = class(ETtnParserExc);
+  ETtnParserColumnNotMapped = class(ETtnParserExc);
+  ETtnParserColumnExceedInput = class(ETtnParserExc);
+
 
 procedure TestErr(bMustBeTrue: Boolean; AMsg: string); overload; deprecated;
 

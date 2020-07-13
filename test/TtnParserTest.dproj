@@ -76,10 +76,10 @@
         <UsingDelphiRTL>true</UsingDelphiRTL>
         <Icon_MainIcon>$(BDS)\bin\delphi_PROJECTICON.ico</Icon_MainIcon>
         <Icns_MainIcns>$(BDS)\bin\delphi_PROJECTICNS.icns</Icns_MainIcns>
-        <DCC_UnitSearchPath>..\Virtual-TreeView\Source;..;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <SanitizedProjectName>TtnParserTest</SanitizedProjectName>
         <VerInfo_Locale>1049</VerInfo_Locale>
         <DCC_ExeOutput>..\_out\</DCC_ExeOutput>
+        <DCC_UnitSearchPath>..;..\spring4D\source\core\container;..\spring4D\source;..\spring4D\source\base;..\spring4D\source\base\collections;..\spring4D\source\base\logging;..\spring4D\source\core\services;..\spring4D\source\core\Interception;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Android)'!=''">
@@ -131,10 +131,12 @@
         <DelphiCompile Include="$(MainSource)">
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
-        <DCCReference Include="uMainConsole.pas"/>
-        <DCCReference Include="uMainTestinsight.pas"/>
-        <DCCReference Include="uTestParser.pas"/>
-        <DCCReference Include="uTestTtnParser.pas"/>
+        <DCCReference Include="Ttn.Test.Main.Console.pas"/>
+        <DCCReference Include="Ttn.Test.Main.Testinsight.pas"/>
+        <DCCReference Include="Ttn.Test.Parser.pas"/>
+        <DCCReference Include="..\Ttn.Registration.pas"/>
+        <DCCReference Include="..\Ttn.List.pas"/>
+        <DCCReference Include="..\Ttn.Obj.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
