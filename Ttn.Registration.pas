@@ -4,10 +4,18 @@ interface
 
 uses
   Spring.Container,
-  Spring.Container.Common;
+  Spring.Container.Common,
+  System.SysUtils;
 
 procedure RegisterTypes(); overload;
 procedure RegisterTypes(const AContainer: TContainer); overload;
+
+type
+  TTtnResolver = class
+    class function Resolve<T>: T; overload;
+    class function Resolve<T>(const AContainer: TContainer): T; overload;
+  end;
+
 
 implementation
 
@@ -30,6 +38,16 @@ begin
   Acontainer.RegisterType<IFactory<ITtnObj>>.AsFactory;
 
   AContainer.Build;
+end;
+
+class function TTtnResolver.Resolve<T>: T;
+begin
+  Result := Resolve<T>(GlobalContainer);
+end;
+
+class function TTtnResolver.Resolve<T>(const AContainer: TContainer): T;
+begin
+  Result := AContainer.Resolve<T>;
 end;
 
 end.

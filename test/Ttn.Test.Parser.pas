@@ -1,4 +1,4 @@
-unit Ttn.Test.Parser;
+п»їunit Ttn.Test.Parser;
 
 interface
 
@@ -36,10 +36,19 @@ type
     procedure TestConfigureAStrong;
     [Test]
     [TestCase]
-    procedure TestLineDataGet;
+    procedure TestLineDataStr;
+    [Test]
+    [TestCase]
+    procedure TestLineDataInt;
+    [Test]
+    [TestCase]
+    procedure TestLineDataDbl;
     [Test]
     [TestCase('ConfigureAbsentFile','Abrcacadabra.csv')]
     procedure TestParseAbsentFile(const AFile: string);
+    [Test]
+    [TestCase('','AAA,A'#$0020#$0009#$000D#$00A0#$0085'AA')]
+    procedure TestRemoveWhiteSpace(const  ACleanStr, AStr: string);
     [Test]
     [TestCase]
     procedure TestParseAStrong;
@@ -49,6 +58,9 @@ implementation
 
 uses
   System.Classes, System.SysUtils, Ttn.Errors, Spring.Container, Ttn.Constants;
+
+const
+  C_Default_Header = F_sign+';'+F_name+';'+F_cost+';'+F_quant+';'+F_weight;  
 
 procedure TTestParser.Setup;
 begin
@@ -64,9 +76,9 @@ procedure TTestParser.TestParseMotor;
 const
   C_File_Type_Motor =
     '#MOTOR'+sLineBreak+
-    'sign;name;cost;quant;weight'+sLineBreak+
-    '*;Автомагнитола;1260.01;1;0.002'+sLineBreak+
-    ';страна происхождения-Соединенные Штаты;;;';
+    C_Default_Header+sLineBreak+
+    '*;РђРІС‚РѕРјР°РіРЅРёС‚РѕР»Р°;1260.01;1;0.002'+sLineBreak+
+    ';СЃС‚СЂР°РЅР° РїСЂРѕРёСЃС…РѕР¶РґРµРЅРёСЏ-РЎРѕРµРґРёРЅРµРЅРЅС‹Рµ РЁС‚Р°С‚С‹;;;';
 var
   SampleInput: TStringList;
 begin
@@ -74,13 +86,13 @@ begin
   try
     SampleInput.Text := C_File_Type_Motor;
     Parser.Parse(SampleInput);
-    Assert.AreEqual(1, Parser.ParseResult.Count, 'Не соотвествует количество элементов.');
+    Assert.AreEqual(1, Parser.ParseResult.Count, 'РќРµ СЃРѕРѕС‚РІРµСЃС‚РІСѓРµС‚ РєРѕР»РёС‡РµСЃС‚РІРѕ СЌР»РµРјРµРЅС‚РѕРІ.');
     Assert.AreEqual('*', Parser.ParseResult[0].SIGN);
-    Assert.AreEqual('Автомагнитола', Parser.ParseResult[0].NAME);
+    Assert.AreEqual('РђРІС‚РѕРјР°РіРЅРёС‚РѕР»Р°', Parser.ParseResult[0].NAME);
     Assert.AreEqual('1260.01', Parser.ParseResult[0].COST.ToString);
     Assert.AreEqual(1, Parser.ParseResult[0].QUANTITY);
     Assert.AreEqual('0.002',Parser.ParseResult[0].WEIGHT1.ToString);
-    Assert.AreEqual('страна происхождения-Соединенные Штаты',Parser.ParseResult[0].STR_PR);
+    Assert.AreEqual('СЃС‚СЂР°РЅР° РїСЂРѕРёСЃС…РѕР¶РґРµРЅРёСЏ-РЎРѕРµРґРёРЅРµРЅРЅС‹Рµ РЁС‚Р°С‚С‹',Parser.ParseResult[0].STR_PR);
   finally
     SampleInput.Free();
   end;
@@ -184,7 +196,7 @@ procedure TTestParser.TestConfigureMotor;
 const
   C_File_Type_Motor =
     '#MOTOR'+sLineBreak+
-    'sign;name;cost;quant;weight'+sLineBreak+
+    C_Default_Header+sLineBreak+
     '<...>';
 var
   SampleInput: TStringList;
@@ -223,7 +235,7 @@ begin
   end;
 end;
 
-procedure TTestParser.TestLineDataGet;
+procedure TTestParser.TestLineDataStr;
 
   function callLineDataGet(const AInput: TStrings; const AColumn: string): TTestLocalMethod;
   begin
@@ -231,15 +243,15 @@ procedure TTestParser.TestLineDataGet;
     (
       procedure()
       begin
-        Parser.LineDataGet(AInput, AColumn);
+        Parser.LineDataStr(AInput, AColumn);
       end
     );
   end;
 
 
 const
-  C_Header = 'sign;name;cost;quant;weight';
-  C_Line = '***';
+  C_Header = C_Default_Header;
+  C_Line = 'SehenswГјrdigkeiten';
 var
   SampleInput: TStringList;
 begin
@@ -249,10 +261,117 @@ begin
     Parser.MapHeader(C_Header);
     Assert.WillRaise(callLineDataGet(SampleInput, 'NotMapped'), ETtnParserColumnNotMapped);
     Assert.WillRaise(callLineDataGet(SampleInput, F_weight), ETtnParserColumnExceedInput);
-    Assert.AreEqual(Parser.LineDataGet(SampleInput, F_Sign), C_Line);
+    Assert.AreEqual(Parser.LineDataStr(SampleInput, F_sign), C_Line);
   finally
     SampleInput.Free();
   end;
+end;
+
+procedure TTestParser.TestLineDataInt;
+var
+  TestResult: Integer;
+
+  function callLineDataGet(const ALineInput: String; const AColumn: string): TTestLocalMethod;
+  begin
+    Result :=
+    (
+      procedure()
+      var
+        SampleInput: TStringList;
+      begin
+        SampleInput := TStringList.Create('"',';', [soStrictDelimiter]);
+        try
+          SampleInput.DelimitedText := ALineInput;
+          TestResult := Parser.LineDataInt(SampleInput, AColumn);
+        finally
+          SampleInput.Free;
+        end;
+      end
+    );
+  end;
+
+type
+  RTestRecord = record
+    Text: string;
+    Value: Integer;
+  end;
+const
+  C_Header = C_Default_Header;
+  C_Valid_Input: array[0..7] of RTestRecord = (
+    (Text: '-1'; Value: -1),(Text: '0'; Value: 0),(Text: '1'; Value: 1),(Text: '-1 024'; Value: -1024), (Text: '1 024'; Value: 1024),
+    (Text: '"-1 024"'; Value: -1024), (Text: '"1 024"'; Value: 1024), (Text: '"0"'; Value: 0)
+  );
+  C_InValid_Input: array[0..4] of string = (
+    '1.01','1#1','SehenswГјrdigkeiten','1,01',';'
+  );  
+var
+  inputValid: RTestRecord;
+  inputInvalid: string;
+begin
+  Parser.MapHeader(C_Header);
+  for inputValid in C_Valid_Input do
+    begin
+    Assert.WillNotRaise(callLineDataGet(inputValid.Text, F_sign));
+    Assert.AreEqual(inputValid.Value, TestResult);
+    end;
+  for inputInvalid in C_InValid_Input do
+    Assert.WillRaise(callLineDataGet(inputInvalid, F_sign), EConvertError);
+end;
+
+procedure TTestParser.TestLineDataDbl;
+var
+  TestResult: Double;
+
+  function callLineDataGet(const ALineInput: String; const AColumn: string): TTestLocalMethod;
+  begin
+    Result :=
+    (
+      procedure()
+      var
+        SampleInput: TStringList;
+      begin
+        SampleInput := TStringList.Create('"',';', [soStrictDelimiter]);
+        try
+          SampleInput.DelimitedText := ALineInput;
+          TestResult := Parser.LineDataDbl(SampleInput, AColumn);
+        finally
+          SampleInput.Free;
+        end;
+      end
+    );
+  end;
+
+type
+  RTestRecord = record
+    Text: string;
+    Value: Double;
+  end;
+const
+  C_Header = C_Default_Header;
+  C_Valid_Input: array[0..7] of RTestRecord = (
+    (Text: '-1.00'; Value: -1.00),(Text: '0'; Value: 0),(Text: '1.00'; Value: 1.00),(Text: '-1 024.375'; Value: -1024.375), 
+    (Text: '1 024.375'; Value: 1024.375), (Text: '"-1 024.125"'; Value: -1024.125), (Text: '"1 024.125"'; Value: 1024.125), (Text: '"0.00"'; Value: 0)
+  );
+  C_InValid_Input: array[0..3] of string = (
+    '1#1','SehenswГјrdigkeiten','1,01',';'
+  );  
+var
+  inputValid: RTestRecord;
+  inputInvalid: string;
+begin
+  Parser.MapHeader(C_Header);
+  for inputValid in C_Valid_Input do
+    begin
+    Assert.WillNotRaise(callLineDataGet(inputValid.Text, F_sign));
+    Assert.AreEqual(inputValid.Value, TestResult);
+    end;
+  for inputInvalid in C_InValid_Input do
+    Assert.WillRaise(callLineDataGet(inputInvalid, F_sign), EConvertError);
+end;
+
+procedure TTestParser.TestRemoveWhiteSpace(const ACleanStr, AStr: string);
+begin
+  Assert.AreEqual(ACleanStr, Parser.RemoveWhiteSpace(AStr));
 end;
 
 procedure TTestParser.TestParseAStrong;
@@ -281,11 +400,11 @@ const
     '#ASTRONG'+sLineBreak+
     'sign;name;;;;;;;;;;;;;;;;;quant;;;cost;;;;weight;;;;;;;;;;;;;;;;;;;;'+sLineBreak;
   C_Input_Normal =
-    '****;Авто;;;;;;;;;;;;;;;;;12345;;;1.01;;;;24.375;;;;;;;;;;;;;;;;;;;;';
+    '****;РђРІС‚Рѕ;;;;;;;;;;;;;;;;;12 345;;;1.01;;;;24.375;;;;;;;;;;;;;;;;;;;;';
   C_Input_Convert_Error: array[0..2] of string = (
-    '****;Авто;;;;;;;;;;;;;;;;;12#45;;;1.01;;;;24.375;;;;;;;;;;;;;;;;;;;;',
-    '****;Авто;;;;;;;;;;;;;;;;;1245;;;1.01;;;;;;;;;;;;;;;;;;;;;;;;',
-    '****;Авто;;;;;;;;;;;;;;;;;1245;;;1,01;;;;24.375;;;;;;;;;;;;;;;;;;;;'
+    '****;РђРІС‚Рѕ;;;;;;;;;;;;;;;;;12#45;;;1.01;;;;24.375;;;;;;;;;;;;;;;;;;;;',
+    '****;РђРІС‚Рѕ;;;;;;;;;;;;;;;;;1245;;;1.01;;;;;;;;;;;;;;;;;;;;;;;;',
+    '****;РђРІС‚Рѕ;;;;;;;;;;;;;;;;;1245;;;1,01;;;;24.375;;;;;;;;;;;;;;;;;;;;'
   );
 var
   inputConvertError: string;
@@ -293,13 +412,13 @@ begin
   for inputConvertError in C_Input_Convert_Error do
     Assert.WillRaise(callParseAStrong(C_File_Type_AutoStrong_Hdr + inputConvertError), EConvertError);
   Assert.WillNotRaise(callParseAStrong(C_File_Type_AutoStrong_Hdr + C_Input_Normal));
-  Assert.AreEqual(1, Parser.ParseResult.Count, 'Не соотвествует количество элементов.');
+  Assert.AreEqual(1, Parser.ParseResult.Count, 'РќРµ СЃРѕРѕС‚РІРµСЃС‚РІСѓРµС‚ РєРѕР»РёС‡РµСЃС‚РІРѕ СЌР»РµРјРµРЅС‚РѕРІ.');
   Assert.AreEqual('****', Parser.ParseResult[0].SIGN);
-  Assert.AreEqual('Авто', Parser.ParseResult[0].NAME);
+  Assert.AreEqual('РђРІС‚Рѕ', Parser.ParseResult[0].NAME);
   Assert.AreEqual(12345, Parser.ParseResult[0].QUANTITY);
   Assert.AreEqual('1.01', Parser.ParseResult[0].COST.ToString);
   Assert.AreEqual('24.375',Parser.ParseResult[0].WEIGHT1.ToString);
-  Assert.AreEqual('Авто',Parser.ParseResult[0].STR_PR);
+  Assert.AreEqual('РђРІС‚Рѕ',Parser.ParseResult[0].STR_PR);
 end;
 
 initialization

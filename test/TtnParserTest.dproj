@@ -132,11 +132,24 @@
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
         <DCCReference Include="Ttn.Test.Main.Console.pas"/>
-        <DCCReference Include="Ttn.Test.Main.Testinsight.pas"/>
-        <DCCReference Include="Ttn.Test.Parser.pas"/>
-        <DCCReference Include="..\Ttn.Registration.pas"/>
-        <DCCReference Include="..\Ttn.List.pas"/>
-        <DCCReference Include="..\Ttn.Obj.pas"/>
+        <DCCReference Include="Ttn.Test.Main.Testinsight.pas">
+            <Form>,
+  Ttn.Registration in &apos;..\Ttn.Registration.pas&apos;
+  Ttn.Test.Parser in &apos;Ttn.Test.Parser.pas&apos;,
+  ,
+  Ttn.List in &apos;..\Ttn.List.pas&apos;,
+  Ttn.Obj in &apos;..\Ttn.Obj.pas&apos;</Form>
+        </DCCReference>
+        <DCCReference Include="..\Ttn.Registration.pas">
+            <Form>Ttn.Test.Parser in &apos;Ttn.Test.Parser.pas&apos;,
+  Ttn.List in &apos;..\Ttn.List.pas&apos;,
+  Ttn.Obj in &apos;..\Ttn.Obj.pas&apos;</Form>
+        </DCCReference>
+        <DCCReference Include="Ttn.Test.Parser.pas">
+            <Form>,
+  Ttn.List in &apos;..\Ttn.List.pas&apos;,
+  Ttn.Obj in &apos;..\Ttn.Obj.pas&apos;</Form>
+        </DCCReference>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

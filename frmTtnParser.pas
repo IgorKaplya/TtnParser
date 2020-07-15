@@ -4,7 +4,7 @@ interface
 
 uses
   Forms,IniFiles, Vcl.Controls, Vcl.StdCtrls, System.Classes, Vcl.ActnList, Vcl.StdActns, Vcl.ExtCtrls, Vcl.ComCtrls, Vcl.ImgList,
-  Vcl.ToolWin, ttnObjLst, VirtualTrees, Vcl.Graphics, Types, ttnObj, Vcl.Menus,
+  Vcl.ToolWin, Ttn.Interfaces, VirtualTrees, Vcl.Graphics, Types, Vcl.Menus,
   System.ImageList, System.Actions;
 
 type
@@ -48,19 +48,22 @@ type
     FIniFile: TMemIniFile;
     FInited: Boolean;
     FInpFile: string;
-    FTtn: TTtnObjLst;
+    FParser: ITtnParser;
+    FTtn: ITtnList;
     FValuta: string;
     procedure ClearUnNames;
-    function CurTtnObj(out obj: TTtnObj): Boolean;
+    function CurTtnObj(out obj: ITtnObj): Boolean;
     procedure SetInpFile(const Value: string);
     property IniFile: TMemIniFile read FIniFile;
     property Inited: Boolean read FInited;
+    property Parser: ITtnParser read FParser;
     property Valuta: string read FValuta;
   public
     procedure ProcessInpFile;
+    procedure _ProcessInpFile;
     procedure StartUp;
     property InpFile: string read FInpFile write SetInpFile;
-    property Ttn: TTtnObjLst read FTtn;
+    property Ttn: ITtnList read FTtn;
   end;
 
 var
@@ -69,7 +72,7 @@ var
 implementation
 
 uses
-  Dialogs, SysUtils, TtnParserErrors, dmMain, System.Variants, DB, frmTtnSettings, System.Math, frmAddCod;
+  Dialogs, SysUtils, Ttn.Errors, dmMain, System.Variants, DB, frmTtnSettings, System.Math, frmAddCod, Ttn.Registration;
 
 const
   C_ERR_NO_KOD = 'не найден код';
@@ -86,10 +89,22 @@ const
 
 {$R *.dfm}
 
+procedure TfrmTtnParserMain.FormCreate(Sender: TObject);
+begin
+  FParser := TTtnResolver.Resolve<ITtnParser>;
+  FTtn := Parser.ParseResult;
+end;
+
+procedure TfrmTtnParserMain.FormDestroy(Sender: TObject);
+begin
+  dm.conMain.Close();
+  FreeAndNil(FIniFile);
+end;
+
 procedure TfrmTtnParserMain.actAddKodExecute(Sender: TObject);
 {Добавление кода в базу прямо из отчета}
 var
-  obj: TTtnObj;
+  obj: ITtnObj;
 begin
   try
   TestErr(dm.tblKod.State=dsBrowse,'Таблица кодов в состоянии редактирования. Сохраните или отмените изменения');
@@ -112,7 +127,7 @@ end;
 
 procedure TfrmTtnParserMain.actAddKodUpdate(Sender: TObject);
 var
-  obj: TTtnObj;
+  obj: ITtnObj;
 begin
 (Sender as TAction).Enabled:=CurTtnObj(obj) and (Pos(C_ERR_NO_KOD,obj.ErrorMsg)<>0);
 end;
@@ -140,7 +155,7 @@ procedure TfrmTtnParserMain.ClearUnNames;
 var
   lnt,nt: Integer;
   i: integer;
-  obj: TTtnObj;
+  obj: ITtnObj;
 begin
   lnt:=-1;
   for i:=0 to Ttn.Count-1 do
@@ -154,24 +169,12 @@ begin
     end;
 end;
 
-function TfrmTtnParserMain.CurTtnObj(out obj: TTtnObj): Boolean;
+function TfrmTtnParserMain.CurTtnObj(out obj: ITtnObj): Boolean;
 begin
   obj:=nil;
   if vstTtn.SelectedCount=1 then
     obj:=ttn[vstTtn.GetFirstSelected().Index];
   Result := Assigned(obj);
-end;
-
-procedure TfrmTtnParserMain.FormCreate(Sender: TObject);
-begin
-FTtn := TTtnObjLst.Create();
-end;
-
-procedure TfrmTtnParserMain.FormDestroy(Sender: TObject);
-begin
-  FreeAndNil(FTtn);
-  dm.conMain.Close();
-  FreeAndNil(FIniFile);
 end;
 
 procedure TfrmTtnParserMain.FileOpenInpAccept(Sender: TObject);
@@ -200,6 +203,20 @@ begin
 end;
 
 procedure TfrmTtnParserMain.ProcessInpFile;
+{Разбор входного файла, сортировка и унифткация. Основной метод программы}
+begin
+  pnlWait.BringToFront;
+  try
+    vstTtn.Clear;
+    Parser.Parse(InpFile);
+    vstTtn.RootNodeCount:=Ttn.Count;
+  finally
+    dm.TablesFirst;
+  end;
+  pnlWait.SendToBack;
+end;
+
+procedure TfrmTtnParserMain._ProcessInpFile;
 {Разбор входного файла, сортировка и унифткация. Основной метод программы}
 
 const
@@ -236,7 +253,7 @@ const
     end;
   end;
 
-  procedure ParseKod(const AObj: TTtnObj; iLine: integer);
+  procedure ParseKod(const AObj: ITtnObj; iLine: integer);
   {Найти соответствие кода ТНВЭД по имени и признаку}
   const
     C_EPSILON = 0.00001;
@@ -266,7 +283,7 @@ const
   weight:=AObj.WEIGHT1/Aobj.QUANTITY;
   if (CompareValue(weight,weightMin,C_EPSILON)=LessThanValue) or (CompareValue(weight,weightMax,C_EPSILON)=GreaterThanValue) then
     begin
-    AObj.Error:=errWeight;
+    AObj.Error:=clRed;
     AObj.ErrorMsg:=Format( '%d: вес (%.3f) не укладывается в эталонный [%.3f..%.3f]', [iLine,weight,weightMin,weightMax]);
     end;
   end;
@@ -323,7 +340,7 @@ var
   sl,slLine: TStringList;
   iLine: Integer;
   iQuantity: Integer;
-  obj: TTtnObj;
+  obj: ITtnObj;
 begin
 pnlWait.BringToFront;
 sl:=TStringList.Create;
@@ -446,7 +463,7 @@ procedure TfrmTtnParserMain.vstTtnDrawText(Sender: TBaseVirtualTree;
 {Отрисовка элементов с ошибками}
 begin
 if length(ttn[node.Index].ErrorMsg)>0 then
-  TargetCanvas.Font.Color:=C_TTN_ERR_CLR[ttn[node.Index].Error];
+  TargetCanvas.Font.Color:=ttn[node.Index].Error;
 end;
 
 procedure TfrmTtnParserMain.vstTtnGetHint(Sender: TBaseVirtualTree; Node:

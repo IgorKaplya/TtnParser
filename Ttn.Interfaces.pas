@@ -78,7 +78,10 @@ type
   ['{0A042E88-AB67-4CA2-885B-B9EB01276344}']
     procedure ReadConfiguration(const AConfiguration: string);
     procedure MapHeader(const AHeader: string);
-    function LineDataGet(const ASource: TStrings; AHeaderColumn: string): string;
+    function LineDataStr(const ASource: TStrings; AHeaderColumn: string): string;
+    function LineDataDbl(const ASource: TStrings; AHeaderColumn: string): Double;
+    function LineDataInt(const ASource: TStrings; AHeaderColumn: string): Integer;
+    function RemoveWhiteSpace(const AStr: string): string;
   end;
 
 implementation

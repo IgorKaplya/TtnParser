@@ -16,7 +16,10 @@ type
     procedure ParseAStrong(const inpLine: TStrings);
     procedure ParseMotor(const ALineCore, ALineCountry: TStrings);
     procedure ReadConfiguration(const AConfiguration: string);
-    function LineDataGet(const ASource: TStrings; AHeaderColumn: string): string;
+    function LineDataStr(const ASource: TStrings; AHeaderColumn: string): string;
+    function LineDataDbl(const ASource: TStrings; AHeaderColumn: string): Double;
+    function LineDataInt(const ASource: TStrings; AHeaderColumn: string): Integer;
+    function RemoveWhiteSpace(const AStr: string): string;
   public
     constructor Create(ATtnList: ITtnList);
     destructor Destroy; override;
@@ -33,7 +36,7 @@ type
 implementation
 
 uses
-  ttnObj, System.SysUtils, System.StrUtils, Spring.Container;
+  System.SysUtils, System.StrUtils, Spring.Container, System.Character;
 
 constructor TTtnParser.Create(ATtnList: ITtnList);
 begin
@@ -70,8 +73,17 @@ begin
   Result := FParseResult;
 end;
 
-function TTtnParser.LineDataGet(const ASource: TStrings; AHeaderColumn:
-    string): string;
+function TTtnParser.LineDataDbl(const ASource: TStrings; AHeaderColumn: string): Double;
+begin
+  Result := RemoveWhiteSpace(LineDataStr(ASource, AHeaderColumn)).ToDouble();
+end;
+
+function TTtnParser.LineDataInt(const ASource: TStrings; AHeaderColumn: string): Integer;
+begin
+  Result := RemoveWhiteSpace(LineDataStr(ASource, AHeaderColumn)).ToInteger();
+end;
+
+function TTtnParser.LineDataStr(const ASource: TStrings; AHeaderColumn: string): string;
 var
   idxMappedColumn: integer;
 begin
@@ -160,24 +172,25 @@ var
   ttn: ITtnObj;
 begin
   ttn := ParseResult.Add;
-  ttn.SIGN := LineDataGet(inpLine, F_sign);
-  ttn.NAME := LineDataGet(inpLine, F_name);
-  ttn.COST := LineDataGet(inpLine, F_cost).ToDouble();
-  ttn.QUANTITY := LineDataGet(inpLine, F_quant).ToInteger();
-  ttn.WEIGHT1 := LineDataGet(inpLine, F_weight).ToDouble;
+  ttn.SIGN := LineDataStr(inpLine, F_sign);
+  ttn.NAME := LineDataStr(inpLine, F_name);
+  ttn.COST := LineDataDbl(inpLine, F_cost);
+  ttn.QUANTITY := LineDataInt(inpLine, F_quant);
+  ttn.WEIGHT1 := LineDataDbl(inpLine, F_weight);
   ttn.STR_PR := ttn.NAME;
 end;
+
 procedure TTtnParser.ParseMotor(const ALineCore, ALineCountry: TStrings);
 var
   ttn: ITtnObj;
 begin
   ttn := ParseResult.Add;
-  ttn.SIGN := LineDataGet(ALineCore, F_sign);
-  ttn.NAME := LineDataGet(ALineCore, F_name);
-  ttn.COST := LineDataGet(ALineCore, F_cost).ToDouble;
-  ttn.QUANTITY := LineDataGet(ALineCore, F_quant).ToInteger();
-  ttn.WEIGHT1 := LineDataGet(ALineCore, F_weight).ToDouble;
-  ttn.STR_PR := LineDataGet(ALineCountry, F_name);
+  ttn.SIGN := LineDataStr(ALineCore, F_sign);
+  ttn.NAME := LineDataStr(ALineCore, F_name);
+  ttn.COST := LineDataDbl(ALineCore, F_cost);
+  ttn.QUANTITY := LineDataInt(ALineCore, F_quant);
+  ttn.WEIGHT1 := LineDataDbl(ALineCore, F_weight);
+  ttn.STR_PR := LineDataStr(ALineCountry, F_name);
 end;
 
 procedure TTtnParser.ReadConfiguration(const AConfiguration: string);
@@ -185,12 +198,19 @@ var
   PossibleConfiguration: TTtnParserConfiguration;
 begin
   for PossibleConfiguration in C_All_Parser_Configurations do
-    if SameText(Config_String_Alias[PossibleConfiguration], AConfiguration) then
-    begin
+    if AConfiguration.StartsWith(Config_String_Alias[PossibleConfiguration]) then
       FConfiguration := PossibleConfiguration;
-      Break;
-    end;
-  ETtnParserWrongConfig.Test(Configuration <> tpcNone, 'Некорректный заголовок файла. %s.', [AConfiguration]);
+  ETtnParserWrongConfig.Test(Configuration <> tpcNone, 'Не удалось определить тип файла. %s.', [AConfiguration]);
+end;
+
+function TTtnParser.RemoveWhiteSpace(const AStr: string): string;
+var
+  charChecked: Char;
+begin
+  Result := '';
+  for charChecked in AStr do
+    if not charChecked.IsWhiteSpace then
+      Result := Result + charChecked;
 end;
 
 end.
