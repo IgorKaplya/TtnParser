@@ -175,7 +175,7 @@ end;
 
 procedure TTtnObj.SetWEIGHT2(const Value: Double);
 begin
-  FWEIGHT1 := Value;
+  FWEIGHT2 := Value;
 end;
 
 procedure TTtnObj.SetWEIGHT3(const Value: Double);

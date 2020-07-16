@@ -75,7 +75,7 @@ type
   end;
 
   ITtnParserTestable = interface(ITtnParser)
-  ['{0A042E88-AB67-4CA2-885B-B9EB01276344}']
+  ['{622737DF-80FE-4AB4-9961-40F358A3C5A4}']
     procedure ReadConfiguration(const AConfiguration: string);
     procedure MapHeader(const AHeader: string);
     function LineDataStr(const ASource: TStrings; AHeaderColumn: string): string;
@@ -84,6 +84,24 @@ type
     function RemoveWhiteSpace(const AStr: string): string;
   end;
 
+  ITtnProcessor = interface(IInterface)
+  ['{76592F46-8EB5-4EDE-BE46-44FD5C9889AE}']
+    procedure Process(const AList: ITtnList);
+    function GetCurrency: string;
+    procedure SetCurrency(const Value: string);
+    property Currency: string read GetCurrency write SetCurrency;
+  end;
+
+  ITtnProcessorTestable = interface(ITtnProcessor)
+  ['{0DCD560F-91E2-481B-AA97-4DEF1FD04148}']
+    procedure ProcessWeight(const AObj: ITtnObj);
+    procedure ProcessCurrency(const AObj: ITtnObj);
+  end;
+
+
+
 implementation
 
 end.
+
+

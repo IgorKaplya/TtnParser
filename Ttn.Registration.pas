@@ -21,6 +21,7 @@ implementation
 
 uses
   Ttn.Interfaces,
+  Ttn.Processor,
   Ttn.Parser,
   Ttn.List,
   Ttn.Obj;
@@ -36,6 +37,7 @@ begin
   AContainer.RegisterType<TTtnList>;
   AContainer.RegisterType<TTtnObj>;
   Acontainer.RegisterType<IFactory<ITtnObj>>.AsFactory;
+  AContainer.RegisterType<TTtnProcessor>;
 
   AContainer.Build;
 end;
