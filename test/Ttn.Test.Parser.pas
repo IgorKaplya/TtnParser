@@ -52,19 +52,21 @@ type
     [Test]
     [TestCase]
     procedure TestParseAStrong;
+    [Test]
+    procedure TestParseAStrongName();
   end;
 
 implementation
 
 uses
-  System.Classes, System.SysUtils, Ttn.Errors, Spring.Container, Ttn.Constants;
+  System.Classes, System.SysUtils, Ttn.Errors, Spring.Container, Ttn.Constants, Ttn.Registration;
 
 const
   C_Default_Header = F_sign+';'+F_name+';'+F_cost+';'+F_quant+';'+F_weight;  
 
 procedure TTestParser.Setup;
 begin
-  FParser := GlobalContainer.Resolve<ITtnParserTestable>;
+  FParser := TTtnResolver.Resolve<ITtnParserTestable>;
 end;
 
 procedure TTestParser.TearDown;
@@ -400,7 +402,8 @@ const
     '#ASTRONG'+sLineBreak+
     'sign;name;;;;;;;;;;;;;;;;;quant;;;cost;;;;weight;;;;;;;;;;;;;;;;;;;;'+sLineBreak;
   C_Input_Normal =
-    '****;Авто;;;;;;;;;;;;;;;;;12 345;;;1.01;;;;24.375;;;;;;;;;;;;;;;;;;;;';
+    '****;Авто *Великобритания;;;;;;;;;;;;;;;;;12 345;;;1.01;;;;24.375;;;;;;;;;;;;;;;;;;;;';
+
   C_Input_Convert_Error: array[0..2] of string = (
     '****;Авто;;;;;;;;;;;;;;;;;12#45;;;1.01;;;;24.375;;;;;;;;;;;;;;;;;;;;',
     '****;Авто;;;;;;;;;;;;;;;;;1245;;;1.01;;;;;;;;;;;;;;;;;;;;;;;;',
@@ -418,7 +421,43 @@ begin
   Assert.AreEqual(12345, Parser.ParseResult[0].QUANTITY);
   Assert.AreEqual('1.01', Parser.ParseResult[0].COST.ToString);
   Assert.AreEqual('24.375',Parser.ParseResult[0].WEIGHT1.ToString);
-  Assert.AreEqual('Авто',Parser.ParseResult[0].STR_PR);
+  Assert.AreEqual('Великобритания',Parser.ParseResult[0].STR_PR);
+end;
+
+procedure TTestParser.TestParseAStrongName;
+
+  function callParseAStrongName(const AInput: string; const AObj: ITtnObj): TTestLocalMethod;
+  begin
+    Result :=
+    (
+      procedure()
+      begin
+        Parser.ParseAStrongName(AInput, AObj);
+      end
+    );
+  end;
+
+const
+  Expected_Name = 'Авто';
+  Expected_Country = 'Великобритания';
+  C_Input_Normal: array[0..5] of string = (
+    'Авто *Великобритания',
+    'Авто *Инвойс *Великобритания',
+    'Авто *Инв*ойс *Великобритания',
+    'Авто *Инвойс *Еще что-то *Великобритания',
+    '"Авто *Великобритания"','"Авто *Инвойс *Великобритания"'
+  );
+var
+  sInput: string;
+  testObj: ITtnObj;
+begin
+  testObj := TTtnResolver.Resolve<ITtnObj>;
+  for sInput in C_Input_Normal do
+  begin
+    Assert.WillNotRaise(callParseAStrongName(sInput, testObj));
+    Assert.AreEqual(Expected_Name, testObj.NAME);
+    Assert.AreEqual(Expected_Country, testObj.STR_PR);
+  end;
 end;
 
 initialization

@@ -20,6 +20,7 @@ type
     function LineDataDbl(const ASource: TStrings; AHeaderColumn: string): Double;
     function LineDataInt(const ASource: TStrings; AHeaderColumn: string): Integer;
     function RemoveWhiteSpace(const AStr: string): string;
+    procedure ParseAStrongName(AInput: string; const AObj: ITtnObj);
   public
     constructor Create(ATtnList: ITtnList);
     destructor Destroy; override;
@@ -173,11 +174,29 @@ var
 begin
   ttn := ParseResult.Add;
   ttn.SIGN := LineDataStr(inpLine, F_sign);
-  ttn.NAME := LineDataStr(inpLine, F_name);
   ttn.COST := LineDataDbl(inpLine, F_cost);
   ttn.QUANTITY := LineDataInt(inpLine, F_quant);
   ttn.WEIGHT1 := LineDataDbl(inpLine, F_weight);
-  ttn.STR_PR := ttn.NAME;
+  ParseAStrongName(LineDataStr(inpLine, F_name), ttn);
+end;
+
+procedure TTtnParser.ParseAStrongName(AInput: string; const AObj: ITtnObj);
+var
+  nameList: TStringList;
+begin
+  nameList := TStringList.Create('"','*',[soStrictDelimiter]);
+  try
+    AObj.Name := '';
+    AObj.STR_PR := '';
+    nameList.DelimitedText := AnsiDequotedStr(AInput, nameList.QuoteChar);
+    if nameList.Count > 0 then
+    begin
+      AObj.Name := Trim(nameList[0]);
+      AObj.STR_PR := Trim(nameList[nameList.Count-1]);
+    end;
+  finally
+    nameList.Free();
+  end;
 end;
 
 procedure TTtnParser.ParseMotor(const ALineCore, ALineCountry: TStrings);
@@ -212,5 +231,6 @@ begin
     if not charChecked.IsWhiteSpace then
       Result := Result + charChecked;
 end;
+
 
 end.

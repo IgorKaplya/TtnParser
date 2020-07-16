@@ -139,16 +139,8 @@
   Ttn.List in &apos;..\Ttn.List.pas&apos;,
   Ttn.Obj in &apos;..\Ttn.Obj.pas&apos;</Form>
         </DCCReference>
-        <DCCReference Include="..\Ttn.Registration.pas">
-            <Form>Ttn.Test.Parser in &apos;Ttn.Test.Parser.pas&apos;,
-  Ttn.List in &apos;..\Ttn.List.pas&apos;,
-  Ttn.Obj in &apos;..\Ttn.Obj.pas&apos;</Form>
-        </DCCReference>
-        <DCCReference Include="Ttn.Test.Parser.pas">
-            <Form>,
-  Ttn.List in &apos;..\Ttn.List.pas&apos;,
-  Ttn.Obj in &apos;..\Ttn.Obj.pas&apos;</Form>
-        </DCCReference>
+        <DCCReference Include="..\Ttn.Registration.pas"/>
+        <DCCReference Include="Ttn.Test.Parser.pas"/>
         <DCCReference Include="Ttn.Test.Processor.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>

@@ -82,6 +82,7 @@ type
     function LineDataDbl(const ASource: TStrings; AHeaderColumn: string): Double;
     function LineDataInt(const ASource: TStrings; AHeaderColumn: string): Integer;
     function RemoveWhiteSpace(const AStr: string): string;
+    procedure ParseAStrongName(AInput: string; const AObj: ITtnObj);
   end;
 
   ITtnProcessor = interface(IInterface)

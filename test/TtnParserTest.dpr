@@ -6,17 +6,9 @@ program TtnParserTest;
 
 uses
   Ttn.Test.Main.Console in 'Ttn.Test.Main.Console.pas',
-  Ttn.Test.Main.Testinsight in 'Ttn.Test.Main.Testinsight.pas' {,
-  Ttn.Registration in '..\Ttn.Registration.pas'Ttn.Test.Parser in'Ttn.Test.Parser.pas',
-  ,
-  Ttn.List in '..\Ttn.List.pas',
-  Ttn.Obj in '..\Ttn.Obj.pas'},
-  Ttn.Registration in '..\Ttn.Registration.pas' {Ttn.Test.Parser in 'Ttn.Test.Parser.pas',
-  Ttn.List in '..\Ttn.List.pas',
-  Ttn.Obj in '..\Ttn.Obj.pas'},
-  Ttn.Test.Parser in 'Ttn.Test.Parser.pas' {,
-  Ttn.List in '..\Ttn.List.pas',
-  Ttn.Obj in '..\Ttn.Obj.pas'},
+  Ttn.Test.Main.Testinsight in 'Ttn.Test.Main.Testinsight.pas',
+  Ttn.Registration in '..\Ttn.Registration.pas',
+  Ttn.Test.Parser in 'Ttn.Test.Parser.pas',
   Ttn.Test.Processor in 'Ttn.Test.Processor.pas';
 
 begin
