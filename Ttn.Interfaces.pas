@@ -3,7 +3,7 @@ unit Ttn.Interfaces;
 interface
 
 uses
-  System.Classes, Ttn.Constants;
+  System.Classes, Ttn.Constants, System.Generics.Collections;
 
 type
 
@@ -97,9 +97,21 @@ type
   ['{0DCD560F-91E2-481B-AA97-4DEF1FD04148}']
     procedure ProcessWeight(const AObj: ITtnObj);
     procedure ProcessCurrency(const AObj: ITtnObj);
+    procedure ProcessCountry(const AObj: ITtnObj);
+    function GetCountryList: TDictionary<string, string>;
+    procedure SetCountryList(const Value: TDictionary<string, string>);
+    property CountryList: TDictionary<string, string> read GetCountryList write SetCountryList;
   end;
 
-
+  ITtnCountry = interface(IInterface)
+  ['{91B58BCD-CCF8-4DE3-9CCC-12CC5397C5DF}']
+    function GetTextInput: string;
+    procedure SetTextInput(const Value: string);
+    function GetTtnValue: string;
+    procedure SetTtnValue(const Value: string);
+    property TextInput: string read GetTextInput write SetTextInput;
+    property TtnValue: string read GetTtnValue write SetTtnValue;
+  end;
 
 implementation
 
