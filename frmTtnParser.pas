@@ -51,6 +51,7 @@ type
     FParser: ITtnParser;
     FTtn: ITtnList;
     FValuta: string;
+    FProcessor: ITtnProcessor;
     procedure ClearUnNames;
     function CurTtnObj(out obj: ITtnObj): Boolean;
     procedure SetInpFile(const Value: string);
@@ -58,6 +59,7 @@ type
     property Inited: Boolean read FInited;
     property Parser: ITtnParser read FParser;
     property Valuta: string read FValuta;
+    property Processor: ITtnProcessor read FProcessor;
   public
     procedure ProcessInpFile;
     procedure _ProcessInpFile;
@@ -93,6 +95,7 @@ procedure TfrmTtnParserMain.FormCreate(Sender: TObject);
 begin
   FParser := TTtnResolver.Resolve<ITtnParser>;
   FTtn := Parser.ParseResult;
+  FProcessor := TTtnResolver.Resolve<ITtnProcessor>;
 end;
 
 procedure TfrmTtnParserMain.FormDestroy(Sender: TObject);
@@ -209,6 +212,7 @@ begin
   try
     vstTtn.Clear;
     Parser.Parse(InpFile);
+    Processor.Process(Parser.ParseResult);
     vstTtn.RootNodeCount:=Ttn.Count;
   finally
     dm.TablesFirst;
@@ -430,6 +434,7 @@ procedure TfrmTtnParserMain.StartUp;
   FIniFile:=TMemIniFile.Create(sIni);
   FormatSettings.DecimalSeparator:=IniFile.ReadString('Настройки','ДесятичныйРазделитель',FormatSettings.DecimalSeparator)[1];
   FValuta:=IniFile.ReadString('Настройки','Валюта','');
+  Processor.Currency := Valuta;
   end;
 
   procedure DbConnect();
