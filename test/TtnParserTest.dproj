@@ -1,4 +1,4 @@
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup>
         <ProjectGuid>{3DCE3285-6A72-4235-8311-4ECCB9FD6AEF}</ProjectGuid>
         <ProjectVersion>18.4</ProjectVersion>
@@ -76,11 +76,11 @@
         <UsingDelphiRTL>true</UsingDelphiRTL>
         <Icon_MainIcon>$(BDS)\bin\delphi_PROJECTICON.ico</Icon_MainIcon>
         <Icns_MainIcns>$(BDS)\bin\delphi_PROJECTICNS.icns</Icns_MainIcns>
-        <DCC_UnitSearchPath>$(DUnitX);..\Virtual-TreeView\Source;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <SanitizedProjectName>TtnParserTest</SanitizedProjectName>
         <VerInfo_Locale>1049</VerInfo_Locale>
         <DCC_ExeOutput>..\_out\</DCC_ExeOutput>
         <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
+        <DCC_UnitSearchPath>..;..\spring4d\Source;..\spring4d\Source\Base;..\spring4d\Source\Base\Collections;..\spring4d\Source\Base\Logging;..\spring4d\Source\Base\Patches;..\spring4d\Source\Core\Container;..\spring4d\Source\Core\Interception;..\spring4d\Source\Core\Logging;..\spring4d\Source\Core\Services;..\spring4d\Source\Data\ObjectDataSet;..\spring4d\Source\Persistence\Adapters;..\spring4d\Source\Persistence\Core;..\spring4d\Source\Persistence\Criteria;..\spring4d\Source\Persistence\Mapping;..\spring4d\Source\Persistence\SQL;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Android)'!=''">
         <DCC_UsePackage>DBXSqliteDriver;IndyIPCommon;bindcompdbx;DBXInterBaseDriver;IndyIPServer;IndySystem;tethering;fmxFireDAC;bindcompfmx;ibmonitor;FMXTee;DbxCommonDriver;FmxTeeUI;ibxpress;fmx;xmlrtl;ibxbindings;rtl;DbxClientDriver;CustomIPTransport;dbexpress;IndyCore;bindcomp;dsnap;IndyIPClient;dbxcds;bindengine;dsnapxml;dbrtl;IndyProtocols;$(DCC_UsePackage)</DCC_UsePackage>
@@ -119,10 +119,11 @@
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
         <DCC_RemoteDebug>false</DCC_RemoteDebug>
         <VerInfo_Locale>1033</VerInfo_Locale>
+        <DCC_Define>TESTINSIGHT;$(DCC_Define)</DCC_Define>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
         <DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
-        <DCC_Define>RELEASE;$(DCC_Define)</DCC_Define>
+        <DCC_Define>RELEASE;CI;$(DCC_Define)</DCC_Define>
         <DCC_SymbolReferenceInfo>0</DCC_SymbolReferenceInfo>
         <DCC_DebugInformation>0</DCC_DebugInformation>
     </PropertyGroup>
@@ -130,36 +131,24 @@
         <DelphiCompile Include="$(MainSource)">
             <MainSource>MainSource</MainSource>
         </DelphiCompile>
-        <DCCReference Include="uTestTtnParser.pas"/>
-        <DCCReference Include="..\frmTtnParser.pas">
-            <Form>frmTtnParserMain</Form>
-            <FormType>dfm</FormType>
+        <DCCReference Include="Ttn.Test.Run.Console.pas"/>
+        <DCCReference Include="Ttn.Test.Run.Testinsight.pas">
+            <Form>,
+  Ttn.Registration in &apos;..\Ttn.Registration.pas&apos;,
+  Ttn.Test.Parser in &apos;Ttn.Test.Parser.pas&apos;,
+  Ttn.Test.Processor in &apos;Ttn.Test.Processor.pas&apos;,
+  Ttn.Kod.List in &apos;..\Ttn.Kod.List.pas&apos;,
+  Ttn.Enum.Enumerator in &apos;..\Ttn.Enum.Enumerator.pas&apos;,
+  Ttn.Enum.EnumerableList in &apos;..\Ttn.Enum.EnumerableList.pas&apos;;
+
+begin
+  try
+    RegisterTypes();
+    {$IFDEF TESTINSIGHT</Form>
         </DCCReference>
-        <DCCReference Include="..\ttnObjLst.pas"/>
-        <DCCReference Include="..\ttnObj.pas"/>
-        <DCCReference Include="..\TtnParserErrors.pas"/>
-        <DCCReference Include="..\dmMain.pas">
-            <Form>dm</Form>
-            <FormType>dfm</FormType>
-            <DesignClass>TDataModule</DesignClass>
-        </DCCReference>
-        <DCCReference Include="..\frmTtnSettings.pas">
-            <Form>frmSett</Form>
-            <FormType>dfm</FormType>
-        </DCCReference>
-        <DCCReference Include="..\uCodBook.pas">
-            <Form>FrameCodBook</Form>
-            <FormType>dfm</FormType>
-            <DesignClass>TFrame</DesignClass>
-        </DCCReference>
-        <DCCReference Include="..\frmAddCod.pas">
-            <Form>frmAddCode</Form>
-            <FormType>dfm</FormType>
-        </DCCReference>
-        <DCCReference Include="..\frmCodBookHlp.pas">
-            <Form>frmCodBookHelp</Form>
-            <FormType>dfm</FormType>
-        </DCCReference>
+        <DCCReference Include="..\Ttn.Registration.pas"/>
+        <DCCReference Include="Ttn.Test.Parser.pas"/>
+        <DCCReference Include="Ttn.Test.Processor.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
@@ -186,6 +175,12 @@
                 </Excluded_Packages>
             </Delphi.Personality>
             <Deployment Version="3">
+                <DeployFile LocalName="..\_out\TtnParserTest.exe" Configuration="Debug" Class="ProjectOutput">
+                    <Platform Name="Win32">
+                        <RemoteName>TtnParserTest.exe</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
                 <DeployFile LocalName="$(BDS)\Redist\osx32\libcgunwind.1.0.dylib" Class="DependencyModule">
                     <Platform Name="OSX32">
                         <Overwrite>true</Overwrite>
@@ -203,12 +198,6 @@
                 </DeployFile>
                 <DeployFile LocalName="$(BDS)\Redist\osx32\libcgsqlite3.dylib" Class="DependencyModule">
                     <Platform Name="OSX32">
-                        <Overwrite>true</Overwrite>
-                    </Platform>
-                </DeployFile>
-                <DeployFile LocalName="Win32\Debug\TtnParserTest.exe" Configuration="Debug" Class="ProjectOutput">
-                    <Platform Name="Win32">
-                        <RemoteName>TtnParserTest.exe</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>

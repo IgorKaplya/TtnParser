@@ -2,7 +2,7 @@ unit uTestTtnParser;
 
 interface
 uses
-  DUnitX.TestFramework, System.Classes, frmTtnParser;
+  DUnitX.TestFramework, System.Classes;
 
 type
 
@@ -24,7 +24,13 @@ type
 implementation
 
 uses
-  System.SysUtils;
+  frmTtnParser,
+  dmMain,
+  frmTtnSettings,
+  frmAddCod,
+  frmCodBookHlp,
+  System.SysUtils,
+  Forms;
 
 
 procedure TTtnParserTestObject.CheckEqualsStrLst(const AActual, AExpected: TStrings; AMsg: string = '');
@@ -32,7 +38,9 @@ var
   i: Integer;
   slDif: TStringList;
 begin
-if not SameText(AActual.Text,AExpected.Text) then
+if SameText(AActual.Text,AExpected.Text) then
+  Assert.Pass('')
+else
   begin
   Assert.AreEqual(AActual.Count,AExpected.Count,AMsg+'. Different row count.');
   slDif:=TStringList.Create();
@@ -53,7 +61,14 @@ end;
 
 procedure TTtnParserTestObject.Setup;
 begin
-
+  Application.Initialize;
+  Application.Title := 'Разбор ТТН';
+  Application.CreateForm(TfrmTtnParserMain, frmTtnParserMain);
+  Application.CreateForm(Tdm, dm);
+  Application.CreateForm(TfrmSett, frmSett);
+  Application.CreateForm(TfrmAddCode, frmAddCode);
+  Application.CreateForm(TfrmCodBookHelp, frmCodBookHelp);
+  frmTtnParserMain.StartUp();
 end;
 
 procedure TTtnParserTestObject.TearDown;
@@ -82,4 +97,5 @@ end;
 
 initialization
   TDUnitX.RegisterTestFixture(TTtnParserTestObject);
+
 end.

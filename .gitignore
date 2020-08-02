@@ -67,17 +67,17 @@ __recovery/
 # Boss dependency manager vendor folder https://github.com/HashLoad/boss
 modules/
 
-# Temp work folder for KOTMI-2010 client
-/Delphi/TempData/
-
 # Log files
 *.log
  
 # Output folder for application
-#_out/
+inp.csv
 
 # DunitX result files
 dunitx-results.xml
 
 # MS Access files
 *.ldb
+
+# Test plugin settings
+TestInsightSettings.ini
