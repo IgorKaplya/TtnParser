@@ -1,4 +1,4 @@
-unit Ttn.Test.Main.Testinsight;
+unit Ttn.Test.Run.Testinsight;
 
 interface
 

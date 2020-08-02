@@ -1,4 +1,4 @@
-unit Ttn.Test.Main.Console;
+unit Ttn.Test.Run.Console;
 
 interface
 

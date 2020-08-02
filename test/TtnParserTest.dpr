@@ -5,8 +5,8 @@ program TtnParserTest;
 {$ENDIF}
 
 uses
-  Ttn.Test.Main.Console in 'Ttn.Test.Main.Console.pas',
-  Ttn.Test.Main.Testinsight in 'Ttn.Test.Main.Testinsight.pas',
+  Ttn.Test.Run.Console in 'Ttn.Test.Run.Console.pas',
+  Ttn.Test.Run.Testinsight in 'Ttn.Test.Run.Testinsight.pas',
   Ttn.Registration in '..\Ttn.Registration.pas',
   Ttn.Test.Parser in 'Ttn.Test.Parser.pas',
   Ttn.Test.Processor in 'Ttn.Test.Processor.pas';

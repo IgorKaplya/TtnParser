@@ -18,6 +18,10 @@ type
   ETtnParserWrongMotorLines = class(ETtnParserExc);
   ETtnParserColumnNotMapped = class(ETtnParserExc);
   ETtnParserColumnExceedInput = class(ETtnParserExc);
+  ETtnWeightProcessing = class(ETtnParserExc);
+  ETtnWeightProcessingWeightStandartZero = class(ETtnWeightProcessing);
+  ETtnWeightProcessingCoefficientWeightZero = class(ETtnWeightProcessing);
+  ETtnWeightProcessingWeightViolatesAcceptable = class(ETtnWeightProcessing);
 
 
 procedure TestErr(bMustBeTrue: Boolean; AMsg: string); overload; deprecated;

@@ -62,7 +62,6 @@ type
     property Processor: ITtnProcessor read FProcessor;
   public
     procedure ProcessInpFile;
-    procedure _ProcessInpFile;
     procedure StartUp;
     property InpFile: string read FInpFile write SetInpFile;
     property Ttn: ITtnList read FTtn;
@@ -220,190 +219,6 @@ begin
   pnlWait.SendToBack;
 end;
 
-procedure TfrmTtnParserMain._ProcessInpFile;
-{Разбор входного файла, сортировка и унифткация. Основной метод программы}
-
-const
-  C_Inp_Arg_Cnt = 5;
-  C_Inp_Sign = 0;
-  C_Inp_Name = 1;
-  C_Inp_Cost = 2;
-  C_Inp_Weight = 4;
-  C_Inp_Quantity = 3;
-  C_Inp_Str_Pr = 1;
-
-  procedure ParseInpLine(const sLineData: string; const slLine: TStrings);
-  {Разобрать одну строку из входного файла и положить в slLine для работы. DelimitedText не годится из-за Excel варианта CSV}
-  var
-    i: Integer;
-    sLine: string;
-    iPos: Integer;
-  begin
-  sLine:=sLineData;
-  while Pos(';',sLine)<>0 do
-    begin
-    iPos:=Pos(';',sLine);
-    Delete(sLine,iPos,1);
-    insert(sLineBreak,sLine,iPos);
-    end;
-  slLine.Text:=sLine;
-  for i:=0 to slLine.Count-1 do
-    slLine[i]:=Trim(slLine[i]);
-  if slLine.Count=C_Inp_Arg_Cnt then
-    begin
-    slLine[C_Inp_Cost]:=StringReplace(slLine[C_Inp_Cost],' ','',[rfReplaceAll]);
-    slLine[C_Inp_Weight]:=StringReplace(slLine[C_Inp_Weight],' ','',[rfReplaceAll]);
-    slLine[C_Inp_Quantity]:=StringReplace(slLine[C_Inp_Quantity],' ','',[rfReplaceAll]);
-    end;
-  end;
-
-  procedure ParseKod(const AObj: ITtnObj; iLine: integer);
-  {Найти соответствие кода ТНВЭД по имени и признаку}
-  const
-    C_EPSILON = 0.00001;
-  var
-    sSign,sName: string;
-    weightMin,weightMax, weight: Double;
-  begin
-  sSign:=AObj.SIGN;
-  sName:=AObj.NAME;
-  if Length(sSign)>0 then
-    TestErr(
-      dm.tblKod.Locate(F_kod_sign+';'+F_kod_txt,VarArrayOf([sSign,sName]),[loPartialKey]),
-      Format('%d: %s', [iLine,C_ERR_NO_KOD])
-    )
-  else
-    TestErr(
-      dm.tblKod.Locate(F_Kod_txt,sName,[loPartialKey]),
-      Format('%d: %s', [iLine,C_ERR_NO_KOD])
-    );
-  AObj.KOD:=dm.tblKod.FieldByName(F_Kod_val).AsString;
-  //Контроль по эталонному весу
-  TestErr(not dm.tblKod.FieldByName(F_Kod_Weight_Standart).IsNull,'Не задан эталонный вес');
-  TestErr(not dm.tblKod.FieldByName(F_Kod_Weight_Koef).IsNull,'Не задан эталонный вес коэфф');
-  TestErr(not SameValue(dm.tblKod.FieldByName(F_Kod_Weight_Koef).AsFloat,0,C_EPSILON),'Эталонный вес коэфф значение слишком мало или равно 0');
-  weightMin:=dm.tblKod.FieldByName(F_Kod_Weight_Standart).AsFloat/dm.tblKod.FieldByName(F_Kod_Weight_Koef).AsFloat;
-  weightMax:=dm.tblKod.FieldByName(F_Kod_Weight_Standart).AsFloat*dm.tblKod.FieldByName(F_Kod_Weight_Koef).AsFloat;
-  weight:=AObj.WEIGHT1/Aobj.QUANTITY;
-  if (CompareValue(weight,weightMin,C_EPSILON)=LessThanValue) or (CompareValue(weight,weightMax,C_EPSILON)=GreaterThanValue) then
-    begin
-    AObj.Error:=clRed;
-    AObj.ErrorMsg:=Format( '%d: вес (%.3f) не укладывается в эталонный [%.3f..%.3f]', [iLine,weight,weightMin,weightMax]);
-    end;
-  end;
-
-  procedure Unify();
-  {Сортируем и проставляем NUMBER}
-  var
-    i,iNum: Integer;
-    sCountry: string;
-    sKod: string;
-  begin
-  //Сортировка
-  Ttn.Sort;
-  //Проставляем номера
-  i:=0;
-  iNum:=1;
-  while i<Ttn.Count do
-    begin
-    sKod:=Ttn[i].KOD;
-    sCountry:=Ttn[i].STR_PR;
-    Ttn[i].NUMBER:=iNum;
-    if dm.tblUni.Locate(F_Uni_kod,sKod,[]) then
-      repeat
-      Ttn[i].NAME:=dm.tblUni.FieldByName(F_Uni_etal_txt).AsString;
-      Ttn[i].NUMBER:=iNum;
-      Inc(i);
-      until (i>=Ttn.Count) or not SameText(sKod,Ttn[i].KOD) or not SameText(sCountry,Ttn[i].STR_PR)
-    else
-      Inc(i);
-    Inc(iNum);
-    end;
-  end;
-
-  function RemoveSpaces(const s: string): string;
-  begin
-  Result:=StringReplace(s,' ','',[rfReplaceAll]);
-  end;
-
-  function FindCountry(const ALine: string): Boolean;
-  //Loop through table and find match for F_Str_pr_txt field data in ALine
-  begin
-  Result:=False;
-  dm.tblStrPr.First;
-  while (not dm.tblStrPr.Eof) and (not Result) do
-    if (pos(dm.tblStrPr.FieldByName(F_Str_pr_txt).AsString.ToLower, ALine)<>0) then
-      Result:=True
-    else
-      dm.tblStrPr.Next();
-  end;
-
-var
-  dCost: Double;
-  dWeight: Double;
-  sl,slLine: TStringList;
-  iLine: Integer;
-  iQuantity: Integer;
-  obj: ITtnObj;
-begin
-pnlWait.BringToFront;
-sl:=TStringList.Create;
-slLine:=TStringList.Create;
-  try
-  vstTtn.Clear;
-  ttn.Clear();
-  sl.LoadFromFile(InpFile);
-  TestErr(sl.Count>1,'Файл данных пуст');
-  TestErr(Odd(sl.Count),'В файле данных должно быть нечетное число строк (с учетом заголовка)');
-  //Отбрасываем заголовок
-  sl.Delete(0);
-  iLine:=0;
-  while iLine<(sl.Count div 2) do
-    begin
-    ParseInpLine(sl[2*iLine],slLine);
-    obj:=Ttn.Add;
-      try
-      TestErr(slLine.Count=C_Inp_Arg_Cnt,Format('%d: должно быть %d столбцов', [2*iLine+2,C_Inp_Arg_Cnt]));
-        //Данные во входном файле
-        obj.SIGN:=slLine[C_Inp_Sign];
-        obj.NAME:=slLine[C_Inp_Name];
-        TestErr(TryStrToFloat(slLine[C_Inp_Cost],dCost),Format('%d: стоимость некорректна', [2*iLine+2]));
-        obj.COST:=dCost;
-        TestErr(TryStrToInt(slLine[C_Inp_Quantity],iQuantity),Format('%d: количество некорректно', [2*iLine+2]));
-        obj.QUANTITY:=iQuantity;
-        TestErr(TryStrToFloat(slLine[C_Inp_Weight],dWeight),Format('%d: вес некорректен', [2*iLine+2]));
-        obj.WEIGHT1:=1000*dWeight;
-        obj.WEIGHT2:=obj.WEIGHT1;
-        obj.WEIGHT3:=obj.WEIGHT1;
-        //Страна проихождения
-        ParseInpLine(sl[2*iLine+1],slLine);
-        TestErr(slLine.Count=C_Inp_Arg_Cnt-1,Format('%d: должно быть %d столбцов', [2*iLine+3,C_Inp_Arg_Cnt-1]));
-        TestErr(FindCountry(slLine[C_Inp_Str_Pr].ToLower),Format('%d: не найдена страна происхождения', [2*iLine+3,C_Inp_Arg_Cnt-1]));
-        obj.STR_PR:=dm.tblStrPr.FieldByName(F_Str_pr_val).AsString;
-        //Валюта
-        obj.VAL:=Valuta;
-        //КОД
-        ParseKod(obj,2*iLine+2);
-        //Унификация
-        Unify();
-      except on e: Exception do
-        begin
-        obj.ErrorMsg:=e.Message;
-        end;
-      end;
-    Inc(iLine);
-    end;
-  // Удаление лишних имен
-  ClearUnNames();
-  vstTtn.RootNodeCount:=Ttn.Count;
-  finally
-    FreeAndNil(sl);
-    FreeAndNil(slLine);
-    dm.TablesFirst;
-  end;
-pnlWait.SendToBack;
-end;
-
 procedure TfrmTtnParserMain.SetInpFile(const Value: string);
 {Выбор файла со входящими данными}
 begin
@@ -434,6 +249,7 @@ procedure TfrmTtnParserMain.StartUp;
   FIniFile:=TMemIniFile.Create(sIni);
   FormatSettings.DecimalSeparator:=IniFile.ReadString('Настройки','ДесятичныйРазделитель',FormatSettings.DecimalSeparator)[1];
   FValuta:=IniFile.ReadString('Настройки','Валюта','');
+  Processor.WeightMultiplier := IniFile.ReadFloat('Настройки','Множитель_веса',1);
   Processor.Currency := Valuta;
   end;
 
@@ -468,7 +284,7 @@ procedure TfrmTtnParserMain.vstTtnDrawText(Sender: TBaseVirtualTree;
 {Отрисовка элементов с ошибками}
 begin
 if length(ttn[node.Index].ErrorMsg)>0 then
-  TargetCanvas.Font.Color:=ttn[node.Index].Error;
+  TargetCanvas.Font.Color:=clRed;
 end;
 
 procedure TfrmTtnParserMain.vstTtnGetHint(Sender: TBaseVirtualTree; Node:

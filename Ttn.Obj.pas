@@ -10,7 +10,6 @@ type
   TTtnObj = class(TInterfacedObject, ITtnObj)
   private
     FCOST: Double;
-    FError: Integer;
     FErrorMsg: string;
     FKOD: string;
     FNAME: string;
@@ -24,7 +23,6 @@ type
     FWEIGHT3: Double;
   public
     function GetCOST: Double;
-    function GetError: Integer;
     function GetErrorMsg: string;
     function GetKOD: string;
     function GetNAME: string;
@@ -37,7 +35,6 @@ type
     function GetWEIGHT2: Double;
     function GetWEIGHT3: Double;
     procedure SetCOST(const Value: Double);
-    procedure SetError(const Value: Integer);
     procedure SetErrorMsg(const Value: string);
     procedure SetKOD(const Value: string);
     procedure SetNAME(const Value: string);
@@ -56,11 +53,6 @@ implementation
 function TTtnObj.GetCOST: Double;
 begin
   Result := FCOST;
-end;
-
-function TTtnObj.GetError: Integer;
-begin
-  Result := FError;
 end;
 
 function TTtnObj.GetErrorMsg: string;
@@ -121,11 +113,6 @@ end;
 procedure TTtnObj.SetCOST(const Value: Double);
 begin
   FCOST := Value;
-end;
-
-procedure TTtnObj.SetError(const Value: Integer);
-begin
-  FError := Value;
 end;
 
 procedure TTtnObj.SetErrorMsg(const Value: string);

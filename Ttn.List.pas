@@ -3,66 +3,29 @@ unit Ttn.List;
 interface
 
 uses
-  Ttn.Interfaces, System.Classes, System.Generics.Collections, System.SysUtils, Spring.Container.Common, System.Generics.Defaults;
+  Ttn.Interfaces
+  , System.Classes
+  , System.Generics.Collections
+  , System.SysUtils
+  , Spring.Container.Common
+  , System.Generics.Defaults
+  , Ttn.Enum.EnumerableList
+  ;
 
 type
-  TTtnList = class(TInterfacedObject, ITtnList)
+  TTtnList = class(TTtnEnumerableList<ITtnObj>, ITtnList)
   private
-    FItems: TList<ITtnObj>;
-    FTtnObjFactory: IFactory<ITtnObj>;
   public
-    constructor Create(ATtnObjFactory: IFactory<ITtnObj>);
-    destructor Destroy; override;
-    function Add: ITtnObj;
-    procedure Clear;
-    function GetCount: Integer;
-    function GetItems(Index: Integer): ITtnObj;
+    constructor Create(ATtnObjFactory: ITtnFactory<ITtnObj>);
     procedure Save(const AStrings: TStrings);
     procedure Sort;
   end;
 
 implementation
 
-constructor TTtnList.Create(ATtnObjFactory: IFactory<ITtnObj>);
+constructor TTtnList.Create(ATtnObjFactory: ITtnFactory<ITtnObj>);
 begin
-  inherited Create();
-  FTtnObjFactory := ATtnObjFactory;
-  FItems := TList<ITtnObj>.Create();
-end;
-
-destructor TTtnList.Destroy;
-begin
-  Clear();
-  FItems.Free;
-  inherited;
-end;
-
-function TTtnList.Add: ITtnObj;
-begin
-  Result := FTtnObjFactory();
-  FItems.Add(Result);
-end;
-
-procedure TTtnList.Clear;
-var
-  ttnObject: ITtnObj;
-begin
-  while FItems.Count>0 do
-  begin
-    ttnObject := FItems[0];
-    ttnObject := nil;
-    FItems.Delete(0);
-  end;
-end;
-
-function TTtnList.GetCount: Integer;
-begin
-  Result := FItems.Count;
-end;
-
-function TTtnList.GetItems(Index: Integer): ITtnObj;
-begin
-  Result := FItems[Index];
+  inherited Create(ATtnObjFactory);
 end;
 
 procedure TTtnList.Save(const AStrings: TStrings);

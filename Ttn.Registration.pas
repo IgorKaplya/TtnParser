@@ -24,7 +24,9 @@ uses
   Ttn.Processor,
   Ttn.Parser,
   Ttn.List,
-  Ttn.Obj;
+  Ttn.Obj,
+  Ttn.Kod,
+  Ttn.Kod.List;
 
 procedure RegisterTypes();
 begin
@@ -36,8 +38,11 @@ begin
   AContainer.RegisterType<TTtnParser>;
   AContainer.RegisterType<TTtnList>;
   AContainer.RegisterType<TTtnObj>;
-  Acontainer.RegisterType<IFactory<ITtnObj>>.AsFactory;
+  Acontainer.RegisterType<ITtnFactory<ITtnObj>>.AsFactory;
   AContainer.RegisterType<TTtnProcessor>;
+  AContainer.RegisterType<TTtnKod>;
+  Acontainer.RegisterType<ITtnFactory<ITtnKod>>.AsFactory;
+  Acontainer.RegisterType<TTtnKodList>;
 
   AContainer.Build;
 end;
