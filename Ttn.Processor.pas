@@ -182,10 +182,10 @@ var
 begin
   kodFound := false;
   AObj.KOD := '';
-  inputName := AObj.NAME.ToLower();
-  inputSign := AObj.SIGN.ToLower();
+  inputName := AObj.NAME;
+  inputSign := AObj.SIGN;
   for kod in KodList do
-    if (pos(inputName, kod.KodTxt.ToLower)<>0) and SameText(kod.Kodsign.ToLower(), inputSign) then
+    if AnsiSameText(inputName, kod.KodTxt) and AnsiSameText(kod.Kodsign, inputSign) then
     begin
       AObj.KOD := kod.KodVal;
       kodFound := True;
