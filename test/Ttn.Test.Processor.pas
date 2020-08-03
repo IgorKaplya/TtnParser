@@ -176,17 +176,20 @@ type
     expectedKod: string;
   end;
 const
-  given_kodlist: array[0..2] of RKodDescription = (
+  given_kodlist: array[0..4] of RKodDescription = (
     (Kodsign: ''; KodTxt:  'Двигатель'; KodVal: '111'),
     (Kodsign: 'Д'; KodTxt: 'Двигатель'; KodVal: '222'),
-    (Kodsign: 'Б'; KodTxt: 'Двигатель'; KodVal: '333')
+    (Kodsign: 'Б'; KodTxt: 'Двигатель'; KodVal: '333'),
+    (Kodsign: ''; KodTxt:  'Амортизатор капота'; KodVal: '555'),
+    (Kodsign: ''; KodTxt:  'Капот'; KodVal: '666')
   );
-  valid_input: array[0..4] of RKodTest = (
+  valid_input: array[0..5] of RKodTest = (
     (inputSign: ''; inputName:  'Двигатель'; expectedKod: '111'),
     (inputSign: 'Д'; inputName: 'Двигатель'; expectedKod: '222'),
     (inputSign: 'Б'; inputName: 'Двигатель'; expectedKod: '333'),
     (inputSign: 'д'; inputName: 'двигатель'; expectedKod: '222'),
-    (inputSign: 'б'; inputName: 'ДвигАтель'; expectedKod: '333')
+    (inputSign: 'б'; inputName: 'ДвигАтель'; expectedKod: '333'),
+    (inputSign: ''; inputName: 'Капот'; expectedKod: '666')
   );
   wrong_input: array[0..0] of RKodTest = (
     (inputName: 'AbraCadabra'; expectedKod: '')
@@ -210,7 +213,7 @@ begin
    for kodTest in valid_input do
    begin
      Assert.WillNotRaise(callProcessKod(kodTest.inputSign, kodTest.inputName));
-     Assert.AreEqual(kodTest.expectedKod, ProcessObject.KOD);
+     Assert.AreEqual(kodTest.expectedKod, ProcessObject.KOD, Format('[%s/%s]',[kodTest.inputSign, kodTest.inputName]));
    end;
 
    for kodTest in wrong_input do
