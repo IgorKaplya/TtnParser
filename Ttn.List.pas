@@ -23,6 +23,9 @@ type
 
 implementation
 
+uses
+  Ttn.Constants;
+
 constructor TTtnList.Create(ATtnObjFactory: ITtnFactory<ITtnObj>);
 begin
   inherited Create(ATtnObjFactory);
@@ -35,7 +38,7 @@ begin
   AStrings.Clear();
   for obj in FItems do
     AStrings.Add(
-      Format('%d;"%s";"%s";%.3f;%.3f;%.3f;%.2f;"%s";"%s";%d;',[
+      Format('%d;"%s";"%s";%.3f;%.3f;%.3f;%.2f;"%s";"%s";%d;"%s";"%s";"%s";"%s";"%s"',[
         obj.NUMBER,
         obj.KOD ,
         obj.NAME ,
@@ -45,7 +48,12 @@ begin
         obj.COST ,
         obj.VAL ,
         obj.STR_PR ,
-        obj.QUANTITY
+        obj.QUANTITY,
+        obj.DestinationCountry,
+        obj.DestinationCountryRegion,
+        obj.DeliveryCountry,
+        obj.DeliveryCountryRegion,
+        FormatDateTime(C_Date_Tovar_Format, obj.DateTtn)
       ])
     );
 end;

@@ -1,9 +1,9 @@
 object frmTtnParserMain: TfrmTtnParserMain
-  Left = 0
+  Left = 343
   Top = 0
   Caption = #1056#1072#1079#1073#1086#1088' '#1058#1058#1053
   ClientHeight = 555
-  ClientWidth = 1095
+  ClientWidth = 1581
   Color = clBtnFace
   Font.Charset = RUSSIAN_CHARSET
   Font.Color = clWindowText
@@ -21,7 +21,7 @@ object frmTtnParserMain: TfrmTtnParserMain
   object lblInpFile: TLabel
     Left = 0
     Top = 539
-    Width = 1095
+    Width = 1581
     Height = 16
     Align = alBottom
     Caption = #1042#1093#1086#1076#1085#1086#1081' '#1092#1072#1081#1083':'
@@ -36,7 +36,7 @@ object frmTtnParserMain: TfrmTtnParserMain
   object pnlWait: TPanel
     Left = 0
     Top = 39
-    Width = 1095
+    Width = 1581
     Height = 500
     Align = alClient
     Caption = #1054#1073#1088#1072#1073#1086#1090#1082#1072'...'
@@ -47,11 +47,12 @@ object frmTtnParserMain: TfrmTtnParserMain
     Font.Style = []
     ParentFont = False
     TabOrder = 2
+    ExplicitWidth = 1095
   end
   object tlbMain: TToolBar
     Left = 0
     Top = 0
-    Width = 1095
+    Width = 1581
     Height = 39
     AutoSize = True
     ButtonHeight = 39
@@ -60,6 +61,7 @@ object frmTtnParserMain: TfrmTtnParserMain
     Images = imlMain
     ShowCaptions = True
     TabOrder = 0
+    ExplicitWidth = 1095
     object btnInp: TToolButton
       Left = 0
       Top = 0
@@ -84,7 +86,7 @@ object frmTtnParserMain: TfrmTtnParserMain
   object vstTtn: TVirtualStringTree
     Left = 0
     Top = 39
-    Width = 1095
+    Width = 1581
     Height = 500
     Align = alClient
     Colors.FocusedSelectionColor = clSkyBlue
@@ -100,6 +102,9 @@ object frmTtnParserMain: TfrmTtnParserMain
     OnDrawText = vstTtnDrawText
     OnGetText = vstTtnGetText
     OnGetHint = vstTtnGetHint
+    ExplicitLeft = 40
+    ExplicitTop = 33
+    ExplicitWidth = 1437
     Columns = <
       item
         Position = 0
@@ -150,6 +155,31 @@ object frmTtnParserMain: TfrmTtnParserMain
         Position = 9
         Width = 72
         WideText = 'QUANTITY'
+      end
+      item
+        Position = 10
+        Width = 103
+        WideText = 'STRAN_OTPR'
+      end
+      item
+        Position = 11
+        Width = 82
+        WideText = 'ATD_OTPR'
+      end
+      item
+        Position = 12
+        Width = 99
+        WideText = 'STRAN_NAZN'
+      end
+      item
+        Position = 13
+        Width = 79
+        WideText = 'ATD_NAZN'
+      end
+      item
+        Position = 14
+        Width = 101
+        WideText = 'DATE_TOVAR'
       end>
   end
   object alMain: TActionList
@@ -202,7 +232,7 @@ object frmTtnParserMain: TfrmTtnParserMain
     Left = 336
     Top = 48
     Bitmap = {
-      494C010105000800640010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C010105000800680010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000100202028F010101DF010101FF010101FF010101FF010101DF0202

@@ -48,8 +48,12 @@ type
     property Items[Index: Integer]: T read GetItems; default;
   end;
 
+
+  StringCountryRegion = string[3];
+
   ITtnObj = interface(IInvokable)
   ['{F597E2BD-3F63-4A60-AD1C-F569F116A265}']
+  {$REGION 'Property accessors'}
     function GetCOST: Double;
     function GetErrorMsg: string;
     function GetKOD: string;
@@ -74,6 +78,17 @@ type
     procedure SetWEIGHT1(const Value: Double);
     procedure SetWEIGHT2(const Value: Double);
     procedure SetWEIGHT3(const Value: Double);
+    function GetDestinationCountry: string;
+    procedure SetDestinationCountry(const Value: string);
+    function GetDestinationCountryRegion: StringCountryRegion;
+    procedure SetDestinationCountryRegion(const Value: StringCountryRegion);
+    function GetDeliveryCountry: string;
+    procedure SetDeliveryCountry(const Value: string);
+    function GetDeliveryCountryRegion: StringCountryRegion;
+    procedure SetDeliveryCountryRegion(const Value: StringCountryRegion);
+    function GetDateTtn: TDate;
+    procedure SetDateTtn(const Value: TDate);
+  {$ENDREGION}
     property COST: Double read GetCOST write SetCOST;
     property ErrorMsg: string read GetErrorMsg write SetErrorMsg;
     property KOD: string read GetKOD write SetKOD;
@@ -86,6 +101,11 @@ type
     property WEIGHT1: Double read GetWEIGHT1 write SetWEIGHT1;
     property WEIGHT2: Double read GetWEIGHT2 write SetWEIGHT2;
     property WEIGHT3: Double read GetWEIGHT3 write SetWEIGHT3;
+    property DestinationCountry: string read GetDestinationCountry write SetDestinationCountry;
+    property DestinationCountryRegion: StringCountryRegion read GetDestinationCountryRegion write SetDestinationCountryRegion;
+    property DeliveryCountry: string read GetDeliveryCountry write SetDeliveryCountry;
+    property DeliveryCountryRegion: StringCountryRegion read GetDeliveryCountryRegion write SetDeliveryCountryRegion;
+    property DateTtn: TDate read GetDateTtn write SetDateTtn;
   end;
 
   ITtnList  = interface(ITtnListBase<ITtnObj>)

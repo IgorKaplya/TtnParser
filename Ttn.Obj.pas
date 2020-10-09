@@ -21,6 +21,21 @@ type
     FWEIGHT1: Double;
     FWEIGHT2: Double;
     FWEIGHT3: Double;
+    FDestinationCountry: string;
+    FDestinationCountryRegion: StringCountryRegion;
+    FDeliveryCountry: string;
+    FDeliveryCountryRegion: StringCountryRegion;
+    FDateTtn: TDate;
+    function GetDateTtn: TDate;
+    function GetDeliveryCountry: string;
+    function GetDeliveryCountryRegion: StringCountryRegion;
+    function GetDestinationCountry: string;
+    function GetDestinationCountryRegion: StringCountryRegion;
+    procedure SetDateTtn(const Value: TDate);
+    procedure SetDeliveryCountry(const Value: string);
+    procedure SetDeliveryCountryRegion(const Value: StringCountryRegion);
+    procedure SetDestinationCountry(const Value: string);
+    procedure SetDestinationCountryRegion(const Value: StringCountryRegion);
   public
     function GetCOST: Double;
     function GetErrorMsg: string;
@@ -168,6 +183,56 @@ end;
 procedure TTtnObj.SetWEIGHT3(const Value: Double);
 begin
   FWEIGHT3 := Value;
+end;
+
+function TTtnObj.GetDateTtn: TDate;
+begin
+  Result := FDateTtn;
+end;
+
+function TTtnObj.GetDeliveryCountry: string;
+begin
+  Result := FDeliveryCountry;
+end;
+
+function TTtnObj.GetDeliveryCountryRegion: StringCountryRegion;
+begin
+  Result := FDeliveryCountryRegion;
+end;
+
+function TTtnObj.GetDestinationCountry: string;
+begin
+  Result := FDestinationCountry;
+end;
+
+function TTtnObj.GetDestinationCountryRegion: StringCountryRegion;
+begin
+  Result := FDestinationCountryRegion;
+end;
+
+procedure TTtnObj.SetDateTtn(const Value: TDate);
+begin
+  FDateTtn := Value;
+end;
+
+procedure TTtnObj.SetDeliveryCountry(const Value: string);
+begin
+  FDeliveryCountry := Value;
+end;
+
+procedure TTtnObj.SetDeliveryCountryRegion(const Value: StringCountryRegion);
+begin
+  FDeliveryCountryRegion := Value;
+end;
+
+procedure TTtnObj.SetDestinationCountry(const Value: string);
+begin
+  FDestinationCountry := Value;
+end;
+
+procedure TTtnObj.SetDestinationCountryRegion(const Value: StringCountryRegion);
+begin
+  FDestinationCountryRegion := Value;
 end;
 
 end.
