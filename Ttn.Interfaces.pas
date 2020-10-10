@@ -198,6 +198,40 @@ type
     property KodList: ITtnKodList read GetKodList;
   end;
 
+  ITTnResult = interface
+  ['{DA9C32D2-ECFB-4988-8DD0-0349F56DDBD9}']
+    {$REGION 'Property Accessors'}
+    function GetFileName: string;
+    procedure SetFileName(const Value: string);
+    function GetDestinationCountry: string;
+    procedure SetDestinationCountry(const Value: string);
+    function GetDestinationCountryRegion: StringCountryRegion;
+    procedure SetDestinationCountryRegion(const Value: StringCountryRegion);
+    function GetShipmentCountry: string;
+    procedure SetShipmentCountry(const Value: string);
+    function GetShipmentCountryRegion: StringCountryRegion;
+    procedure SetShipmentCountryRegion(const Value: StringCountryRegion);
+    function GetDateTtn: TDate;
+    procedure SetDateTtn(const Value: TDate);
+    {$ENDREGION}
+    property FileName: string read GetFileName write SetFileName;
+    property DestinationCountry: string read GetDestinationCountry write SetDestinationCountry;
+    property DestinationCountryRegion: StringCountryRegion read GetDestinationCountryRegion write SetDestinationCountryRegion;
+    property ShipmentCountry: string read GetShipmentCountry write SetShipmentCountry;
+    property ShipmentCountryRegion: StringCountryRegion read GetShipmentCountryRegion write SetShipmentCountryRegion;
+    property DateTtn: TDate read GetDateTtn write SetDateTtn;
+  end;
+
+  ITtnResultStorage = interface(ITtnListBase<ITTnResult>)
+  ['{D529BBD8-6403-4E9A-856E-0C46E9ED026D}']
+    {$REGION 'Property Accessors'}
+    function GetActiveResult: ITTnResult;
+    procedure SetActiveResult(const Value: ITTnResult);
+    {$ENDREGION}
+    property ActiveResult: ITTnResult read GetActiveResult write SetActiveResult;
+    function Load(const AFolder: string): Boolean;
+  end;
+
 implementation
 
 end.
