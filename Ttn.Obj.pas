@@ -36,7 +36,8 @@ type
     procedure SetDeliveryCountryRegion(const Value: StringCountryRegion);
     procedure SetDestinationCountry(const Value: string);
     procedure SetDestinationCountryRegion(const Value: StringCountryRegion);
-  public
+    function GetAsText: string;
+    procedure SetAsText(const Value: string);
     function GetCOST: Double;
     function GetErrorMsg: string;
     function GetKOD: string;
@@ -61,9 +62,30 @@ type
     procedure SetWEIGHT1(const Value: Double);
     procedure SetWEIGHT2(const Value: Double);
     procedure SetWEIGHT3(const Value: Double);
+  public
+    property COST: Double read GetCOST write SetCOST;
+    property ErrorMsg: string read GetErrorMsg write SetErrorMsg;
+    property KOD: string read GetKOD write SetKOD;
+    property NAME: string read GetNAME write SetNAME;
+    property NUMBER: Integer read GetNUMBER write SetNUMBER;
+    property QUANTITY: Integer read GetQUANTITY write SetQUANTITY;
+    property SIGN: string read GetSIGN write SetSIGN;
+    property STR_PR: string read GetSTR_PR write SetSTR_PR;
+    property VAL: string read GetVAL write SetVAL;
+    property WEIGHT1: Double read GetWEIGHT1 write SetWEIGHT1;
+    property WEIGHT2: Double read GetWEIGHT2 write SetWEIGHT2;
+    property WEIGHT3: Double read GetWEIGHT3 write SetWEIGHT3;
+    property DestinationCountry: string read GetDestinationCountry write SetDestinationCountry;
+    property DestinationCountryRegion: StringCountryRegion read GetDestinationCountryRegion write SetDestinationCountryRegion;
+    property DeliveryCountry: string read GetDeliveryCountry write SetDeliveryCountry;
+    property DeliveryCountryRegion: StringCountryRegion read GetDeliveryCountryRegion write SetDeliveryCountryRegion;
+    property DateTtn: TDate read GetDateTtn write SetDateTtn;
   end;
 
 implementation
+
+uses
+  System.SysUtils, Ttn.Constants, System.Classes;
 
 function TTtnObj.GetCOST: Double;
 begin
@@ -233,6 +255,61 @@ end;
 procedure TTtnObj.SetDestinationCountryRegion(const Value: StringCountryRegion);
 begin
   FDestinationCountryRegion := Value;
+end;
+
+function TTtnObj.GetAsText: string;
+begin
+  Result := Format('%d;"%s";"%s";%.3f;%.3f;%.3f;%.2f;"%s";"%s";%d;"%s";"%s";"%s";"%s";"%s"',[
+    NUMBER,                                        // 0
+    KOD ,                                          // 1
+    NAME ,                                         // 2
+    WEIGHT1 ,                                      // 3
+    WEIGHT2 ,                                      // 4
+    WEIGHT3 ,                                      // 5
+    COST ,                                         // 6
+    VAL ,                                          // 7
+    STR_PR ,                                       // 8
+    QUANTITY,                                      // 9
+    DestinationCountry,                            // 10
+    DestinationCountryRegion,                      // 11
+    DeliveryCountry,                               // 12
+    DeliveryCountryRegion,                         // 13
+    FormatDateTime(C_Date_Tovar_Format, DateTtn)   // 14
+  ]);
+end;
+
+procedure TTtnObj.SetAsText(const Value: string);
+var
+  i: Integer;
+  listFields: TStringList;
+  formatSettings: TFormatSettings;
+begin
+  listFields := TStringList.Create();
+  try
+    formatSettings := TFormatSettings.Create('Windows-1251');
+    formatSettings.ShortDateFormat := C_Date_Tovar_Format;
+    for i := 0 to listFields.Count - 1 do
+    case i of
+    0 : NUMBER := listFields[i].ToInteger;
+    1 : KOD := listFields[i];
+    2 : NAME := listFields[i];
+    3 : WEIGHT1 := listFields[i].ToDouble;
+    4 : WEIGHT2 := listFields[i].ToDouble;
+    5 : WEIGHT3 := listFields[i].ToDouble;
+    6 : COST := listFields[i].ToDouble;
+    7 : VAL := listFields[i];
+    8 : STR_PR := listFields[i];
+    9 : QUANTITY := listFields[i].ToInteger;
+    10 : DestinationCountry := listFields[i];
+    11 : DestinationCountryRegion := listFields[i];
+    12 : DeliveryCountryRegion := listFields[i];
+    13 : DeliveryCountryRegion := listFields[i];
+    14 : DateTtn := StrToDate(listFields[i], formatSettings);
+    end;
+  finally
+    listFields.Free;
+    listFields := nil;
+  end;
 end;
 
 end.

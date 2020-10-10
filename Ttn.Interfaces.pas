@@ -88,6 +88,8 @@ type
     procedure SetDeliveryCountryRegion(const Value: StringCountryRegion);
     function GetDateTtn: TDate;
     procedure SetDateTtn(const Value: TDate);
+    function GetAsText: string;
+    procedure SetAsText(const Value: string);
   {$ENDREGION}
     property COST: Double read GetCOST write SetCOST;
     property ErrorMsg: string read GetErrorMsg write SetErrorMsg;
@@ -106,11 +108,14 @@ type
     property DeliveryCountry: string read GetDeliveryCountry write SetDeliveryCountry;
     property DeliveryCountryRegion: StringCountryRegion read GetDeliveryCountryRegion write SetDeliveryCountryRegion;
     property DateTtn: TDate read GetDateTtn write SetDateTtn;
+    property AsText: string read GetAsText write SetAsText;
   end;
 
   ITtnList  = interface(ITtnListBase<ITtnObj>)
   ['{C8ADF7F6-8F43-414E-AB41-D51DC74C59E3}']
     procedure Save(const AStrings: TStrings);
+    procedure Load(const AStrings: TStrings); overload;
+    procedure Load(const AFile: string); overload;
     procedure Sort;
   end;
 

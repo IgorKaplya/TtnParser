@@ -19,12 +19,11 @@ type
     constructor Create(ATtnObjFactory: ITtnFactory<ITtnObj>);
     procedure Save(const AStrings: TStrings);
     procedure Sort;
+    procedure Load(const AFile: string); overload;
+    procedure Load(const AStrings: TStrings); overload;
   end;
 
 implementation
-
-uses
-  Ttn.Constants;
 
 constructor TTtnList.Create(ATtnObjFactory: ITtnFactory<ITtnObj>);
 begin
@@ -37,25 +36,7 @@ var
 begin
   AStrings.Clear();
   for obj in FItems do
-    AStrings.Add(
-      Format('%d;"%s";"%s";%.3f;%.3f;%.3f;%.2f;"%s";"%s";%d;"%s";"%s";"%s";"%s";"%s"',[
-        obj.NUMBER,
-        obj.KOD ,
-        obj.NAME ,
-        obj.WEIGHT1 ,
-        obj.WEIGHT2 ,
-        obj.WEIGHT3 ,
-        obj.COST ,
-        obj.VAL ,
-        obj.STR_PR ,
-        obj.QUANTITY,
-        obj.DestinationCountry,
-        obj.DestinationCountryRegion,
-        obj.DeliveryCountry,
-        obj.DeliveryCountryRegion,
-        FormatDateTime(C_Date_Tovar_Format, obj.DateTtn)
-      ])
-    );
+    AStrings.Add(obj.AsText);
 end;
 
 procedure TTtnList.Sort;
@@ -75,6 +56,32 @@ procedure TTtnList.Sort;
 
 begin
   FItems.Sort(comarerConstruct);
+end;
+
+procedure TTtnList.Load(const AFile: string);
+var
+  fileLoad: TStringList;
+begin
+  fileLoad := TStringList.Create();
+  try
+    fileLoad.LoadFromFile(AFile);
+    Load(fileLoad);
+  finally
+    fileLoad.Free();
+  end;
+end;
+
+procedure TTtnList.Load(const AStrings: TStrings);
+var
+  line: string;
+  obj: ITtnObj;
+begin
+  Clear();
+  for line in AStrings do
+  begin
+    obj := Add();
+    obj.AsText := line;
+  end;
 end;
 
 end.
