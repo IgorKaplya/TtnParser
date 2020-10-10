@@ -26,7 +26,9 @@ uses
   Ttn.List,
   Ttn.Obj,
   Ttn.Kod,
-  Ttn.Kod.List;
+  Ttn.Kod.List,
+  Ttn.Result,
+  Ttn.ResultStorage;
 
 procedure RegisterTypes();
 begin
@@ -43,6 +45,9 @@ begin
   AContainer.RegisterType<TTtnKod>;
   Acontainer.RegisterType<ITtnFactory<ITtnKod>>.AsFactory;
   Acontainer.RegisterType<TTtnKodList>;
+  AContainer.RegisterType<TTtnResult>;
+  Acontainer.RegisterType<ITtnFactory<ITTnResult>>.AsFactory;
+  AContainer.RegisterType<TTtnResultStorage>;
 
   AContainer.Build;
 end;
