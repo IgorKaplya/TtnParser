@@ -1,10 +1,11 @@
-unit Ttn.Test.ResultStorage;
+﻿unit Ttn.Test.ResultStorage;
 
 interface
 
 uses
   DUnitX.TestFramework,
-  Ttn.Interfaces;
+  Ttn.Interfaces,
+  System.Classes;
 
 type
 
@@ -21,6 +22,8 @@ type
     procedure TestLoadFolder;
     [Test]
     procedure TestLoadInvalidFolder;
+    [Test]
+    procedure TestCRUD;
   end;
 
 implementation
@@ -87,6 +90,73 @@ procedure TTtnTestResultStorage.TestLoadInvalidFolder;
 
 begin
   Assert.WillRaise(LoadFolder('AbraCadabra'), EDirectoryNotFoundException);
+end;
+
+procedure TTtnTestResultStorage.TestCRUD;
+
+  function DoCreate(const AFile: string): TTestLocalMethod;
+  begin
+    Result :=
+    (
+      procedure()
+      begin
+        ResultStorage.CreateResult(AFile)
+      end
+    );
+  end;
+
+  function DoDelete(const AFile: string): TTestLocalMethod;
+  begin
+    Result :=
+    (
+      procedure()
+      begin
+        ResultStorage.DeleteResult(AFile)
+      end
+    );
+  end;
+
+  function DoUpdate(const AFile, AText: string): TTestLocalMethod;
+  begin
+    Result :=
+    (
+      procedure()
+      begin
+        ResultStorage.UpdateResult(AFile, AText);
+      end
+    );
+  end;
+
+const
+  file_to_test_crud = '.\_TestData\TestResultsStorage\CRUD\CRUD_Result.csv';
+  file_payload1 = '1 тест CRUD для ResultsStorage';
+  file_payload2 = '2 тест CRUD для ResultsStorage';
+var
+  checkPayload: TStringList;
+begin
+  Assert.WillRaise(DoCreate('AbraCadabra\AbraCadabra.csv'), EDirectoryNotFoundException);
+  Assert.WillRaise(DoDelete('AbraCadabra\AbraCadabra.csv'), EDirectoryNotFoundException);
+  Assert.WillRaise(DoUpdate('AbraCadabra\AbraCadabra.csv','AbraCadabra'), EDirectoryNotFoundException);
+
+  Assert.WillNotRaise(DoCreate(file_to_test_crud));
+  Assert.IsTrue(FileExists(file_to_test_crud),' File wasn`t created: '+file_to_test_crud);
+
+  Assert.WillNotRaise(DoUpdate(file_to_test_crud, file_payload1));
+  Assert.WillNotRaise(DoUpdate(file_to_test_crud, file_payload2));
+  checkPayload := TStringList.Create();
+  try
+    checkPayload.LoadFromFile(file_to_test_crud, TEncoding.UTF8);
+    Assert.AreEqual(
+      file_payload1+sLineBreak+file_payload2+sLineBreak,
+      checkPayload.Text,
+      'File wasn`t updated '+file_to_test_crud
+    );
+  finally
+    checkPayload.Free();
+  end;
+
+  Assert.WillNotRaise(DoDelete(file_to_test_crud));
+  Assert.IsFalse(FileExists(file_to_test_crud),' File wasn`t deleted: '+file_to_test_crud);
 end;
 
 initialization

@@ -230,6 +230,9 @@ type
     {$ENDREGION}
     property ActiveResult: ITTnResult read GetActiveResult write SetActiveResult;
     function Load(const AFolder: string): Boolean;
+    procedure CreateResult(const AFile: string);
+    procedure DeleteResult(const AFile: string);
+    procedure UpdateResult(const AFile: string; const AText: string);
   end;
 
 implementation
