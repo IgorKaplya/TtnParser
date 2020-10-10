@@ -9,7 +9,8 @@ uses
   Ttn.Test.Run.Testinsight in 'Ttn.Test.Run.Testinsight.pas',
   Ttn.Registration in '..\Ttn.Registration.pas',
   Ttn.Test.Parser in 'Ttn.Test.Parser.pas',
-  Ttn.Test.Processor in 'Ttn.Test.Processor.pas';
+  Ttn.Test.Processor in 'Ttn.Test.Processor.pas',
+  Ttn.Test.ResultStorage in 'Ttn.Test.ResultStorage.pas';
 
 begin
   try
