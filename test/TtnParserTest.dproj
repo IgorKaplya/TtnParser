@@ -5,7 +5,7 @@
         <FrameworkType>VCL</FrameworkType>
         <MainSource>TtnParserTest.dpr</MainSource>
         <Base>True</Base>
-        <Config Condition="'$(Config)'==''">Debug</Config>
+        <Config Condition="'$(Config)'==''">Release</Config>
         <Platform Condition="'$(Platform)'==''">Win32</Platform>
         <TargetedPlatforms>1</TargetedPlatforms>
         <AppType>Console</AppType>
@@ -146,12 +146,12 @@ begin
     RegisterTypes();
     {$IFDEF TESTINSIGHT</Form>
         </DCCReference>
-        <DCCReference Include="..\Ttn.Registration.pas"/>
         <DCCReference Include="Ttn.Test.Parser.pas"/>
         <DCCReference Include="Ttn.Test.Processor.pas"/>
         <DCCReference Include="Ttn.Test.ResultStorage.pas"/>
         <DCCReference Include="Ttn.Test.TtnList.pas"/>
         <DCCReference Include="Ttn.Test.TtnObj.pas"/>
+        <DCCReference Include="Ttn.Test.Run.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
