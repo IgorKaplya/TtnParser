@@ -146,9 +146,14 @@ begin
     RegisterTypes();
     {$IFDEF TESTINSIGHT</Form>
         </DCCReference>
-        <DCCReference Include="..\Ttn.Registration.pas"/>
+        <DCCReference Include="Ttn.Test.Run.pas"/>
         <DCCReference Include="Ttn.Test.Parser.pas"/>
         <DCCReference Include="Ttn.Test.Processor.pas"/>
+        <DCCReference Include="Ttn.Test.ResultStorage.pas"/>
+        <DCCReference Include="Ttn.Test.TtnList.pas"/>
+        <DCCReference Include="Ttn.Test.TtnObj.pas"/>
+        <DCCReference Include="Ttn.Test.DocumentList.pas"/>
+        <DCCReference Include="Ttn.Test.Document.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
@@ -198,6 +203,12 @@ begin
                 </DeployFile>
                 <DeployFile LocalName="$(BDS)\Redist\osx32\libcgsqlite3.dylib" Class="DependencyModule">
                     <Platform Name="OSX32">
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
+                <DeployFile LocalName="..\_out\TtnParserTest.exe" Configuration="Release" Class="ProjectOutput">
+                    <Platform Name="Win32">
+                        <RemoteName>TtnParserTest.exe</RemoteName>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>

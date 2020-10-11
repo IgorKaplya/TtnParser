@@ -88,6 +88,8 @@ type
     procedure SetDeliveryCountryRegion(const Value: StringCountryRegion);
     function GetDateTtn: TDate;
     procedure SetDateTtn(const Value: TDate);
+    function GetAsText: string;
+    procedure SetAsText(const Value: string);
   {$ENDREGION}
     property COST: Double read GetCOST write SetCOST;
     property ErrorMsg: string read GetErrorMsg write SetErrorMsg;
@@ -106,11 +108,14 @@ type
     property DeliveryCountry: string read GetDeliveryCountry write SetDeliveryCountry;
     property DeliveryCountryRegion: StringCountryRegion read GetDeliveryCountryRegion write SetDeliveryCountryRegion;
     property DateTtn: TDate read GetDateTtn write SetDateTtn;
+    property AsText: string read GetAsText write SetAsText;
   end;
 
   ITtnList  = interface(ITtnListBase<ITtnObj>)
   ['{C8ADF7F6-8F43-414E-AB41-D51DC74C59E3}']
     procedure Save(const AStrings: TStrings);
+    procedure Load(const AStrings: TStrings); overload;
+    procedure Load(const AFile: string); overload;
     procedure Sort;
   end;
 
@@ -196,6 +201,67 @@ type
     procedure CheckWeightRange(const AKod: ITtnKod; const AObj: ITtnObj);
     property CountryList: TDictionary<string, string> read GetCountryList write SetCountryList;
     property KodList: ITtnKodList read GetKodList;
+  end;
+
+  ITtnDocument = interface
+  ['{1BE92079-3A87-4BCB-8C5C-54E29D18B158}']
+    {$REGION 'Property Accessors'}
+    function GetNumberObj: Integer;
+    procedure SetNumberObj(const Value: Integer);
+    function GetDocumentCode: string;
+    procedure SetDocumentCode(const Value: string);
+    function GetDocumentNumber: string;
+    procedure SetDocumentNumber(const Value: string);
+    function GetDocumentDate: TDate;
+    procedure SetDocumentDate(const Value: TDate);
+    {$ENDREGION}
+    property NumberObj: Integer read GetNumberObj write SetNumberObj;
+    property DocumentCode: string read GetDocumentCode write SetDocumentCode;
+    property DocumentNumber: string read GetDocumentNumber write SetDocumentNumber;
+    property DocumentDate: TDate read GetDocumentDate write SetDocumentDate;
+  end;
+
+  ITtnDocumentList = interface(ITtnListBase<ITtnDocument>)
+  ['{333B36A3-8762-4E4E-B1C9-1DA7A6CEE2D1}']
+  end;
+
+  ITTnResult = interface
+  ['{DA9C32D2-ECFB-4988-8DD0-0349F56DDBD9}']
+    {$REGION 'Property Accessors'}
+    function GetFileName: string;
+    procedure SetFileName(const Value: string);
+    function GetDestinationCountry: string;
+    procedure SetDestinationCountry(const Value: string);
+    function GetDestinationCountryRegion: StringCountryRegion;
+    procedure SetDestinationCountryRegion(const Value: StringCountryRegion);
+    function GetShipmentCountry: string;
+    procedure SetShipmentCountry(const Value: string);
+    function GetShipmentCountryRegion: StringCountryRegion;
+    procedure SetShipmentCountryRegion(const Value: StringCountryRegion);
+    function GetDateTtn: TDate;
+    procedure SetDateTtn(const Value: TDate);
+    function GetDocuments: ITtnDocumentList;
+    {$ENDREGION}
+    property FileName: string read GetFileName write SetFileName;
+    property DestinationCountry: string read GetDestinationCountry write SetDestinationCountry;
+    property DestinationCountryRegion: StringCountryRegion read GetDestinationCountryRegion write SetDestinationCountryRegion;
+    property ShipmentCountry: string read GetShipmentCountry write SetShipmentCountry;
+    property ShipmentCountryRegion: StringCountryRegion read GetShipmentCountryRegion write SetShipmentCountryRegion;
+    property DateTtn: TDate read GetDateTtn write SetDateTtn;
+    property Documents: ITtnDocumentList read GetDocuments;
+  end;
+
+  ITtnResultStorage = interface(ITtnListBase<ITTnResult>)
+  ['{D529BBD8-6403-4E9A-856E-0C46E9ED026D}']
+    {$REGION 'Property Accessors'}
+    function GetActiveResult: ITTnResult;
+    procedure SetActiveResult(const Value: ITTnResult);
+    {$ENDREGION}
+    property ActiveResult: ITTnResult read GetActiveResult write SetActiveResult;
+    function Load(const AFolder: string): Boolean;
+    procedure CreateResult(const AFile: string);
+    procedure DeleteResult(const AFile: string);
+    procedure UpdateResult(const AFile: string; const AText: string);
   end;
 
 implementation
