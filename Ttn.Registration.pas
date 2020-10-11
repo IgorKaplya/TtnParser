@@ -28,7 +28,9 @@ uses
   Ttn.Kod,
   Ttn.Kod.List,
   Ttn.Result,
-  Ttn.ResultStorage;
+  Ttn.ResultStorage,
+  Ttn.Result.Document,
+  Ttn.Result.DocumentList;
 
 procedure RegisterTypes();
 begin
@@ -48,6 +50,9 @@ begin
   AContainer.RegisterType<TTtnResult>;
   Acontainer.RegisterType<ITtnFactory<ITTnResult>>.AsFactory;
   AContainer.RegisterType<TTtnResultStorage>;
+  AContainer.RegisterType<TTtnDocument>;
+  AContainer.RegisterFactory<ITtnFactory<ITtnDocument>>.AsFactory;
+  AContainer.RegisterType<TTtnDocumentList>;
 
   AContainer.Build;
 end;

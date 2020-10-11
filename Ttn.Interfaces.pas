@@ -203,6 +203,28 @@ type
     property KodList: ITtnKodList read GetKodList;
   end;
 
+  ITtnDocument = interface
+  ['{1BE92079-3A87-4BCB-8C5C-54E29D18B158}']
+    {$REGION 'Property Accessors'}
+    function GetNumberObj: Integer;
+    procedure SetNumberObj(const Value: Integer);
+    function GetDocumentCode: string;
+    procedure SetDocumentCode(const Value: string);
+    function GetDocumentNumber: string;
+    procedure SetDocumentNumber(const Value: string);
+    function GetDocumentDate: TDate;
+    procedure SetDocumentDate(const Value: TDate);
+    {$ENDREGION}
+    property NumberObj: Integer read GetNumberObj write SetNumberObj;
+    property DocumentCode: string read GetDocumentCode write SetDocumentCode;
+    property DocumentNumber: string read GetDocumentNumber write SetDocumentNumber;
+    property DocumentDate: TDate read GetDocumentDate write SetDocumentDate;
+  end;
+
+  ITtnDocumentList = interface(ITtnListBase<ITtnDocument>)
+  ['{333B36A3-8762-4E4E-B1C9-1DA7A6CEE2D1}']
+  end;
+
   ITTnResult = interface
   ['{DA9C32D2-ECFB-4988-8DD0-0349F56DDBD9}']
     {$REGION 'Property Accessors'}
