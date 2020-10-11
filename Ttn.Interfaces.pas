@@ -240,6 +240,7 @@ type
     procedure SetShipmentCountryRegion(const Value: StringCountryRegion);
     function GetDateTtn: TDate;
     procedure SetDateTtn(const Value: TDate);
+    function GetDocuments: ITtnDocumentList;
     {$ENDREGION}
     property FileName: string read GetFileName write SetFileName;
     property DestinationCountry: string read GetDestinationCountry write SetDestinationCountry;
@@ -247,6 +248,7 @@ type
     property ShipmentCountry: string read GetShipmentCountry write SetShipmentCountry;
     property ShipmentCountryRegion: StringCountryRegion read GetShipmentCountryRegion write SetShipmentCountryRegion;
     property DateTtn: TDate read GetDateTtn write SetDateTtn;
+    property Documents: ITtnDocumentList read GetDocuments;
   end;
 
   ITtnResultStorage = interface(ITtnListBase<ITTnResult>)

@@ -15,6 +15,7 @@ type
     FFileName: string;
     FShipmentCountry: string;
     FShipmentCountryRegion: StringCountryRegion;
+    FDocuments: ITtnDocumentList;
     function GetDateTtn: TDate;
     function GetDestinationCountry: string;
     function GetDestinationCountryRegion: StringCountryRegion;
@@ -27,13 +28,17 @@ type
     procedure SetFileName(const Value: string);
     procedure SetShipmentCountry(const Value: string);
     procedure SetShipmentCountryRegion(const Value: StringCountryRegion);
+    function GetDocuments: ITtnDocumentList;
   public
+    constructor Create(ADocuments: ITtnDocumentList);
+    destructor Destroy; override;
     property FileName: string read GetFileName write SetFileName;
     property DestinationCountry: string read GetDestinationCountry write SetDestinationCountry;
     property DestinationCountryRegion: StringCountryRegion read GetDestinationCountryRegion write SetDestinationCountryRegion;
     property ShipmentCountry: string read GetShipmentCountry write SetShipmentCountry;
     property ShipmentCountryRegion: StringCountryRegion read GetShipmentCountryRegion write SetShipmentCountryRegion;
     property DateTtn: TDate read GetDateTtn write SetDateTtn;
+    property Documents: ITtnDocumentList read GetDocuments;
   end;
 
 implementation
@@ -96,6 +101,23 @@ end;
 procedure TTtnResult.SetShipmentCountryRegion(const Value: StringCountryRegion);
 begin
   FShipmentCountryRegion := Value;
+end;
+
+function TTtnResult.GetDocuments: ITtnDocumentList;
+begin
+  // TODO -cMM: TTtnResult.GetDocuments default body inserted
+end;
+
+constructor TTtnResult.Create(ADocuments: ITtnDocumentList);
+begin
+  inherited Create;
+  FDocuments := ADocuments;
+end;
+
+destructor TTtnResult.Destroy;
+begin
+  FDocuments := nil;
+  inherited Destroy;
 end;
 
 end.
