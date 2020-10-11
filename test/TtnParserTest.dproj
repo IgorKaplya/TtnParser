@@ -150,6 +150,8 @@ begin
         <DCCReference Include="Ttn.Test.Parser.pas"/>
         <DCCReference Include="Ttn.Test.Processor.pas"/>
         <DCCReference Include="Ttn.Test.ResultStorage.pas"/>
+        <DCCReference Include="Ttn.Test.TtnList.pas"/>
+        <DCCReference Include="Ttn.Test.TtnObj.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>

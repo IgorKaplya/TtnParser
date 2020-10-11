@@ -85,7 +85,10 @@ type
 implementation
 
 uses
-  System.SysUtils, Ttn.Constants, System.Classes;
+  System.SysUtils, Ttn.Constants, System.Classes, Ttn.Errors;
+
+const
+  obj_minimum_field_count = 15;
 
 function TTtnObj.GetCOST: Double;
 begin
@@ -288,23 +291,30 @@ begin
   try
     formatSettings := TFormatSettings.Create('Windows-1251');
     formatSettings.ShortDateFormat := C_Date_Tovar_Format;
+    listFields.StrictDelimiter := true;
+    listFields.Delimiter := ';';
+    listFields.DelimitedText := Value;
+    ETtnObjAsTxtNotEnoughFields.Test(listFields.Count>=obj_minimum_field_count, 'Couldn`t load line "%s". Need %d+ fields.', [Value, obj_minimum_field_count ]);
     for i := 0 to listFields.Count - 1 do
-    case i of
-    0 : NUMBER := listFields[i].ToInteger;
-    1 : KOD := listFields[i];
-    2 : NAME := listFields[i];
-    3 : WEIGHT1 := listFields[i].ToDouble;
-    4 : WEIGHT2 := listFields[i].ToDouble;
-    5 : WEIGHT3 := listFields[i].ToDouble;
-    6 : COST := listFields[i].ToDouble;
-    7 : VAL := listFields[i];
-    8 : STR_PR := listFields[i];
-    9 : QUANTITY := listFields[i].ToInteger;
-    10 : DestinationCountry := listFields[i];
-    11 : DestinationCountryRegion := listFields[i];
-    12 : DeliveryCountryRegion := listFields[i];
-    13 : DeliveryCountryRegion := listFields[i];
-    14 : DateTtn := StrToDate(listFields[i], formatSettings);
+    begin
+      ETtnObjAsTxtFieldIsEmpty.Test(not listFields[i].IsEmpty, 'Couldn`t load line "%s". [%d] field is empty.', [Value, i]);
+      case i of
+      0 : NUMBER := listFields[i].ToInteger;
+      1 : KOD := listFields[i];
+      2 : NAME := listFields[i];
+      3 : WEIGHT1 := listFields[i].ToDouble;
+      4 : WEIGHT2 := listFields[i].ToDouble;
+      5 : WEIGHT3 := listFields[i].ToDouble;
+      6 : COST := listFields[i].ToDouble;
+      7 : VAL := listFields[i];
+      8 : STR_PR := listFields[i];
+      9 : QUANTITY := listFields[i].ToInteger;
+      10 : DestinationCountry := listFields[i];
+      11 : DestinationCountryRegion := listFields[i];
+      12 : DeliveryCountry := listFields[i];
+      13 : DeliveryCountryRegion := listFields[i];
+      14 : DateTtn := StrToDate(listFields[i], formatSettings);
+      end;
     end;
   finally
     listFields.Free;
