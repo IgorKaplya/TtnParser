@@ -30,6 +30,20 @@ object frmTtnParserMain: TfrmTtnParserMain
     object tsResults: TTabSheet
       Caption = 'tsResults'
       ImageIndex = 2
+      ExplicitLeft = 0
+      ExplicitTop = 34
+      object vstResultStorage: TVirtualStringTree
+        Left = 0
+        Top = 0
+        Width = 441
+        Height = 521
+        Align = alLeft
+        Header.AutoSizeIndex = 0
+        Header.MainColumn = -1
+        TabOrder = 0
+        OnGetText = vstResultStorageGetText
+        Columns = <>
+      end
     end
     object tsWait: TTabSheet
       Caption = 'tsWait'

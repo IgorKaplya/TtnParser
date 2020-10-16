@@ -81,3 +81,5 @@ dunitx-results.xml
 
 # Test plugin settings
 TestInsightSettings.ini
+
+_out/results/

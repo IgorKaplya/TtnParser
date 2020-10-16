@@ -30,6 +30,7 @@ type
     tsWait: TTabSheet;
     pnlWait: TPanel;
     tsResults: TTabSheet;
+    vstResultStorage: TVirtualStringTree;
     procedure actAddKodExecute(Sender: TObject);
     procedure actAddKodUpdate(Sender: TObject);
     procedure actRefreshExecute(Sender: TObject);
@@ -40,6 +41,8 @@ type
     procedure FileOpenInpAccept(Sender: TObject);
     procedure FileSaveAsAccept(Sender: TObject);
     procedure FormActivate(Sender: TObject);
+    procedure vstResultStorageGetText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; TextType:
+        TVSTTextType; var CellText: string);
     procedure vstTtnDrawText(Sender: TBaseVirtualTree; TargetCanvas: TCanvas; Node:
         PVirtualNode; Column: TColumnIndex; const Text: string; const CellRect:
         TRect; var DefaultDraw: Boolean);
@@ -56,6 +59,7 @@ type
     FTtn: ITtnList;
     FValuta: string;
     FProcessor: ITtnProcessor;
+    FResultStorage: ITtnResultStorage;
     procedure ClearUnNames;
     function CurTtnObj(out obj: ITtnObj): Boolean;
     procedure SetInpFile(const Value: string);
@@ -64,6 +68,7 @@ type
     property Parser: ITtnParser read FParser;
     property Valuta: string read FValuta;
     property Processor: ITtnProcessor read FProcessor;
+    property ResultStorage: ITtnResultStorage read FResultStorage;
   public
     procedure ProcessInpFile;
     procedure StartUp;
@@ -105,6 +110,7 @@ begin
   FParser := TTtnResolver.Resolve<ITtnParser>;
   FTtn := Parser.ParseResult;
   FProcessor := TTtnResolver.Resolve<ITtnProcessor>;
+  FResultStorage := TTtnResolver.Resolve<ITtnResultStorage>;
 end;
 
 procedure TfrmTtnParserMain.FormDestroy(Sender: TObject);
@@ -261,6 +267,8 @@ procedure TfrmTtnParserMain.StartUp;
   FValuta:=IniFile.ReadString('Настройки','Валюта','');
   Processor.WeightMultiplier := IniFile.ReadFloat('Настройки','Множитель_веса',1);
   Processor.Currency := Valuta;
+  ResultStorage.Load(IniFile.ReadString('Результаты','путь','.'));
+  vstResultStorage.RootNodeCount := ResultStorage.Count;
   end;
 
   procedure DbConnect();
@@ -296,6 +304,12 @@ begin
       Close();
       end;
     end;
+end;
+
+procedure TfrmTtnParserMain.vstResultStorageGetText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex;
+    TextType: TVSTTextType; var CellText: string);
+begin
+  CellText := ResultStorage[Node.Index].FileName;
 end;
 
 procedure TfrmTtnParserMain.vstTtnDrawText(Sender: TBaseVirtualTree;
