@@ -18,169 +18,186 @@ object frmTtnParserMain: TfrmTtnParserMain
   OnDestroy = FormDestroy
   PixelsPerInch = 96
   TextHeight = 16
-  object lblInpFile: TLabel
-    Left = 0
-    Top = 539
-    Width = 1581
-    Height = 16
-    Align = alBottom
-    Caption = #1042#1093#1086#1076#1085#1086#1081' '#1092#1072#1081#1083':'
-    Font.Charset = DEFAULT_CHARSET
-    Font.Color = clWindowText
-    Font.Height = -13
-    Font.Name = 'MS Sans Serif'
-    Font.Style = [fsBold]
-    ParentFont = False
-    ExplicitWidth = 110
-  end
-  object pnlWait: TPanel
-    Left = 0
-    Top = 39
-    Width = 1581
-    Height = 500
-    Align = alClient
-    Caption = #1054#1073#1088#1072#1073#1086#1090#1082#1072'...'
-    Font.Charset = RUSSIAN_CHARSET
-    Font.Color = clWindowText
-    Font.Height = -21
-    Font.Name = 'Arial'
-    Font.Style = []
-    ParentFont = False
-    TabOrder = 2
-    ExplicitWidth = 1095
-  end
-  object tlbMain: TToolBar
+  object pgParserMain: TPageControl
     Left = 0
     Top = 0
     Width = 1581
-    Height = 39
-    AutoSize = True
-    ButtonHeight = 39
-    ButtonWidth = 70
-    Caption = 'tlbMain'
-    Images = imlMain
-    ShowCaptions = True
-    TabOrder = 0
-    ExplicitWidth = 1095
-    object btnInp: TToolButton
-      Left = 0
-      Top = 0
-      Action = FileOpenInp
-    end
-    object btnSettings: TToolButton
-      Left = 70
-      Top = 0
-      Action = actSettings
-    end
-    object btnRefresh: TToolButton
-      Left = 140
-      Top = 0
-      Action = actRefresh
-    end
-    object btnFileSaveAs: TToolButton
-      Left = 210
-      Top = 0
-      Action = FileSaveAs
-    end
-  end
-  object vstTtn: TVirtualStringTree
-    Left = 0
-    Top = 39
-    Width = 1581
-    Height = 500
+    Height = 555
+    ActivePage = tsResults
     Align = alClient
-    Colors.FocusedSelectionColor = clSkyBlue
-    Header.AutoSizeIndex = 0
-    Header.Height = 20
-    Header.Options = [hoColumnResize, hoDrag, hoShowSortGlyphs, hoVisible]
-    HintMode = hmHint
-    LineStyle = lsSolid
-    PopupMenu = ppmTtn
-    TabOrder = 1
-    TreeOptions.PaintOptions = [toShowButtons, toShowDropmark, toShowHorzGridLines, toShowRoot, toShowTreeLines, toShowVertGridLines, toThemeAware, toUseBlendedImages, toFullVertGridLines]
-    TreeOptions.SelectionOptions = [toFullRowSelect, toRightClickSelect]
-    OnDrawText = vstTtnDrawText
-    OnGetText = vstTtnGetText
-    OnGetHint = vstTtnGetHint
-    ExplicitLeft = 40
-    ExplicitTop = 33
-    ExplicitWidth = 1437
-    Columns = <
-      item
-        Position = 0
-        Width = 71
-        WideText = 'NUMBER'
+    Style = tsFlatButtons
+    TabOrder = 0
+    object tsResults: TTabSheet
+      Caption = 'tsResults'
+      ImageIndex = 2
+    end
+    object tsWait: TTabSheet
+      Caption = 'tsWait'
+      ImageIndex = 1
+      object pnlWait: TPanel
+        Left = 0
+        Top = 0
+        Width = 1573
+        Height = 521
+        Align = alClient
+        Caption = #1054#1073#1088#1072#1073#1086#1090#1082#1072'...'
+        Font.Charset = RUSSIAN_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -21
+        Font.Name = 'Arial'
+        Font.Style = []
+        ParentFont = False
+        TabOrder = 0
       end
-      item
-        Position = 1
-        Width = 79
-        WideText = 'KOD'
+    end
+    object tsParse: TTabSheet
+      Caption = 'tsParse'
+      object lblInpFile: TLabel
+        Left = 0
+        Top = 505
+        Width = 1573
+        Height = 16
+        Align = alBottom
+        Caption = #1042#1093#1086#1076#1085#1086#1081' '#1092#1072#1081#1083':'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -13
+        Font.Name = 'MS Sans Serif'
+        Font.Style = [fsBold]
+        ParentFont = False
+        ExplicitTop = 539
+        ExplicitWidth = 110
       end
-      item
-        Position = 2
-        Width = 464
-        WideText = 'NAME'
+      object tlbMain: TToolBar
+        Left = 0
+        Top = 0
+        Width = 1573
+        Height = 39
+        AutoSize = True
+        ButtonHeight = 39
+        ButtonWidth = 70
+        Caption = 'tlbMain'
+        Images = imlMain
+        ShowCaptions = True
+        TabOrder = 0
+        object btnInp: TToolButton
+          Left = 0
+          Top = 0
+          Action = FileOpenInp
+        end
+        object btnSettings: TToolButton
+          Left = 70
+          Top = 0
+          Action = actSettings
+        end
+        object btnRefresh: TToolButton
+          Left = 140
+          Top = 0
+          Action = actRefresh
+        end
+        object btnFileSaveAs: TToolButton
+          Left = 210
+          Top = 0
+          Action = FileSaveAs
+        end
       end
-      item
-        Position = 3
-        Width = 64
-        WideText = 'WEIGHT1'
+      object vstTtn: TVirtualStringTree
+        Left = 0
+        Top = 39
+        Width = 1573
+        Height = 466
+        Align = alClient
+        Colors.FocusedSelectionColor = clSkyBlue
+        Header.AutoSizeIndex = 0
+        Header.Height = 20
+        Header.Options = [hoColumnResize, hoDrag, hoShowSortGlyphs, hoVisible]
+        HintMode = hmHint
+        LineStyle = lsSolid
+        PopupMenu = ppmTtn
+        TabOrder = 1
+        TreeOptions.PaintOptions = [toShowButtons, toShowDropmark, toShowHorzGridLines, toShowRoot, toShowTreeLines, toShowVertGridLines, toThemeAware, toUseBlendedImages, toFullVertGridLines]
+        TreeOptions.SelectionOptions = [toFullRowSelect, toRightClickSelect]
+        OnDrawText = vstTtnDrawText
+        OnGetText = vstTtnGetText
+        OnGetHint = vstTtnGetHint
+        Columns = <
+          item
+            Position = 0
+            Width = 71
+            WideText = 'NUMBER'
+          end
+          item
+            Position = 1
+            Width = 79
+            WideText = 'KOD'
+          end
+          item
+            Position = 2
+            Width = 464
+            WideText = 'NAME'
+          end
+          item
+            Position = 3
+            Width = 64
+            WideText = 'WEIGHT1'
+          end
+          item
+            Position = 4
+            Width = 64
+            WideText = 'WEIGHT2'
+          end
+          item
+            Position = 5
+            Width = 64
+            WideText = 'WEIGHT3'
+          end
+          item
+            Position = 6
+            Width = 80
+            WideText = 'COST'
+          end
+          item
+            Position = 7
+            Width = 70
+            WideText = 'VAL'
+          end
+          item
+            Position = 8
+            Width = 61
+            WideText = 'STR_PR'
+          end
+          item
+            Position = 9
+            Width = 72
+            WideText = 'QUANTITY'
+          end
+          item
+            Position = 10
+            Width = 103
+            WideText = 'STRAN_OTPR'
+          end
+          item
+            Position = 11
+            Width = 82
+            WideText = 'ATD_OTPR'
+          end
+          item
+            Position = 12
+            Width = 99
+            WideText = 'STRAN_NAZN'
+          end
+          item
+            Position = 13
+            Width = 79
+            WideText = 'ATD_NAZN'
+          end
+          item
+            Position = 14
+            Width = 101
+            WideText = 'DATE_TOVAR'
+          end>
       end
-      item
-        Position = 4
-        Width = 64
-        WideText = 'WEIGHT2'
-      end
-      item
-        Position = 5
-        Width = 64
-        WideText = 'WEIGHT3'
-      end
-      item
-        Position = 6
-        Width = 80
-        WideText = 'COST'
-      end
-      item
-        Position = 7
-        Width = 70
-        WideText = 'VAL'
-      end
-      item
-        Position = 8
-        Width = 61
-        WideText = 'STR_PR'
-      end
-      item
-        Position = 9
-        Width = 72
-        WideText = 'QUANTITY'
-      end
-      item
-        Position = 10
-        Width = 103
-        WideText = 'STRAN_OTPR'
-      end
-      item
-        Position = 11
-        Width = 82
-        WideText = 'ATD_OTPR'
-      end
-      item
-        Position = 12
-        Width = 99
-        WideText = 'STRAN_NAZN'
-      end
-      item
-        Position = 13
-        Width = 79
-        WideText = 'ATD_NAZN'
-      end
-      item
-        Position = 14
-        Width = 101
-        WideText = 'DATE_TOVAR'
-      end>
+    end
   end
   object alMain: TActionList
     Images = imlMain
@@ -232,7 +249,7 @@ object frmTtnParserMain: TfrmTtnParserMain
     Left = 336
     Top = 48
     Bitmap = {
-      494C010105000800680010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C0101050008006C0010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000100202028F010101DF010101FF010101FF010101FF010101DF0202

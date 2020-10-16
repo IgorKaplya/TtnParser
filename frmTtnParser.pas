@@ -22,10 +22,14 @@ type
     btnRefresh: TToolButton;
     FileSaveAs: TFileSaveAs;
     btnFileSaveAs: TToolButton;
-    pnlWait: TPanel;
     actAddKod: TAction;
     ppmTtn: TPopupMenu;
     mniAddKod: TMenuItem;
+    pgParserMain: TPageControl;
+    tsParse: TTabSheet;
+    tsWait: TTabSheet;
+    pnlWait: TPanel;
+    tsResults: TTabSheet;
     procedure actAddKodExecute(Sender: TObject);
     procedure actAddKodUpdate(Sender: TObject);
     procedure actRefreshExecute(Sender: TObject);
@@ -213,7 +217,7 @@ end;
 procedure TfrmTtnParserMain.ProcessInpFile;
 {Разбор входного файла, сортировка и унифткация. Основной метод программы}
 begin
-  pnlWait.BringToFront;
+  pgParserMain.ActivePage := tsWait;
   try
     vstTtn.Clear;
     Parser.Parse(InpFile);
@@ -222,7 +226,7 @@ begin
   finally
     dm.TablesFirst;
   end;
-  pnlWait.SendToBack;
+  pgParserMain.ActivePage := tsParse;
 end;
 
 procedure TfrmTtnParserMain.SetInpFile(const Value: string);
@@ -270,11 +274,21 @@ procedure TfrmTtnParserMain.StartUp;
   dm.tblUni.Open();
   end;
 
+  procedure InitTab();
+  var
+    i: Integer;
+  begin
+    for i:=0 to pgParserMain.PageCount-1 do
+      pgParserMain.Pages[i].TabVisible := False;
+    pgParserMain.ActivePage := tsResults;
+  end;
+
 begin
   if not Inited then
     try
     IniRead();
     DbConnect();
+    InitTab();
     FInited:=True;
     except on e: Exception do
       begin
