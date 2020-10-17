@@ -57,6 +57,12 @@ type
     mniActiveResultDocumentAdd: TMenuItem;
     mniActiveResultDocumentDelete: TMenuItem;
     mniActiveResultDocumentEdit: TMenuItem;
+    pnlResultStorage: TPanel;
+    stpResultStorageTools: TStackPanel;
+    btnResultStorageAdd: TButton;
+    btnResultStorageDelete: TButton;
+    actResultStorageAdd: TAction;
+    actResultStorageDelete: TAction;
     procedure actAddKodExecute(Sender: TObject);
     procedure actAddKodUpdate(Sender: TObject);
     procedure actActiveResultDocumentAddExecute(Sender: TObject);
@@ -65,6 +71,8 @@ type
     procedure actActiveResultDocumentEditExecute(Sender: TObject);
     procedure actRefreshExecute(Sender: TObject);
     procedure actRefreshUpdate(Sender: TObject);
+    procedure actResultStorageAddExecute(Sender: TObject);
+    procedure actResultStorageDeleteExecute(Sender: TObject);
     procedure actSettingsExecute(Sender: TObject);
     procedure cpNewResultDateChange(Sender: TObject);
     procedure edtDeliveryCountryChange(Sender: TObject);
@@ -229,6 +237,16 @@ end;
 procedure TfrmTtnParserMain.actRefreshUpdate(Sender: TObject);
 begin
 (Sender as TAction).Enabled:=Length(InpFile)>0;
+end;
+
+procedure TfrmTtnParserMain.actResultStorageAddExecute(Sender: TObject);
+begin
+  ResultStorage.Add().FileName := '123.csv';
+end;
+
+procedure TfrmTtnParserMain.actResultStorageDeleteExecute(Sender: TObject);
+begin
+  ResultStorage.DeleteResult('123.csv');
 end;
 
 procedure TfrmTtnParserMain.actSettingsExecute(Sender: TObject);
