@@ -45,11 +45,28 @@ type
     imlMain32: TImageList;
     btnProceed: TButton;
     cpNewResultDate: TCalendarPicker;
+    pnlActiveDocuments: TPanel;
+    stpActiveDocumentTools: TStackPanel;
+    btnDelActiveResultDocument: TButton;
+    btnAddResultDocument: TButton;
+    actActiveResultDocumentAdd: TAction;
+    actActiveResultDocumentDelete: TAction;
+    btnvstActiveDocumentsEdit: TButton;
+    actActiveResultDocumentEdit: TAction;
+    ppmActiveResultsDocuments: TPopupMenu;
+    mniActiveResultDocumentAdd: TMenuItem;
+    mniActiveResultDocumentDelete: TMenuItem;
+    mniActiveResultDocumentEdit: TMenuItem;
     procedure actAddKodExecute(Sender: TObject);
     procedure actAddKodUpdate(Sender: TObject);
+    procedure actActiveResultDocumentAddExecute(Sender: TObject);
+    procedure actActiveResultDocumentDeleteExecute(Sender: TObject);
+    procedure actActiveResultDocumentDeleteUpdate(Sender: TObject);
+    procedure actActiveResultDocumentEditExecute(Sender: TObject);
     procedure actRefreshExecute(Sender: TObject);
     procedure actRefreshUpdate(Sender: TObject);
     procedure actSettingsExecute(Sender: TObject);
+    procedure cpNewResultDateChange(Sender: TObject);
     procedure edtDeliveryCountryChange(Sender: TObject);
     procedure edtShipmentCountryChange(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -61,6 +78,7 @@ type
     procedure medtShipmentRegionChange(Sender: TObject);
     procedure vstActiveDocumentsGetText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; TextType:
         TVSTTextType; var CellText: string);
+    procedure vstActiveDocumentsNewText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; NewText: string);
     procedure vstResultStorageChange(Sender: TBaseVirtualTree; Node: PVirtualNode);
     procedure vstResultStorageGetText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; TextType:
         TVSTTextType; var CellText: string);
@@ -107,6 +125,9 @@ uses
   Ttn.Constants;
 
 const
+  column_doc_date = 2;
+  column_doc_code = 1;
+  column_doc_number = 0;
   C_ERR_NO_KOD = 'не найден код';
   C_COL_NUMBER      = 0;
   C_COL_KOD         = 1;
@@ -171,6 +192,35 @@ begin
 (Sender as TAction).Enabled:=CurTtnObj(obj) and (Pos(C_ERR_NO_KOD,obj.ErrorMsg)<>0);
 end;
 
+procedure TfrmTtnParserMain.actActiveResultDocumentAddExecute(Sender: TObject);
+begin
+  ResultStorage.ActiveResult.Documents.Add;
+  vstActiveDocuments.RootNodeCount := ResultStorage.ActiveResult.Documents.Count;
+  vstActiveDocuments.EditNode(vstActiveDocuments.GetLast(), column_doc_number);
+end;
+
+procedure TfrmTtnParserMain.actActiveResultDocumentDeleteExecute(Sender: TObject);
+var
+  n: pVirtualNode;
+begin
+  n := vstActiveDocuments.GetFirstSelected();
+  if Assigned(n) then
+  begin
+    ResultStorage.ActiveResult.Documents.Delete(n.Index);
+    vstActiveDocuments.RootNodeCount := ResultStorage.ActiveResult.Documents.Count;
+  end;
+end;
+
+procedure TfrmTtnParserMain.actActiveResultDocumentDeleteUpdate(Sender: TObject);
+begin
+  (Sender as TAction).Enabled := (vstActiveDocuments.SelectedCount > 0);
+end;
+
+procedure TfrmTtnParserMain.actActiveResultDocumentEditExecute(Sender: TObject);
+begin
+  vstActiveDocuments.EditNode(vstActiveDocuments.GetFirstSelected(), vstActiveDocuments.FocusedColumn);
+end;
+
 procedure TfrmTtnParserMain.actRefreshExecute(Sender: TObject);
 begin
 ProcessInpFile();
@@ -206,6 +256,11 @@ begin
     else
       obj.NAME:='';
     end;
+end;
+
+procedure TfrmTtnParserMain.cpNewResultDateChange(Sender: TObject);
+begin
+  ResultStorage.ActiveResult.DateTtn := (Sender as TCalendarPicker).Date;
 end;
 
 function TfrmTtnParserMain.CurTtnObj(out obj: ITtnObj): Boolean;
@@ -347,7 +402,25 @@ end;
 procedure TfrmTtnParserMain.vstActiveDocumentsGetText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex;
     TextType: TVSTTextType; var CellText: string);
 begin
-  //
+  case Column of
+  column_doc_number: CellText := ResultStorage.ActiveResult.Documents[Node.Index].NumberObj.ToString;
+  column_doc_code: CellText := ResultStorage.ActiveResult.Documents[Node.Index].DocumentCode;
+  column_doc_date: CellText := FormatDateTime(C_Date_Tovar_Format, ResultStorage.ActiveResult.Documents[Node.Index].DocumentDate);
+  end;
+end;
+
+procedure TfrmTtnParserMain.vstActiveDocumentsNewText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex;
+    NewText: string);
+var
+  fs: TFormatSettings;
+begin
+  fs := TFormatSettings.Create();
+  fs.ShortDateFormat := C_Date_Tovar_Format;
+  case Column of
+  column_doc_number: ResultStorage.ActiveResult.Documents[Node.Index].NumberObj := NewText.ToInteger();
+  column_doc_code: ResultStorage.ActiveResult.Documents[Node.Index].DocumentCode := NewText;
+  column_doc_date: ResultStorage.ActiveResult.Documents[Node.Index].DocumentDate := StrToDate(NewText, fs)
+  end;
 end;
 
 procedure TfrmTtnParserMain.vstResultStorageChange(Sender: TBaseVirtualTree; Node: PVirtualNode);
@@ -363,6 +436,9 @@ begin
     medtShipmentRegion.Text := ResultStorage.ActiveResult.ShipmentCountryRegion;
     medtDeliveryRegion.Text := ResultStorage.ActiveResult.DestinationCountryRegion;
     vstActiveDocuments.RootNodeCount := ResultStorage.ActiveResult.Documents.Count;
+    if ResultStorage.ActiveResult.DateTtn = 0 then
+      ResultStorage.ActiveResult.DateTtn := Now();
+    cpNewResultDate.Date := ResultStorage.ActiveResult.DateTtn;
   end;
 end;
 
