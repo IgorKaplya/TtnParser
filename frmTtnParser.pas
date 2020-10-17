@@ -5,7 +5,7 @@ interface
 uses
   Forms,IniFiles, Vcl.Controls, Vcl.StdCtrls, System.Classes, Vcl.ActnList, Vcl.StdActns, Vcl.ExtCtrls, Vcl.ComCtrls, Vcl.ImgList,
   Vcl.ToolWin, Ttn.Interfaces, VirtualTrees, Vcl.Graphics, Types, Vcl.Menus,
-  System.ImageList, System.Actions;
+  System.ImageList, System.Actions, Vcl.WinXPanels;
 
 type
   TfrmTtnParserMain = class(TForm)
@@ -25,12 +25,15 @@ type
     actAddKod: TAction;
     ppmTtn: TPopupMenu;
     mniAddKod: TMenuItem;
-    pgParserMain: TPageControl;
-    tsParse: TTabSheet;
-    tsWait: TTabSheet;
     pnlWait: TPanel;
-    tsResults: TTabSheet;
     vstResultStorage: TVirtualStringTree;
+    cpResultStorage: TCardPanel;
+    crdActiveResultNone: TCard;
+    crdActiveResult: TCard;
+    cpMain: TCardPanel;
+    crdMainWait: TCard;
+    crdMainResults: TCard;
+    crdMainParse: TCard;
     procedure actAddKodExecute(Sender: TObject);
     procedure actAddKodUpdate(Sender: TObject);
     procedure actRefreshExecute(Sender: TObject);
@@ -41,6 +44,7 @@ type
     procedure FileOpenInpAccept(Sender: TObject);
     procedure FileSaveAsAccept(Sender: TObject);
     procedure FormActivate(Sender: TObject);
+    procedure vstResultStorageChange(Sender: TBaseVirtualTree; Node: PVirtualNode);
     procedure vstResultStorageGetText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; TextType:
         TVSTTextType; var CellText: string);
     procedure vstTtnDrawText(Sender: TBaseVirtualTree; TargetCanvas: TCanvas; Node:
@@ -223,7 +227,7 @@ end;
 procedure TfrmTtnParserMain.ProcessInpFile;
 {Разбор входного файла, сортировка и унифткация. Основной метод программы}
 begin
-  pgParserMain.ActivePage := tsWait;
+  cpMain.ActiveCard := crdMainWait;
   try
     vstTtn.Clear;
     Parser.Parse(InpFile);
@@ -232,7 +236,7 @@ begin
   finally
     dm.TablesFirst;
   end;
-  pgParserMain.ActivePage := tsParse;
+  cpMain.ActiveCard := crdMainParse;
 end;
 
 procedure TfrmTtnParserMain.SetInpFile(const Value: string);
@@ -283,12 +287,9 @@ procedure TfrmTtnParserMain.StartUp;
   end;
 
   procedure InitTab();
-  var
-    i: Integer;
   begin
-    for i:=0 to pgParserMain.PageCount-1 do
-      pgParserMain.Pages[i].TabVisible := False;
-    pgParserMain.ActivePage := tsResults;
+    cpMain.ActiveCard := crdMainResults;
+    cpResultStorage.ActiveCard := crdActiveResultNone;
   end;
 
 begin
@@ -304,6 +305,17 @@ begin
       Close();
       end;
     end;
+end;
+
+procedure TfrmTtnParserMain.vstResultStorageChange(Sender: TBaseVirtualTree; Node: PVirtualNode);
+begin
+  if not Assigned(Sender.GetFirstSelected()) then
+    cpResultStorage.ActiveCard := crdActiveResultNone
+  else
+  begin
+    ResultStorage.ActiveResult := ResultStorage[Sender.GetFirstSelected().Index];
+    cpResultStorage.ActiveCard := crdActiveResult;
+  end;
 end;
 
 procedure TfrmTtnParserMain.vstResultStorageGetText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex;

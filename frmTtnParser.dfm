@@ -18,41 +18,35 @@ object frmTtnParserMain: TfrmTtnParserMain
   OnDestroy = FormDestroy
   PixelsPerInch = 96
   TextHeight = 16
-  object pgParserMain: TPageControl
+  object cpMain: TCardPanel
     Left = 0
     Top = 0
     Width = 1581
     Height = 555
-    ActivePage = tsResults
     Align = alClient
-    Style = tsFlatButtons
+    ActiveCard = crdMainParse
+    BevelOuter = bvNone
+    Caption = 'cpMain'
     TabOrder = 0
-    object tsResults: TTabSheet
-      Caption = 'tsResults'
-      ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 34
-      object vstResultStorage: TVirtualStringTree
-        Left = 0
-        Top = 0
-        Width = 441
-        Height = 521
-        Align = alLeft
-        Header.AutoSizeIndex = 0
-        Header.MainColumn = -1
-        TabOrder = 0
-        OnGetText = vstResultStorageGetText
-        Columns = <>
-      end
-    end
-    object tsWait: TTabSheet
-      Caption = 'tsWait'
-      ImageIndex = 1
+    ExplicitLeft = 320
+    ExplicitTop = 16
+    ExplicitWidth = 300
+    ExplicitHeight = 200
+    object crdMainWait: TCard
+      Left = 0
+      Top = 0
+      Width = 1581
+      Height = 555
+      Caption = 'crdMainWait'
+      CardIndex = 0
+      TabOrder = 0
+      ExplicitWidth = 185
+      ExplicitHeight = 41
       object pnlWait: TPanel
         Left = 0
         Top = 0
-        Width = 1573
-        Height = 521
+        Width = 1581
+        Height = 555
         Align = alClient
         Caption = #1054#1073#1088#1072#1073#1086#1090#1082#1072'...'
         Font.Charset = RUSSIAN_CHARSET
@@ -64,12 +58,92 @@ object frmTtnParserMain: TfrmTtnParserMain
         TabOrder = 0
       end
     end
-    object tsParse: TTabSheet
-      Caption = 'tsParse'
+    object crdMainResults: TCard
+      Left = 0
+      Top = 0
+      Width = 1581
+      Height = 555
+      Caption = 'crdMainResults'
+      CardIndex = 1
+      TabOrder = 1
+      ExplicitWidth = 185
+      ExplicitHeight = 41
+      object cpResultStorage: TCardPanel
+        Left = 441
+        Top = 0
+        Width = 1140
+        Height = 555
+        Align = alClient
+        ActiveCard = crdActiveResult
+        BevelOuter = bvNone
+        Caption = 'cpResultStorage'
+        Color = clActiveCaption
+        ParentBackground = False
+        TabOrder = 0
+        ExplicitLeft = 0
+        ExplicitWidth = 1581
+        object crdActiveResultNone: TCard
+          Left = 0
+          Top = 0
+          Width = 1140
+          Height = 555
+          Caption = #1042#1099#1073#1077#1088#1080#1090#1077' '#1080#1083#1080' '#1076#1086#1073#1072#1074#1100#1090#1077' '#1088#1077#1079#1091#1083#1100#1090#1072#1090
+          CardIndex = 0
+          Font.Charset = RUSSIAN_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -19
+          Font.Name = 'Arial'
+          Font.Style = [fsBold]
+          ParentFont = False
+          ShowCaption = True
+          TabOrder = 0
+          ExplicitWidth = 185
+          ExplicitHeight = 41
+        end
+        object crdActiveResult: TCard
+          Left = 0
+          Top = 0
+          Width = 1140
+          Height = 555
+          Caption = 'crdActiveResult'
+          CardIndex = 1
+          TabOrder = 1
+          ExplicitWidth = 1581
+        end
+      end
+      object vstResultStorage: TVirtualStringTree
+        Left = 0
+        Top = 0
+        Width = 441
+        Height = 555
+        Align = alLeft
+        Header.AutoSizeIndex = 0
+        Header.MainColumn = -1
+        Indent = 9
+        TabOrder = 1
+        TreeOptions.AutoOptions = [toAutoDropExpand, toAutoScrollOnExpand, toAutoTristateTracking, toAutoDeleteMovedNodes, toAutoChangeScale]
+        TreeOptions.MiscOptions = [toFullRepaintOnResize, toGridExtensions, toInitOnSave, toToggleOnDblClick, toWheelPanning, toEditOnClick]
+        TreeOptions.PaintOptions = [toHideSelection, toHotTrack, toShowButtons, toShowDropmark, toShowHorzGridLines, toShowRoot, toThemeAware, toUseBlendedImages]
+        OnChange = vstResultStorageChange
+        OnGetText = vstResultStorageGetText
+        ExplicitHeight = 521
+        Columns = <>
+      end
+    end
+    object crdMainParse: TCard
+      Left = 0
+      Top = 0
+      Width = 1581
+      Height = 555
+      Caption = 'crdMainParse'
+      CardIndex = 2
+      TabOrder = 2
+      ExplicitWidth = 185
+      ExplicitHeight = 41
       object lblInpFile: TLabel
         Left = 0
-        Top = 505
-        Width = 1573
+        Top = 539
+        Width = 1581
         Height = 16
         Align = alBottom
         Caption = #1042#1093#1086#1076#1085#1086#1081' '#1092#1072#1081#1083':'
@@ -79,47 +153,14 @@ object frmTtnParserMain: TfrmTtnParserMain
         Font.Name = 'MS Sans Serif'
         Font.Style = [fsBold]
         ParentFont = False
-        ExplicitTop = 539
+        ExplicitTop = 505
         ExplicitWidth = 110
-      end
-      object tlbMain: TToolBar
-        Left = 0
-        Top = 0
-        Width = 1573
-        Height = 39
-        AutoSize = True
-        ButtonHeight = 39
-        ButtonWidth = 70
-        Caption = 'tlbMain'
-        Images = imlMain
-        ShowCaptions = True
-        TabOrder = 0
-        object btnInp: TToolButton
-          Left = 0
-          Top = 0
-          Action = FileOpenInp
-        end
-        object btnSettings: TToolButton
-          Left = 70
-          Top = 0
-          Action = actSettings
-        end
-        object btnRefresh: TToolButton
-          Left = 140
-          Top = 0
-          Action = actRefresh
-        end
-        object btnFileSaveAs: TToolButton
-          Left = 210
-          Top = 0
-          Action = FileSaveAs
-        end
       end
       object vstTtn: TVirtualStringTree
         Left = 0
         Top = 39
-        Width = 1573
-        Height = 466
+        Width = 1581
+        Height = 500
         Align = alClient
         Colors.FocusedSelectionColor = clSkyBlue
         Header.AutoSizeIndex = 0
@@ -128,12 +169,14 @@ object frmTtnParserMain: TfrmTtnParserMain
         HintMode = hmHint
         LineStyle = lsSolid
         PopupMenu = ppmTtn
-        TabOrder = 1
+        TabOrder = 0
         TreeOptions.PaintOptions = [toShowButtons, toShowDropmark, toShowHorzGridLines, toShowRoot, toShowTreeLines, toShowVertGridLines, toThemeAware, toUseBlendedImages, toFullVertGridLines]
         TreeOptions.SelectionOptions = [toFullRowSelect, toRightClickSelect]
         OnDrawText = vstTtnDrawText
         OnGetText = vstTtnGetText
         OnGetHint = vstTtnGetHint
+        ExplicitWidth = 1573
+        ExplicitHeight = 466
         Columns = <
           item
             Position = 0
@@ -211,6 +254,40 @@ object frmTtnParserMain: TfrmTtnParserMain
             WideText = 'DATE_TOVAR'
           end>
       end
+      object tlbMain: TToolBar
+        Left = 0
+        Top = 0
+        Width = 1581
+        Height = 39
+        AutoSize = True
+        ButtonHeight = 39
+        ButtonWidth = 70
+        Caption = 'tlbMain'
+        Images = imlMain
+        ShowCaptions = True
+        TabOrder = 1
+        ExplicitWidth = 1573
+        object btnInp: TToolButton
+          Left = 0
+          Top = 0
+          Action = FileOpenInp
+        end
+        object btnSettings: TToolButton
+          Left = 70
+          Top = 0
+          Action = actSettings
+        end
+        object btnRefresh: TToolButton
+          Left = 140
+          Top = 0
+          Action = actRefresh
+        end
+        object btnFileSaveAs: TToolButton
+          Left = 210
+          Top = 0
+          Action = FileSaveAs
+        end
+      end
     end
   end
   object alMain: TActionList
@@ -263,7 +340,7 @@ object frmTtnParserMain: TfrmTtnParserMain
     Left = 336
     Top = 48
     Bitmap = {
-      494C0101050008006C0010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C010105000800700010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000100202028F010101DF010101FF010101FF010101FF010101DF0202
