@@ -44,6 +44,7 @@ type
     procedure Clear;
     function GetCount: Integer;
     function GetItems(Index: Integer): T;
+    procedure Delete(const Index: Integer);
     property Count: Integer read GetCount;
     property Items[Index: Integer]: T read GetItems; default;
   end;
