@@ -105,7 +105,7 @@ end;
 
 function TTtnResult.GetDocuments: ITtnDocumentList;
 begin
-  // TODO -cMM: TTtnResult.GetDocuments default body inserted
+  Result := FDocuments;
 end;
 
 constructor TTtnResult.Create(ADocuments: ITtnDocumentList);
