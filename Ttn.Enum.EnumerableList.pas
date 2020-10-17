@@ -23,6 +23,7 @@ type
     function GetEnumerator: ITtnEnumerator<T>;
     destructor Destroy; override;
     function Add: T;
+    procedure Delete(const Index: Integer);
     procedure Clear; virtual;
     property Count: Integer read GetCount;
     property Items[Index: Integer]: T read GetItems; default;
@@ -59,6 +60,11 @@ end;
 function TTtnEnumerableList<T>.GetItems(Index: Integer): T;
 begin
   Result := FItems[Index];
+end;
+
+procedure TTtnEnumerableList<T>.Delete(const Index: Integer);
+begin
+  FItems.Delete(Index);
 end;
 
 destructor TTtnEnumerableList<T>.Destroy;
