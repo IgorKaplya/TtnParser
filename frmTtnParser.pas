@@ -5,7 +5,7 @@ interface
 uses
   Forms,IniFiles, Vcl.Controls, Vcl.StdCtrls, System.Classes, Vcl.ActnList, Vcl.StdActns, Vcl.ExtCtrls, Vcl.ComCtrls, Vcl.ImgList,
   Vcl.ToolWin, Ttn.Interfaces, VirtualTrees, Vcl.Graphics, Types, Vcl.Menus,
-  System.ImageList, System.Actions, Vcl.WinXPanels;
+  System.ImageList, System.Actions, Vcl.WinXPanels, Vcl.Mask, Vcl.Imaging.pngimage, Vcl.WinXCalendars, Vcl.WinXPickers;
 
 type
   TfrmTtnParserMain = class(TForm)
@@ -34,16 +34,33 @@ type
     crdMainWait: TCard;
     crdMainResults: TCard;
     crdMainParse: TCard;
+    medtShipmentRegion: TMaskEdit;
+    edtShipmentCountry: TEdit;
+    imgShipment: TImage;
+    edtDeliveryCountry: TEdit;
+    medtDeliveryRegion: TMaskEdit;
+    gpnlActiveResult: TGridPanel;
+    vstActiveDocuments: TVirtualStringTree;
+    pnlChooseDateAndGo: TPanel;
+    imlMain32: TImageList;
+    btnProceed: TButton;
+    cpNewResultDate: TCalendarPicker;
     procedure actAddKodExecute(Sender: TObject);
     procedure actAddKodUpdate(Sender: TObject);
     procedure actRefreshExecute(Sender: TObject);
     procedure actRefreshUpdate(Sender: TObject);
     procedure actSettingsExecute(Sender: TObject);
+    procedure edtDeliveryCountryChange(Sender: TObject);
+    procedure edtShipmentCountryChange(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FileOpenInpAccept(Sender: TObject);
     procedure FileSaveAsAccept(Sender: TObject);
     procedure FormActivate(Sender: TObject);
+    procedure medtDeliveryRegionChange(Sender: TObject);
+    procedure medtShipmentRegionChange(Sender: TObject);
+    procedure vstActiveDocumentsGetText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; TextType:
+        TVSTTextType; var CellText: string);
     procedure vstResultStorageChange(Sender: TBaseVirtualTree; Node: PVirtualNode);
     procedure vstResultStorageGetText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex; TextType:
         TVSTTextType; var CellText: string);
@@ -199,6 +216,16 @@ begin
   Result := Assigned(obj);
 end;
 
+procedure TfrmTtnParserMain.edtDeliveryCountryChange(Sender: TObject);
+begin
+  ResultStorage.ActiveResult.DestinationCountry := (Sender as TEdit).Text;
+end;
+
+procedure TfrmTtnParserMain.edtShipmentCountryChange(Sender: TObject);
+begin
+  ResultStorage.ActiveResult.ShipmentCountry := (Sender as TEdit).Text;
+end;
+
 procedure TfrmTtnParserMain.FileOpenInpAccept(Sender: TObject);
 begin
 InpFile:=(Sender as TFileOpen).Dialog.FileName;
@@ -222,6 +249,16 @@ end;
 procedure TfrmTtnParserMain.FormActivate(Sender: TObject);
 begin
   StartUp();
+end;
+
+procedure TfrmTtnParserMain.medtDeliveryRegionChange(Sender: TObject);
+begin
+  ResultStorage.ActiveResult.DestinationCountryRegion := (Sender as TMaskEdit).Text;
+end;
+
+procedure TfrmTtnParserMain.medtShipmentRegionChange(Sender: TObject);
+begin
+  ResultStorage.ActiveResult.ShipmentCountryRegion := (Sender as TMaskEdit).Text;
 end;
 
 procedure TfrmTtnParserMain.ProcessInpFile;
@@ -307,6 +344,12 @@ begin
     end;
 end;
 
+procedure TfrmTtnParserMain.vstActiveDocumentsGetText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex;
+    TextType: TVSTTextType; var CellText: string);
+begin
+  //
+end;
+
 procedure TfrmTtnParserMain.vstResultStorageChange(Sender: TBaseVirtualTree; Node: PVirtualNode);
 begin
   if not Assigned(Sender.GetFirstSelected()) then
@@ -315,6 +358,11 @@ begin
   begin
     ResultStorage.ActiveResult := ResultStorage[Sender.GetFirstSelected().Index];
     cpResultStorage.ActiveCard := crdActiveResult;
+    edtShipmentCountry.Text := ResultStorage.ActiveResult.ShipmentCountry;
+    edtDeliveryCountry.Text := ResultStorage.ActiveResult.DestinationCountry;
+    medtShipmentRegion.Text := ResultStorage.ActiveResult.ShipmentCountryRegion;
+    medtDeliveryRegion.Text := ResultStorage.ActiveResult.DestinationCountryRegion;
+    vstActiveDocuments.RootNodeCount := ResultStorage.ActiveResult.Documents.Count;
   end;
 end;
 
