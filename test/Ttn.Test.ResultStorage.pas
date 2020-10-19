@@ -43,17 +43,9 @@ end;
 
 procedure TTtnTestResultStorage.TestLoadFolder;
 const
-  expected_result_files : array[0..9] of string = (
-    '_TestData\TestResultsStorage\ValidFolder\Clien1\Result1.csv',
-    '_TestData\TestResultsStorage\ValidFolder\Clien1\Result2.csv',
-    '_TestData\TestResultsStorage\ValidFolder\Clien2\Result1.csv',
-    '_TestData\TestResultsStorage\ValidFolder\Clien2\Result2.csv',
-    '_TestData\TestResultsStorage\ValidFolder\Clien2\SubClient1\Result1.csv',
-    '_TestData\TestResultsStorage\ValidFolder\Clien2\SubClient1\Result2.csv',
-    '_TestData\TestResultsStorage\ValidFolder\Clien2\SubClient2\Result1.csv',
-    '_TestData\TestResultsStorage\ValidFolder\Clien2\SubClient2\Result2.csv',
-    '_TestData\TestResultsStorage\ValidFolder\Result1.csv',
-    '_TestData\TestResultsStorage\ValidFolder\Result2.csv'
+  expected_result_files : array[0..1] of string = (
+    '_TestData\TestResultsStorage\ValidFolder\Clien1',
+    '_TestData\TestResultsStorage\ValidFolder\Clien2'
   );
 var
   result: ITTnResult;
@@ -68,7 +60,7 @@ begin
   begin
     Assert.AreEqual(
       expected_result_files[i],
-      result.FileName,
+      result.Folder,
       'Failed to verify structure.'
     );
     Inc(i);

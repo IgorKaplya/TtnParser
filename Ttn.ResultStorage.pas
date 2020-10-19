@@ -30,15 +30,16 @@ end;
 
 function TTtnResultStorage.Load(const ARootFolder: string): Boolean;
 var
-  fileArray: TStringDynArray;
-  oneFile: string;
+  resultsArray: TStringDynArray;
+  oneResult: string;
   newResult: ITTnResult;
 begin
-  fileArray := TDirectory.GetFiles(ARootFolder, '*.csv', TSearchOption.soAllDirectories);
-  for oneFile in fileArray do
+
+  resultsArray := TDirectory.GetDirectories(ARootFolder);
+  for oneResult in resultsArray do
   begin
     newResult := Add();
-    newResult.FileName := oneFile;
+    newResult.Folder := oneResult;
   end;
 end;
 

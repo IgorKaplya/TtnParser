@@ -229,8 +229,8 @@ type
   ITTnResult = interface
   ['{DA9C32D2-ECFB-4988-8DD0-0349F56DDBD9}']
     {$REGION 'Property Accessors'}
-    function GetFileName: string;
-    procedure SetFileName(const Value: string);
+    function GetFolder: string;
+    procedure SetFolder(const Value: string);
     function GetDestinationCountry: string;
     procedure SetDestinationCountry(const Value: string);
     function GetDestinationCountryRegion: StringCountryRegion;
@@ -243,7 +243,7 @@ type
     procedure SetDateTtn(const Value: TDate);
     function GetDocuments: ITtnDocumentList;
     {$ENDREGION}
-    property FileName: string read GetFileName write SetFileName;
+    property Folder: string read GetFolder write SetFolder;
     property DestinationCountry: string read GetDestinationCountry write SetDestinationCountry;
     property DestinationCountryRegion: StringCountryRegion read GetDestinationCountryRegion write SetDestinationCountryRegion;
     property ShipmentCountry: string read GetShipmentCountry write SetShipmentCountry;
