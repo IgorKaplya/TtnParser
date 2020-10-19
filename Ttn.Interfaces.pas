@@ -259,10 +259,10 @@ type
     procedure SetActiveResult(const Value: ITTnResult);
     {$ENDREGION}
     property ActiveResult: ITTnResult read GetActiveResult write SetActiveResult;
-    function Load(const AFolder: string): Boolean;
-    procedure CreateResult(const AFile: string);
-    procedure DeleteResult(const AFile: string);
-    procedure UpdateResult(const AFile: string; const AText: string);
+    function Load(const ARootFolder: string): Boolean;
+    procedure CreateResult(const AName: string);
+    procedure DeleteResult(const AName: string);
+    procedure UpdateResult(const AName, AText: string);
   end;
 
 implementation

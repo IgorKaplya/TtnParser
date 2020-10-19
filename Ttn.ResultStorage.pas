@@ -8,14 +8,14 @@ uses
 
 type
   TTtnResultStorage = class(TTtnEnumerableList<ITTnResult>, ITtnResultstorage)
+    procedure CreateResult(const AName: string);
   private
     FActiveResult: ITTnResult;
     function GetActiveResult: ITTnResult;
-    function Load(const AFolder: string): Boolean;
+    function Load(const ARootFolder: string): Boolean;
     procedure SetActiveResult(const Value: ITTnResult);
-    procedure CreateResult(const AFile: string);
-    procedure DeleteResult(const AFile: string);
-    procedure UpdateResult(const AFile: string; const AText: string);
+    procedure DeleteResult(const AName: string);
+    procedure UpdateResult(const AName, AText: string);
   end;
 
 implementation
@@ -28,13 +28,13 @@ begin
   Result := FActiveResult;
 end;
 
-function TTtnResultStorage.Load(const AFolder: string): Boolean;
+function TTtnResultStorage.Load(const ARootFolder: string): Boolean;
 var
   fileArray: TStringDynArray;
   oneFile: string;
   newResult: ITTnResult;
 begin
-  fileArray := TDirectory.GetFiles(AFolder, '*.csv', TSearchOption.soAllDirectories);
+  fileArray := TDirectory.GetFiles(ARootFolder, '*.csv', TSearchOption.soAllDirectories);
   for oneFile in fileArray do
   begin
     newResult := Add();
@@ -47,21 +47,21 @@ begin
   FActiveResult := Value;
 end;
 
-procedure TTtnResultStorage.CreateResult(const AFile: string);
+procedure TTtnResultStorage.CreateResult(const AName: string);
 begin
-  TFile.WriteAllText(AFile, '', TEncoding.UTF8);
+  TFile.WriteAllText(AName, '', TEncoding.UTF8);
 end;
 
-procedure TTtnResultStorage.DeleteResult(const AFile: string);
+procedure TTtnResultStorage.DeleteResult(const AName: string);
 begin
-  TFile.Delete(AFile);
+  TFile.Delete(AName);
 end;
 
-procedure TTtnResultStorage.UpdateResult(const AFile: string; const AText: string);
+procedure TTtnResultStorage.UpdateResult(const AName, AText: string);
 var
   fileWriter: TStreamWriter;
 begin
-  fileWriter := TFile.AppendText(AFile);
+  fileWriter := TFile.AppendText(AName);
   try
     fileWriter.WriteLine(AText);
   finally
