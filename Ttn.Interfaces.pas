@@ -242,6 +242,7 @@ type
     function GetDateTtn: TDate;
     procedure SetDateTtn(const Value: TDate);
     function GetDocuments: ITtnDocumentList;
+    procedure Append(const ttnList: ITtnList);
     {$ENDREGION}
     property Folder: string read GetFolder write SetFolder;
     property DestinationCountry: string read GetDestinationCountry write SetDestinationCountry;
@@ -262,7 +263,6 @@ type
     function Load(const ARootFolder: string): Boolean;
     procedure CreateResult(const AName: string);
     procedure DeleteResult(const AName: string);
-    procedure UpdateResult(const AName, AText: string);
   end;
 
 implementation

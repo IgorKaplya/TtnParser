@@ -11,17 +11,18 @@ type
     procedure CreateResult(const AName: string);
   private
     FActiveResult: ITTnResult;
+    FRootFolder: string;
     function GetActiveResult: ITTnResult;
     function Load(const ARootFolder: string): Boolean;
     procedure SetActiveResult(const Value: ITTnResult);
     procedure DeleteResult(const AName: string);
-    procedure UpdateResult(const AName, AText: string);
+    property RootFolder: string read FRootFolder;
   end;
 
 implementation
 
 uses
-  System.IOUtils, System.Types, System.SysUtils, System.Classes;
+  System.IOUtils, System.Types, System.SysUtils, System.Classes, Ttn.Constants;
 
 function TTtnResultStorage.GetActiveResult: ITTnResult;
 begin
@@ -34,8 +35,8 @@ var
   oneResult: string;
   newResult: ITTnResult;
 begin
-
   resultsArray := TDirectory.GetDirectories(ARootFolder);
+  FRootFolder := ARootFolder;
   for oneResult in resultsArray do
   begin
     newResult := Add();
@@ -49,25 +50,27 @@ begin
 end;
 
 procedure TTtnResultStorage.CreateResult(const AName: string);
+var
+  newStorage: string;
+  newResult: ITTnResult;
 begin
-  TFile.WriteAllText(AName, '', TEncoding.UTF8);
+  newStorage :=  TPath.Combine(RootFolder, AName);
+  TDirectory.CreateDirectory(newStorage);
+  newResult := Add();
+  newResult.Folder := newStorage;
 end;
 
 procedure TTtnResultStorage.DeleteResult(const AName: string);
-begin
-  TFile.Delete(AName);
-end;
-
-procedure TTtnResultStorage.UpdateResult(const AName, AText: string);
 var
-  fileWriter: TStreamWriter;
+  i: Integer;
+  deletedStorage: string;
 begin
-  fileWriter := TFile.AppendText(AName);
-  try
-    fileWriter.WriteLine(AText);
-  finally
-    fileWriter.Free();
-  end;
+  deletedStorage := TPath.Combine(RootFolder, AName);
+  TDirectory.Delete(deletedStorage, True);
+  for i := Count-1 downto 0 do
+    if SameText(Items[i].Folder,deletedStorage) then
+      Delete(i);
 end;
 
 end.
+

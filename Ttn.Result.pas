@@ -29,6 +29,7 @@ type
     procedure SetShipmentCountry(const Value: string);
     procedure SetShipmentCountryRegion(const Value: StringCountryRegion);
     function GetDocuments: ITtnDocumentList;
+    procedure Append(const ttnList: ITtnList);
   public
     constructor Create(ADocuments: ITtnDocumentList);
     destructor Destroy; override;
@@ -42,6 +43,9 @@ type
   end;
 
 implementation
+
+uses
+  System.Classes, System.IOUtils;
 
 function TTtnResult.GetDateTtn: TDate;
 begin
@@ -118,6 +122,23 @@ destructor TTtnResult.Destroy;
 begin
   FDocuments := nil;
   inherited Destroy;
+end;
+
+procedure TTtnResult.Append(const ttnList: ITtnList);
+var
+  fileWriter: TStreamWriter;
+  textData: TStringList;
+begin
+  textData := TStringList.Create();
+  fileWriter := TFile.AppendText(TPath.Combine(Folder, 'Results.csv'));
+  try
+    ttnList.Save(textData);
+    fileWriter.WriteLine(textData.Text);
+    //todo: update documents.csv
+  finally
+    fileWriter.Free();
+    textData.Free();
+  end;
 end;
 
 end.
