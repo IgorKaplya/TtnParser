@@ -43,17 +43,9 @@ end;
 
 procedure TTtnTestResultStorage.TestLoadFolder;
 const
-  expected_result_files : array[0..9] of string = (
-    '_TestData\TestResultsStorage\ValidFolder\Clien1\Result1.csv',
-    '_TestData\TestResultsStorage\ValidFolder\Clien1\Result2.csv',
-    '_TestData\TestResultsStorage\ValidFolder\Clien2\Result1.csv',
-    '_TestData\TestResultsStorage\ValidFolder\Clien2\Result2.csv',
-    '_TestData\TestResultsStorage\ValidFolder\Clien2\SubClient1\Result1.csv',
-    '_TestData\TestResultsStorage\ValidFolder\Clien2\SubClient1\Result2.csv',
-    '_TestData\TestResultsStorage\ValidFolder\Clien2\SubClient2\Result1.csv',
-    '_TestData\TestResultsStorage\ValidFolder\Clien2\SubClient2\Result2.csv',
-    '_TestData\TestResultsStorage\ValidFolder\Result1.csv',
-    '_TestData\TestResultsStorage\ValidFolder\Result2.csv'
+  expected_result_files : array[0..1] of string = (
+    '_TestData\TestResultsStorage\ValidFolder\Clien1',
+    '_TestData\TestResultsStorage\ValidFolder\Clien2'
   );
 var
   result: ITTnResult;
@@ -68,7 +60,7 @@ begin
   begin
     Assert.AreEqual(
       expected_result_files[i],
-      result.FileName,
+      result.Folder,
       'Failed to verify structure.'
     );
     Inc(i);
@@ -93,6 +85,17 @@ begin
 end;
 
 procedure TTtnTestResultStorage.TestCRUD;
+
+  function DoLoad(const ARoot: string): TTestLocalMethod;
+  begin
+    Result :=
+    (
+      procedure()
+      begin
+        ResultStorage.Load(ARoot)
+      end
+    );
+  end;
 
   function DoCreate(const AFile: string): TTestLocalMethod;
   begin
@@ -122,41 +125,48 @@ procedure TTtnTestResultStorage.TestCRUD;
     (
       procedure()
       begin
-        ResultStorage.UpdateResult(AFile, AText);
+        //todo: ResultStorage.UpdateResult(AFile, AText);
       end
     );
   end;
 
 const
-  file_to_test_crud = '.\_TestData\TestResultsStorage\CRUD\CRUD_Result.csv';
+  folder_root_resultsorage = '.\_TestData\TestResultsStorage\CRUD';
+  folder_to_test_crud = 'CRUD Проверка';
   file_payload1 = '1 тест CRUD для ResultsStorage';
   file_payload2 = '2 тест CRUD для ResultsStorage';
 var
   checkPayload: TStringList;
+  defaultFileInStorage: string;
 begin
-  Assert.WillRaise(DoCreate('AbraCadabra\AbraCadabra.csv'), EDirectoryNotFoundException);
-  Assert.WillRaise(DoDelete('AbraCadabra\AbraCadabra.csv'), EDirectoryNotFoundException);
-  Assert.WillRaise(DoUpdate('AbraCadabra\AbraCadabra.csv','AbraCadabra'), EDirectoryNotFoundException);
+  Assert.WillRaise(DoLoad('AbraCadabra\'), EDirectoryNotFoundException);
+  Assert.WillRaise(DoCreate(''), ENotSupportedException);
+  //todo: Assert.WillRaise(DoUpdate('AbraCadabra','AbraCadabra'), EDirectoryNotFoundException);
 
-  Assert.WillNotRaise(DoCreate(file_to_test_crud));
-  Assert.IsTrue(FileExists(file_to_test_crud),' File wasn`t created: '+file_to_test_crud);
+  Assert.WillNotRaise(DoLoad(folder_root_resultsorage));
 
-  Assert.WillNotRaise(DoUpdate(file_to_test_crud, file_payload1));
-  Assert.WillNotRaise(DoUpdate(file_to_test_crud, file_payload2));
+  Assert.WillNotRaise(DoCreate(folder_to_test_crud));
+  Assert.IsTrue(DirectoryExists(folder_root_resultsorage+'\'+folder_to_test_crud),' Storage wasn`t created: '+folder_to_test_crud);
+  Assert.AreEqual(1, ResultStorage.Count, 'Results collection wasn`t appended');
+
+  {todo:
+  Assert.WillNotRaise(DoUpdate(folder_to_test_crud, file_payload1));
+  Assert.WillNotRaise(DoUpdate(folder_to_test_crud, file_payload2));
   checkPayload := TStringList.Create();
   try
-    checkPayload.LoadFromFile(file_to_test_crud, TEncoding.UTF8);
+    checkPayload.LoadFromFile(folder_to_test_crud, TEncoding.UTF8);
     Assert.AreEqual(
       file_payload1+sLineBreak+file_payload2+sLineBreak,
       checkPayload.Text,
-      'File wasn`t updated '+file_to_test_crud
+      'File wasn`t updated '+folder_to_test_crud
     );
   finally
     checkPayload.Free();
   end;
-
-  Assert.WillNotRaise(DoDelete(file_to_test_crud));
-  Assert.IsFalse(FileExists(file_to_test_crud),' File wasn`t deleted: '+file_to_test_crud);
+  }
+  Assert.WillNotRaise(DoDelete(folder_to_test_crud));
+  Assert.IsFalse(DirectoryExists(folder_root_resultsorage+'\'+folder_to_test_crud),' Storage wasn`t deleted: '+folder_to_test_crud);
+  Assert.AreEqual(0, ResultStorage.Count, 'Results collection wasn`t emtied');
 end;
 
 initialization

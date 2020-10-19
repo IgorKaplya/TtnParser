@@ -12,36 +12,40 @@ type
     FDateTtn: TDate;
     FDestinationCountry: string;
     FDestinationCountryRegion: StringCountryRegion;
-    FFileName: string;
+    FFolder: string;
     FShipmentCountry: string;
     FShipmentCountryRegion: StringCountryRegion;
     FDocuments: ITtnDocumentList;
     function GetDateTtn: TDate;
     function GetDestinationCountry: string;
     function GetDestinationCountryRegion: StringCountryRegion;
-    function GetFileName: string;
+    function GetFolder: string;
     function GetShipmentCountry: string;
     function GetShipmentCountryRegion: StringCountryRegion;
     procedure SetDateTtn(const Value: TDate);
     procedure SetDestinationCountry(const Value: string);
     procedure SetDestinationCountryRegion(const Value: StringCountryRegion);
-    procedure SetFileName(const Value: string);
+    procedure SetFolder(const Value: string);
     procedure SetShipmentCountry(const Value: string);
     procedure SetShipmentCountryRegion(const Value: StringCountryRegion);
     function GetDocuments: ITtnDocumentList;
+    procedure Append(const ttnList: ITtnList);
   public
     constructor Create(ADocuments: ITtnDocumentList);
     destructor Destroy; override;
-    property FileName: string read GetFileName write SetFileName;
     property DestinationCountry: string read GetDestinationCountry write SetDestinationCountry;
     property DestinationCountryRegion: StringCountryRegion read GetDestinationCountryRegion write SetDestinationCountryRegion;
     property ShipmentCountry: string read GetShipmentCountry write SetShipmentCountry;
     property ShipmentCountryRegion: StringCountryRegion read GetShipmentCountryRegion write SetShipmentCountryRegion;
     property DateTtn: TDate read GetDateTtn write SetDateTtn;
     property Documents: ITtnDocumentList read GetDocuments;
+    property Folder: string read GetFolder write SetFolder;
   end;
 
 implementation
+
+uses
+  System.Classes, System.IOUtils;
 
 function TTtnResult.GetDateTtn: TDate;
 begin
@@ -58,9 +62,9 @@ begin
   Result := FDestinationCountryRegion;
 end;
 
-function TTtnResult.GetFileName: string;
+function TTtnResult.GetFolder: string;
 begin
-  Result := FFileName;
+  Result := FFolder;
 end;
 
 function TTtnResult.GetShipmentCountry: string;
@@ -88,9 +92,9 @@ begin
   FDestinationCountryRegion := Value;
 end;
 
-procedure TTtnResult.SetFileName(const Value: string);
+procedure TTtnResult.SetFolder(const Value: string);
 begin
-  FFileName := Value;
+  FFolder := Value;
 end;
 
 procedure TTtnResult.SetShipmentCountry(const Value: string);
@@ -118,6 +122,23 @@ destructor TTtnResult.Destroy;
 begin
   FDocuments := nil;
   inherited Destroy;
+end;
+
+procedure TTtnResult.Append(const ttnList: ITtnList);
+var
+  fileWriter: TStreamWriter;
+  textData: TStringList;
+begin
+  textData := TStringList.Create();
+  fileWriter := TFile.AppendText(TPath.Combine(Folder, 'Results.csv'));
+  try
+    ttnList.Save(textData);
+    fileWriter.WriteLine(textData.Text);
+    //todo: update documents.csv
+  finally
+    fileWriter.Free();
+    textData.Free();
+  end;
 end;
 
 end.

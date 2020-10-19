@@ -8,37 +8,39 @@ uses
 
 type
   TTtnResultStorage = class(TTtnEnumerableList<ITTnResult>, ITtnResultstorage)
+    procedure CreateResult(const AName: string);
   private
     FActiveResult: ITTnResult;
+    FRootFolder: string;
     function GetActiveResult: ITTnResult;
-    function Load(const AFolder: string): Boolean;
+    function Load(const ARootFolder: string): Boolean;
     procedure SetActiveResult(const Value: ITTnResult);
-    procedure CreateResult(const AFile: string);
-    procedure DeleteResult(const AFile: string);
-    procedure UpdateResult(const AFile: string; const AText: string);
+    procedure DeleteResult(const AName: string);
+    property RootFolder: string read FRootFolder;
   end;
 
 implementation
 
 uses
-  System.IOUtils, System.Types, System.SysUtils, System.Classes;
+  System.IOUtils, System.Types, System.SysUtils, System.Classes, Ttn.Constants;
 
 function TTtnResultStorage.GetActiveResult: ITTnResult;
 begin
   Result := FActiveResult;
 end;
 
-function TTtnResultStorage.Load(const AFolder: string): Boolean;
+function TTtnResultStorage.Load(const ARootFolder: string): Boolean;
 var
-  fileArray: TStringDynArray;
-  oneFile: string;
+  resultsArray: TStringDynArray;
+  oneResult: string;
   newResult: ITTnResult;
 begin
-  fileArray := TDirectory.GetFiles(AFolder, '*.csv', TSearchOption.soAllDirectories);
-  for oneFile in fileArray do
+  resultsArray := TDirectory.GetDirectories(ARootFolder);
+  FRootFolder := ARootFolder;
+  for oneResult in resultsArray do
   begin
     newResult := Add();
-    newResult.FileName := oneFile;
+    newResult.Folder := oneResult;
   end;
 end;
 
@@ -47,26 +49,28 @@ begin
   FActiveResult := Value;
 end;
 
-procedure TTtnResultStorage.CreateResult(const AFile: string);
-begin
-  TFile.WriteAllText(AFile, '', TEncoding.UTF8);
-end;
-
-procedure TTtnResultStorage.DeleteResult(const AFile: string);
-begin
-  TFile.Delete(AFile);
-end;
-
-procedure TTtnResultStorage.UpdateResult(const AFile: string; const AText: string);
+procedure TTtnResultStorage.CreateResult(const AName: string);
 var
-  fileWriter: TStreamWriter;
+  newStorage: string;
+  newResult: ITTnResult;
 begin
-  fileWriter := TFile.AppendText(AFile);
-  try
-    fileWriter.WriteLine(AText);
-  finally
-    fileWriter.Free();
-  end;
+  newStorage :=  TPath.Combine(RootFolder, AName);
+  TDirectory.CreateDirectory(newStorage);
+  newResult := Add();
+  newResult.Folder := newStorage;
+end;
+
+procedure TTtnResultStorage.DeleteResult(const AName: string);
+var
+  i: Integer;
+  deletedStorage: string;
+begin
+  deletedStorage := TPath.Combine(RootFolder, AName);
+  TDirectory.Delete(deletedStorage, True);
+  for i := Count-1 downto 0 do
+    if SameText(Items[i].Folder,deletedStorage) then
+      Delete(i);
 end;
 
 end.
+

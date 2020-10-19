@@ -229,8 +229,8 @@ type
   ITTnResult = interface
   ['{DA9C32D2-ECFB-4988-8DD0-0349F56DDBD9}']
     {$REGION 'Property Accessors'}
-    function GetFileName: string;
-    procedure SetFileName(const Value: string);
+    function GetFolder: string;
+    procedure SetFolder(const Value: string);
     function GetDestinationCountry: string;
     procedure SetDestinationCountry(const Value: string);
     function GetDestinationCountryRegion: StringCountryRegion;
@@ -242,8 +242,9 @@ type
     function GetDateTtn: TDate;
     procedure SetDateTtn(const Value: TDate);
     function GetDocuments: ITtnDocumentList;
+    procedure Append(const ttnList: ITtnList);
     {$ENDREGION}
-    property FileName: string read GetFileName write SetFileName;
+    property Folder: string read GetFolder write SetFolder;
     property DestinationCountry: string read GetDestinationCountry write SetDestinationCountry;
     property DestinationCountryRegion: StringCountryRegion read GetDestinationCountryRegion write SetDestinationCountryRegion;
     property ShipmentCountry: string read GetShipmentCountry write SetShipmentCountry;
@@ -259,10 +260,9 @@ type
     procedure SetActiveResult(const Value: ITTnResult);
     {$ENDREGION}
     property ActiveResult: ITTnResult read GetActiveResult write SetActiveResult;
-    function Load(const AFolder: string): Boolean;
-    procedure CreateResult(const AFile: string);
-    procedure DeleteResult(const AFile: string);
-    procedure UpdateResult(const AFile: string; const AText: string);
+    function Load(const ARootFolder: string): Boolean;
+    procedure CreateResult(const AName: string);
+    procedure DeleteResult(const AName: string);
   end;
 
 implementation
