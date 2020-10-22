@@ -248,6 +248,7 @@ type
     function GetDateTtn: TDate;
     procedure SetDateTtn(const Value: TDate);
     function GetDocuments: ITtnDocumentList;
+    function GetTtnList: ITtnList;
     {$ENDREGION}
     property Folder: string read GetFolder write SetFolder;
     property DestinationCountry: string read GetDestinationCountry write SetDestinationCountry;
@@ -256,7 +257,9 @@ type
     property ShipmentCountryRegion: StringCountryRegion read GetShipmentCountryRegion write SetShipmentCountryRegion;
     property DateTtn: TDate read GetDateTtn write SetDateTtn;
     property Documents: ITtnDocumentList read GetDocuments;
+    property TtnList: ITtnList read GetTtnList;
     procedure Append(const ttnList: ITtnList);
+    procedure Init();
   end;
 
   ITtnResultStorage = interface(ITtnListBase<ITTnResult>)
