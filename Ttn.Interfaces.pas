@@ -40,13 +40,19 @@ type
 
   ITtnListBase<T> = interface(ITtnEnumerable<T>)
   ['{C8ADF7F6-8F43-414E-AB41-D51DC74C59E3}']
-    function Add: T;
-    procedure Clear;
+  {$REGION 'Property accessors'}
     function GetCount: Integer;
     function GetItems(Index: Integer): T;
-    procedure Delete(const Index: Integer);
+    function GetLast: T;
+    function GetFirst: T;
+  {$ENDREGION}
+    function Add: T;
+    procedure Clear;
     property Count: Integer read GetCount;
     property Items[Index: Integer]: T read GetItems; default;
+    procedure Delete(const Index: Integer);
+    property Last: T read GetLast;
+    property First: T read GetFirst;
   end;
 
 
@@ -242,7 +248,6 @@ type
     function GetDateTtn: TDate;
     procedure SetDateTtn(const Value: TDate);
     function GetDocuments: ITtnDocumentList;
-    procedure Append(const ttnList: ITtnList);
     {$ENDREGION}
     property Folder: string read GetFolder write SetFolder;
     property DestinationCountry: string read GetDestinationCountry write SetDestinationCountry;
@@ -251,6 +256,7 @@ type
     property ShipmentCountryRegion: StringCountryRegion read GetShipmentCountryRegion write SetShipmentCountryRegion;
     property DateTtn: TDate read GetDateTtn write SetDateTtn;
     property Documents: ITtnDocumentList read GetDocuments;
+    procedure Append(const ttnList: ITtnList);
   end;
 
   ITtnResultStorage = interface(ITtnListBase<ITTnResult>)
