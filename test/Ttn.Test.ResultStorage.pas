@@ -119,13 +119,15 @@ procedure TTtnTestResultStorage.TestCRUD;
     );
   end;
 
-  function DoUpdate(const AFile, AText: string): TTestLocalMethod;
+  function DoUpdate(const AListTtn: ITtnList): TTestLocalMethod;
   begin
     Result :=
     (
       procedure()
       begin
-        //todo: ResultStorage.UpdateResult(AFile, AText);
+        ResultStorage.ActiveResult := ResultStorage.Last;
+        ResultStorage.ActiveResult.Append(AListTtn);
+        ResultStorage.ActiveResult.Init();
       end
     );
   end;
@@ -133,15 +135,11 @@ procedure TTtnTestResultStorage.TestCRUD;
 const
   folder_root_resultsorage = '.\_TestData\TestResultsStorage\CRUD';
   folder_to_test_crud = 'CRUD Проверка';
-  file_payload1 = '1 тест CRUD для ResultsStorage';
-  file_payload2 = '2 тест CRUD для ResultsStorage';
 var
-  checkPayload: TStringList;
-  defaultFileInStorage: string;
+  listTtn: ITtnList;
 begin
   Assert.WillRaise(DoLoad('AbraCadabra\'), EDirectoryNotFoundException);
   Assert.WillRaise(DoCreate(''), ENotSupportedException);
-  //todo: Assert.WillRaise(DoUpdate('AbraCadabra','AbraCadabra'), EDirectoryNotFoundException);
 
   Assert.WillNotRaise(DoLoad(folder_root_resultsorage));
 
@@ -149,21 +147,31 @@ begin
   Assert.IsTrue(DirectoryExists(folder_root_resultsorage+'\'+folder_to_test_crud),' Storage wasn`t created: '+folder_to_test_crud);
   Assert.AreEqual(1, ResultStorage.Count, 'Results collection wasn`t appended');
 
-  {todo:
-  Assert.WillNotRaise(DoUpdate(folder_to_test_crud, file_payload1));
-  Assert.WillNotRaise(DoUpdate(folder_to_test_crud, file_payload2));
-  checkPayload := TStringList.Create();
-  try
-    checkPayload.LoadFromFile(folder_to_test_crud, TEncoding.UTF8);
-    Assert.AreEqual(
-      file_payload1+sLineBreak+file_payload2+sLineBreak,
-      checkPayload.Text,
-      'File wasn`t updated '+folder_to_test_crud
-    );
-  finally
-    checkPayload.Free();
-  end;
-  }
+  listTtn := TTtnResolver.Resolve<ITtnList>;
+  listTtn.Add;
+    listTtn.Last.NUMBER := 1;
+    listTtn.Last.KOD := '123';
+    listTtn.Last.STR_PR := 'Zombie-land';
+    listTtn.Last.NAME := 'Name';
+    listTtn.Last.QUANTITY := 3;
+    listTtn.Last.SIGN := 'O';
+    listTtn.Last.VAL := 'Tugr';
+    listTtn.Last.WEIGHT1 := 1.14;
+    listTtn.Last.WEIGHT2 := 2.14;
+    listTtn.Last.WEIGHT3 := 3.14;
+    listTtn.Last.DestinationCountry := 'VillaRibo';
+    listTtn.Last.DestinationCountryRegion := 'RIB';
+    listTtn.Last.DeliveryCountry := 'VillaBadgo';
+    listTtn.Last.DeliveryCountryRegion := 'BAD';
+    listTtn.Last.COST := 10.0;
+
+  Assert.WillNotRaise(DoUpdate(listTtn));
+  Assert.AreEqual(
+    listTtn.Last.AsText,
+    ResultStorage.ActiveResult.TtnList.Last.AsText,
+    'Results were not updated.'
+  );
+
   Assert.WillNotRaise(DoDelete(folder_to_test_crud));
   Assert.IsFalse(DirectoryExists(folder_root_resultsorage+'\'+folder_to_test_crud),' Storage wasn`t deleted: '+folder_to_test_crud);
   Assert.AreEqual(0, ResultStorage.Count, 'Results collection wasn`t emtied');

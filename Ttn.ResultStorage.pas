@@ -8,7 +8,6 @@ uses
 
 type
   TTtnResultStorage = class(TTtnEnumerableList<ITTnResult>, ITtnResultstorage)
-    procedure CreateResult(const AName: string);
   private
     FActiveResult: ITTnResult;
     FRootFolder: string;
@@ -16,6 +15,8 @@ type
     function Load(const ARootFolder: string): Boolean;
     procedure SetActiveResult(const Value: ITTnResult);
     procedure DeleteResult(const AName: string);
+    procedure CreateResult(const AName: string);
+    function FindStrorage(const AStoragePath: string; out idx: Integer): Boolean;
     property RootFolder: string read FRootFolder;
   end;
 
@@ -51,13 +52,17 @@ end;
 
 procedure TTtnResultStorage.CreateResult(const AName: string);
 var
+  iDummy: Integer;
   newStorage: string;
   newResult: ITTnResult;
 begin
   newStorage :=  TPath.Combine(RootFolder, AName);
   TDirectory.CreateDirectory(newStorage);
-  newResult := Add();
-  newResult.Folder := newStorage;
+  if not FindStrorage(newStorage, iDummy) then
+  begin
+    newResult := Add();
+    newResult.Folder := newStorage;
+  end;
 end;
 
 procedure TTtnResultStorage.DeleteResult(const AName: string);
@@ -70,6 +75,15 @@ begin
   for i := Count-1 downto 0 do
     if SameText(Items[i].Folder,deletedStorage) then
       Delete(i);
+end;
+
+function TTtnResultStorage.FindStrorage(const AStoragePath: string; out idx: Integer): Boolean;
+begin
+  idx := Count;
+  repeat
+    Dec(idx);
+  until SameText(Items[idx].Folder, AStoragePath);
+  Result := idx >= 0;
 end;
 
 end.

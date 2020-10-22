@@ -78,10 +78,11 @@ var
 begin
   Clear();
   for line in AStrings do
-  begin
-    obj := Add();
-    obj.AsText := line;
-  end;
+    if not line.IsEmpty then
+    begin
+      obj := Add();
+      obj.AsText := line;
+    end;
 end;
 
 end.

@@ -16,6 +16,7 @@ type
     FShipmentCountry: string;
     FShipmentCountryRegion: StringCountryRegion;
     FDocuments: ITtnDocumentList;
+    FTtnList: ITtnList;
     function GetDateTtn: TDate;
     function GetDestinationCountry: string;
     function GetDestinationCountryRegion: StringCountryRegion;
@@ -30,8 +31,12 @@ type
     procedure SetShipmentCountryRegion(const Value: StringCountryRegion);
     function GetDocuments: ITtnDocumentList;
     procedure Append(const ttnList: ITtnList);
+    procedure Init;
+    function ResultsFileName: string;
+    function DocumentsFileName: string;
+    function GetTtnList: ITtnList;
   public
-    constructor Create(ADocuments: ITtnDocumentList);
+    constructor Create(ADocuments: ITtnDocumentList; ATtnList: ITtnList);
     destructor Destroy; override;
     property DestinationCountry: string read GetDestinationCountry write SetDestinationCountry;
     property DestinationCountryRegion: StringCountryRegion read GetDestinationCountryRegion write SetDestinationCountryRegion;
@@ -40,6 +45,7 @@ type
     property DateTtn: TDate read GetDateTtn write SetDateTtn;
     property Documents: ITtnDocumentList read GetDocuments;
     property Folder: string read GetFolder write SetFolder;
+    property TtnList: ITtnList read GetTtnList;
   end;
 
 implementation
@@ -112,10 +118,11 @@ begin
   Result := FDocuments;
 end;
 
-constructor TTtnResult.Create(ADocuments: ITtnDocumentList);
+constructor TTtnResult.Create(ADocuments: ITtnDocumentList; ATtnList: ITtnList);
 begin
   inherited Create;
   FDocuments := ADocuments;
+  FTtnList := ATtnList;
 end;
 
 destructor TTtnResult.Destroy;
@@ -130,7 +137,7 @@ var
   textData: TStringList;
 begin
   textData := TStringList.Create();
-  fileWriter := TFile.AppendText(TPath.Combine(Folder, 'Results.csv'));
+  fileWriter := TFile.AppendText(ResultsFileName);
   try
     ttnList.Save(textData);
     fileWriter.WriteLine(textData.Text);
@@ -140,5 +147,34 @@ begin
     textData.Free();
   end;
 end;
+
+procedure TTtnResult.Init;
+var
+  fileList: TStringList;
+begin
+  fileList := TStringList.Create();
+  try
+    fileList.LoadFromFile(ResultsFileName);
+    TtnList.Load(fileList);
+  finally
+    fileList.Free();
+  end;
+end;
+
+function TTtnResult.ResultsFileName: string;
+begin
+  Result := TPath.Combine(Folder, 'Results.csv');
+end;
+
+function TTtnResult.DocumentsFileName: string;
+begin
+  Result := TPath.Combine(Folder, 'Documents.csv');
+end;
+
+function TTtnResult.GetTtnList: ITtnList;
+begin
+  Result := FTtnList;
+end;
+
 
 end.
