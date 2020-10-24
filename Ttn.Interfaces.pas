@@ -233,6 +233,10 @@ type
 
   ITtnDocumentList = interface(ITtnListBase<ITtnDocument>)
   ['{333B36A3-8762-4E4E-B1C9-1DA7A6CEE2D1}']
+    procedure Save(const AStrings: TStrings); overload;
+    procedure Load(const AStrings: TStrings); overload;
+    procedure Save(const AFile: string); overload;
+    procedure Load(const AFile: string); overload;
   end;
 
   ITTnResult = interface

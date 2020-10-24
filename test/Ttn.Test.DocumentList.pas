@@ -17,13 +17,15 @@ type
     [TearDown]
     procedure TearDown;
     [Test]
-    procedure Test1;
+    procedure Test_LoadSave;
+    [Test]
+    procedure Load_BoundaryConditions;
   end;
 
 implementation
 
 uses
-  Ttn.Registration;
+  Ttn.Registration, System.Classes, System.SysUtils;
 
 procedure TTestTtnDocumentList.Setup;
 begin
@@ -35,9 +37,54 @@ begin
   FDocList := nil;
 end;
 
-procedure TTestTtnDocumentList.Test1;
+procedure TTestTtnDocumentList.Test_LoadSave;
+
+  procedure AddDocs(const Count: Integer);
+  var
+    idx: Integer;
+  begin
+    for idx := 1 to Count do
+    begin
+      DocList.Add();
+        DocList.Last.NumberObj := idx;
+        DocList.Last.DocumentCode := 'DocCode_'+idx.ToString;
+        DocList.Last.DocumentNumber := 'DocNum_'+idx.ToString;
+        DocList.Last.DocumentDate := Now;
+    end;
+  end;
+
+const
+  doc_count = 5;
+var
+  sl: TStringList;
 begin
-  Assert.Pass();
+  sl := TStringList.Create();
+  try
+    AddDocs(doc_count);
+    DocList.Save(sl);
+    DocList.Load(sl);
+    Assert.AreEqual(
+      doc_count,
+      DocList.Count
+    );
+  finally
+    sl.Free();
+  end;
+end;
+
+procedure TTestTtnDocumentList.Load_BoundaryConditions;
+
+  function ListLoadFileDelegate(const AFile: string): TTestLocalMethod;
+  begin
+    Result :=
+      procedure()
+      begin
+        DocList.Load(AFile);
+      end;
+  end;
+
+begin
+  Assert.WillRaise(ListLoadFileDelegate('Abracadabra.csv'),EFOpenError);
 end;
 
 initialization
