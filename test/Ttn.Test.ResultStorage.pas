@@ -119,14 +119,13 @@ procedure TTtnTestResultStorage.TestCRUD;
     );
   end;
 
-  function DoUpdate(const AListTtn: ITtnList): TTestLocalMethod;
+  function DoUpdate(const AListTtn: ITtnList; const ADocuments: ITtnDocumentList): TTestLocalMethod;
   begin
     Result :=
     (
       procedure()
       begin
-        ResultStorage.ActiveResult := ResultStorage.Last;
-        ResultStorage.ActiveResult.Append(AListTtn);
+        ResultStorage.ActiveResult.Append(AListTtn, ADocuments);
         ResultStorage.ActiveResult.Init();
       end
     );
@@ -137,6 +136,7 @@ const
   folder_to_test_crud = 'CRUD Проверка';
 var
   listTtn: ITtnList;
+  listDocs: ITtnDocumentList;
 begin
   Assert.WillRaise(DoLoad('AbraCadabra\'), EDirectoryNotFoundException);
   Assert.WillRaise(DoCreate(''), ENotSupportedException);
@@ -146,6 +146,15 @@ begin
   Assert.WillNotRaise(DoCreate(folder_to_test_crud));
   Assert.IsTrue(DirectoryExists(folder_root_resultsorage+'\'+folder_to_test_crud),' Storage wasn`t created: '+folder_to_test_crud);
   Assert.AreEqual(1, ResultStorage.Count, 'Results collection wasn`t appended');
+
+  ResultStorage.ActiveResult := ResultStorage.Last;
+
+  listDocs := TTtnResolver.Resolve<ITtnDocumentList>;
+  listDocs.Add();
+    listDocs.Last.NumberObj := 1;
+    listDocs.Last.DocumentCode := 'DocCode';
+    listDocs.Last.DocumentNumber := 'DocNum';
+    listDocs.Last.DocumentDate := Now;
 
   listTtn := TTtnResolver.Resolve<ITtnList>;
   listTtn.Add;
@@ -165,10 +174,23 @@ begin
     listTtn.Last.DeliveryCountryRegion := 'BAD';
     listTtn.Last.COST := 10.0;
 
-  Assert.WillNotRaise(DoUpdate(listTtn));
+  Assert.WillNotRaise(DoUpdate(listTtn, listDocs));
+  Assert.IsTrue(
+    FileExists(ResultStorage.ActiveResult.ResultsFileName),
+    'Results file was not created'
+  );
+  Assert.IsTrue(
+    FileExists(ResultStorage.ActiveResult.DocumentsFileName),
+    'Documents file was not created'
+  );
   Assert.AreEqual(
     listTtn.Last.AsText,
     ResultStorage.ActiveResult.TtnList.Last.AsText,
+    'Results were not updated.'
+  );
+    Assert.AreEqual(
+    listDocs.Last.AsText,
+    ResultStorage.ActiveResult.Documents.Last.AsText,
     'Results were not updated.'
   );
 

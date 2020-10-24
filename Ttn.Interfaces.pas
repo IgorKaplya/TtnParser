@@ -266,8 +266,10 @@ type
     property DateTtn: TDate read GetDateTtn write SetDateTtn;
     property Documents: ITtnDocumentList read GetDocuments;
     property TtnList: ITtnList read GetTtnList;
-    procedure Append(const ttnList: ITtnList);
+    procedure Append(const ANewTtn: ITtnList; const ADocumentsDescription: ITtnDocumentList);
     procedure Init();
+    function ResultsFileName: string;
+    function DocumentsFileName: string;
   end;
 
   ITtnResultStorage = interface(ITtnListBase<ITTnResult>)

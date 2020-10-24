@@ -8,6 +8,7 @@ uses
 type
 
   TTtnResult = class(TInterfacedObject, ITtnResult)
+    procedure Append(const ANewTtn: ITtnList; const ADocumentsDescription: ITtnDocumentList);
   private
     FDateTtn: TDate;
     FDestinationCountry: string;
@@ -30,7 +31,6 @@ type
     procedure SetShipmentCountry(const Value: string);
     procedure SetShipmentCountryRegion(const Value: StringCountryRegion);
     function GetDocuments: ITtnDocumentList;
-    procedure Append(const ttnList: ITtnList);
     procedure Init;
     function ResultsFileName: string;
     function DocumentsFileName: string;
@@ -131,34 +131,29 @@ begin
   inherited Destroy;
 end;
 
-procedure TTtnResult.Append(const ttnList: ITtnList);
+procedure TTtnResult.Append(const ANewTtn: ITtnList; const ADocumentsDescription: ITtnDocumentList);
 var
-  fileWriter: TStreamWriter;
-  textData: TStringList;
+  newObj: ITtnObj;
+  ttnDoc, newDoc: ITtnDocument;
 begin
-  textData := TStringList.Create();
-  fileWriter := TFile.AppendText(ResultsFileName);
-  try
-    ttnList.Save(textData);
-    fileWriter.WriteLine(textData.Text);
-    //todo: update documents.csv
-  finally
-    fileWriter.Free();
-    textData.Free();
+  for newObj in ANewTtn do
+  begin
+    TtnList.Add().AsText := newObj.AsText;
+    for ttnDoc in ADocumentsDescription do
+    begin
+      newDoc := Documents.Add();
+      newDoc.AsText := ttnDoc.AsText;
+      newDoc.NumberObj := newObj.NUMBER;
+    end;
   end;
+  TtnList.Save(ResultsFileName);
+  Documents.Save(DocumentsFileName);
 end;
 
 procedure TTtnResult.Init;
-var
-  fileList: TStringList;
 begin
-  fileList := TStringList.Create();
-  try
-    fileList.LoadFromFile(ResultsFileName);
-    TtnList.Load(fileList);
-  finally
-    fileList.Free();
-  end;
+  TtnList.Load(ResultsFileName);
+  Documents.Load(DocumentsFileName);
 end;
 
 function TTtnResult.ResultsFileName: string;
