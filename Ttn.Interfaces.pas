@@ -221,11 +221,14 @@ type
     procedure SetDocumentNumber(const Value: string);
     function GetDocumentDate: TDate;
     procedure SetDocumentDate(const Value: TDate);
+    function GetAsText: string;
+    procedure SetAsText(const Value: string);
     {$ENDREGION}
     property NumberObj: Integer read GetNumberObj write SetNumberObj;
     property DocumentCode: string read GetDocumentCode write SetDocumentCode;
     property DocumentNumber: string read GetDocumentNumber write SetDocumentNumber;
     property DocumentDate: TDate read GetDocumentDate write SetDocumentDate;
+    property AsText: string read GetAsText write SetAsText;
   end;
 
   ITtnDocumentList = interface(ITtnListBase<ITtnDocument>)

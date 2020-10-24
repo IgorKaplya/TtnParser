@@ -24,6 +24,8 @@ type
   ETtnWeightProcessingWeightViolatesAcceptable = class(ETtnWeightProcessing);
   ETtnObjAsTxtNotEnoughFields = class(ETtnExc);
   ETtnObjAsTxtFieldIsEmpty = class(ETtnExc);
+  ETtnDocAsTxtNotEnoughFields = class(ETtnExc);
+  ETtnDocAsTxtFieldIsEmpty = class(ETtnExc);
 
 procedure TestErr(bMustBeTrue: Boolean; AMsg: string); overload; deprecated;
 
