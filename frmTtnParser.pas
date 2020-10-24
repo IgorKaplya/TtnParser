@@ -130,7 +130,7 @@ implementation
 
 uses
   Dialogs, SysUtils, Ttn.Errors, dmMain, System.Variants, DB, frmTtnSettings, System.Math, frmAddCod, Ttn.Registration,
-  Ttn.Constants;
+  Ttn.Constants, Winapi.Windows;
 
 const
   column_doc_date = 2;
@@ -244,12 +244,20 @@ var
   newResultStorage: string;
 begin
   if InputQuery('Новая папка для результатов','Введите имя',newResultStorage) then
+  begin
     ResultStorage.CreateResult(newResultStorage);
+    vstResultStorage.RootNodeCount := ResultStorage.Count;
+  end;
 end;
 
 procedure TfrmTtnParserMain.actResultStorageDeleteExecute(Sender: TObject);
 begin
-  ResultStorage.DeleteResult(ResultStorage.ActiveResult.Folder);
+  if MessageBox(0, 'Удаление выбранного хрнилища приведет к потере данных.', 'Удаление', MB_OKCANCEL + MB_ICONWARNING) = IDOK then
+  begin
+    ResultStorage.DeleteResult(ResultStorage.ActiveResult);
+    vstResultStorage.RootNodeCount := ResultStorage.Count;
+    vstResultStorage.ClearSelection;
+  end;
 end;
 
 procedure TfrmTtnParserMain.actSettingsExecute(Sender: TObject);
@@ -466,7 +474,7 @@ end;
 procedure TfrmTtnParserMain.vstResultStorageGetText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex;
     TextType: TVSTTextType; var CellText: string);
 begin
-  CellText := ResultStorage[Node.Index].FileName;
+  CellText := ResultStorage[Node.Index].Folder;
 end;
 
 procedure TfrmTtnParserMain.vstTtnDrawText(Sender: TBaseVirtualTree;

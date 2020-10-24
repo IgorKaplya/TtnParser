@@ -288,7 +288,7 @@ type
     property ActiveResult: ITTnResult read GetActiveResult write SetActiveResult;
     function Load(const ARootFolder: string): Boolean;
     procedure CreateResult(const AName: string);
-    procedure DeleteResult(const AName: string);
+    procedure DeleteResult(const AResult: ITTnResult);
   end;
 
 implementation

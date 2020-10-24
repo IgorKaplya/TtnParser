@@ -108,13 +108,13 @@ procedure TTtnTestResultStorage.TestCRUD;
     );
   end;
 
-  function DoDelete(const AFile: string): TTestLocalMethod;
+  function DoDelete(const ARes: ITTnResult): TTestLocalMethod;
   begin
     Result :=
     (
       procedure()
       begin
-        ResultStorage.DeleteResult(AFile)
+        ResultStorage.DeleteResult(ARes)
       end
     );
   end;
@@ -135,7 +135,7 @@ begin
   Assert.IsTrue(DirectoryExists(folder_root_resultsorage+'\'+folder_to_test_crud),' Storage wasn`t created: '+folder_to_test_crud);
   Assert.AreEqual(1, ResultStorage.Count, 'Results collection wasn`t appended');
 
-  Assert.WillNotRaise(DoDelete(folder_to_test_crud));
+  Assert.WillNotRaise(DoDelete(ResultStorage.Last));
   Assert.IsFalse(DirectoryExists(folder_root_resultsorage+'\'+folder_to_test_crud),' Storage wasn`t deleted: '+folder_to_test_crud);
   Assert.AreEqual(0, ResultStorage.Count, 'Results collection wasn`t emtied');
 end;
