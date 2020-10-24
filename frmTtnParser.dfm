@@ -443,9 +443,10 @@ object frmTtnParserMain: TfrmTtnParserMain
           Height = 578
           Align = alLeft
           BorderStyle = bsNone
-          Color = clMenu
+          Color = clActiveBorder
           Colors.UnfocusedSelectionColor = clHighlight
           Colors.UnfocusedSelectionBorderColor = clHighlight
+          DefaultNodeHeight = 32
           Header.AutoSizeIndex = 0
           Header.MainColumn = -1
           Indent = 9
