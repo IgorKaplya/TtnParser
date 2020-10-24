@@ -30,11 +30,11 @@ type
     procedure SetShipmentCountry(const Value: string);
     procedure SetShipmentCountryRegion(const Value: StringCountryRegion);
     function GetDocuments: ITtnDocumentList;
-    procedure Append(const ttnList: ITtnList);
-    procedure Init;
     function ResultsFileName: string;
     function DocumentsFileName: string;
     function GetTtnList: ITtnList;
+    procedure Load;
+    procedure Save;
   public
     constructor Create(ADocuments: ITtnDocumentList; ATtnList: ITtnList);
     destructor Destroy; override;
@@ -46,6 +46,7 @@ type
     property Documents: ITtnDocumentList read GetDocuments;
     property Folder: string read GetFolder write SetFolder;
     property TtnList: ITtnList read GetTtnList;
+    procedure Append(const ANewTtn: ITtnList; const ADocumentsDescription: TArray<ITtnDocumentDescription>);
   end;
 
 implementation
@@ -131,33 +132,23 @@ begin
   inherited Destroy;
 end;
 
-procedure TTtnResult.Append(const ttnList: ITtnList);
+procedure TTtnResult.Append(const ANewTtn: ITtnList; const ADocumentsDescription: TArray<ITtnDocumentDescription>);
 var
-  fileWriter: TStreamWriter;
-  textData: TStringList;
+  newObj: ITtnObj;
+  newDoc: ITtnDocument;
+  descrDoc: ITtnDocumentDescription;
 begin
-  textData := TStringList.Create();
-  fileWriter := TFile.AppendText(ResultsFileName);
-  try
-    ttnList.Save(textData);
-    fileWriter.WriteLine(textData.Text);
-    //todo: update documents.csv
-  finally
-    fileWriter.Free();
-    textData.Free();
-  end;
-end;
-
-procedure TTtnResult.Init;
-var
-  fileList: TStringList;
-begin
-  fileList := TStringList.Create();
-  try
-    fileList.LoadFromFile(ResultsFileName);
-    TtnList.Load(fileList);
-  finally
-    fileList.Free();
+  for newObj in ANewTtn do
+  begin
+    TtnList.Add().AsText := newObj.AsText;
+    for descrDoc in ADocumentsDescription do
+    begin
+      newDoc := Documents.Add();
+      newDoc.DocumentCode := descrDoc.DocumentCode;
+      newDoc.DocumentNumber := descrDoc.DocumentNumber;
+      newDoc.DocumentDate := descrDoc.DocumentDate;
+      newDoc.NumberObj := newObj.NUMBER;
+    end;
   end;
 end;
 
@@ -174,6 +165,18 @@ end;
 function TTtnResult.GetTtnList: ITtnList;
 begin
   Result := FTtnList;
+end;
+
+procedure TTtnResult.Load;
+begin
+  TtnList.Load(ResultsFileName);
+  Documents.Load(DocumentsFileName);
+end;
+
+procedure TTtnResult.Save;
+begin
+  TtnList.Save(ResultsFileName);
+  Documents.Save(DocumentsFileName);
 end;
 
 

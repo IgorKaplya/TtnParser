@@ -150,6 +150,7 @@ begin
         <DCCReference Include="Ttn.Test.Parser.pas"/>
         <DCCReference Include="Ttn.Test.Processor.pas"/>
         <DCCReference Include="Ttn.Test.ResultStorage.pas"/>
+        <DCCReference Include="Ttn.Test.Result.pas"/>
         <DCCReference Include="Ttn.Test.TtnList.pas"/>
         <DCCReference Include="Ttn.Test.TtnObj.pas"/>
         <DCCReference Include="Ttn.Test.DocumentList.pas"/>

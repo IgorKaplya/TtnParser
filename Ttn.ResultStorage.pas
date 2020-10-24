@@ -82,7 +82,7 @@ begin
   idx := Count;
   repeat
     Dec(idx);
-  until SameText(Items[idx].Folder, AStoragePath);
+  until (idx<0) or SameText(Items[idx].Folder, AStoragePath);
   Result := idx >= 0;
 end;
 

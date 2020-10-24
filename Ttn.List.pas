@@ -14,10 +14,10 @@ uses
 
 type
   TTtnList = class(TTtnEnumerableList<ITtnObj>, ITtnList)
-  private
   public
     constructor Create(ATtnObjFactory: ITtnFactory<ITtnObj>);
-    procedure Save(const AStrings: TStrings);
+    procedure Save(const AFile: string); overload;
+    procedure Save(const AStrings: TStrings); overload;
     procedure Sort;
     procedure Load(const AFile: string); overload;
     procedure Load(const AStrings: TStrings); overload;
@@ -35,7 +35,7 @@ var
   obj: ITtnObj;
 begin
   AStrings.Clear();
-  for obj in FItems do
+  for obj in Self do
     AStrings.Add(obj.AsText);
 end;
 
@@ -64,7 +64,7 @@ var
 begin
   fileLoad := TStringList.Create();
   try
-    fileLoad.LoadFromFile(AFile);
+    fileLoad.LoadFromFile(AFile, TEncoding.UTF8);
     Load(fileLoad);
   finally
     fileLoad.Free();
@@ -83,6 +83,19 @@ begin
       obj := Add();
       obj.AsText := line;
     end;
+end;
+
+procedure TTtnList.Save(const AFile: string);
+var
+  sl: TStringList;
+begin
+  sl := TStringList.Create();
+  try
+    Save(sl);
+    sl.SaveToFile(AFile, TEncoding.Utf8);
+  finally
+    sl.Free()
+  end;
 end;
 
 end.

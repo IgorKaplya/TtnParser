@@ -120,7 +120,8 @@ type
 
   ITtnList  = interface(ITtnListBase<ITtnObj>)
   ['{C8ADF7F6-8F43-414E-AB41-D51DC74C59E3}']
-    procedure Save(const AStrings: TStrings);
+    procedure Save(const AStrings: TStrings); overload;
+    procedure Save(const AFile: string); overload;
     procedure Load(const AStrings: TStrings); overload;
     procedure Load(const AFile: string); overload;
     procedure Sort;
@@ -210,11 +211,8 @@ type
     property KodList: ITtnKodList read GetKodList;
   end;
 
-  ITtnDocument = interface
-  ['{1BE92079-3A87-4BCB-8C5C-54E29D18B158}']
+  ITtnDocumentDescription = interface
     {$REGION 'Property Accessors'}
-    function GetNumberObj: Integer;
-    procedure SetNumberObj(const Value: Integer);
     function GetDocumentCode: string;
     procedure SetDocumentCode(const Value: string);
     function GetDocumentNumber: string;
@@ -222,14 +220,29 @@ type
     function GetDocumentDate: TDate;
     procedure SetDocumentDate(const Value: TDate);
     {$ENDREGION}
-    property NumberObj: Integer read GetNumberObj write SetNumberObj;
     property DocumentCode: string read GetDocumentCode write SetDocumentCode;
     property DocumentNumber: string read GetDocumentNumber write SetDocumentNumber;
     property DocumentDate: TDate read GetDocumentDate write SetDocumentDate;
   end;
 
+  ITtnDocument = interface(ITtnDocumentDescription)
+  ['{1BE92079-3A87-4BCB-8C5C-54E29D18B158}']
+    {$REGION 'Property Accessors'}
+    function GetNumberObj: Integer;
+    procedure SetNumberObj(const Value: Integer);
+    function GetAsText: string;
+    procedure SetAsText(const Value: string);
+    {$ENDREGION}
+    property NumberObj: Integer read GetNumberObj write SetNumberObj;
+    property AsText: string read GetAsText write SetAsText;
+  end;
+
   ITtnDocumentList = interface(ITtnListBase<ITtnDocument>)
   ['{333B36A3-8762-4E4E-B1C9-1DA7A6CEE2D1}']
+    procedure Save(const AStrings: TStrings); overload;
+    procedure Load(const AStrings: TStrings); overload;
+    procedure Save(const AFile: string); overload;
+    procedure Load(const AFile: string); overload;
   end;
 
   ITTnResult = interface
@@ -258,8 +271,12 @@ type
     property DateTtn: TDate read GetDateTtn write SetDateTtn;
     property Documents: ITtnDocumentList read GetDocuments;
     property TtnList: ITtnList read GetTtnList;
-    procedure Append(const ttnList: ITtnList);
-    procedure Init();
+    //procedure Append(const ANewTtn: ITtnList; const ADocumentsDescription: ITtnDocumentList);
+    procedure Append(const ANewTtn: ITtnList; const ADocumentsDescription: TArray<ITtnDocumentDescription>);
+    procedure Load;
+    procedure Save;
+    function ResultsFileName: string;
+    function DocumentsFileName: string;
   end;
 
   ITtnResultStorage = interface(ITtnListBase<ITTnResult>)
