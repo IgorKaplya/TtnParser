@@ -120,7 +120,8 @@ type
 
   ITtnList  = interface(ITtnListBase<ITtnObj>)
   ['{C8ADF7F6-8F43-414E-AB41-D51DC74C59E3}']
-    procedure Save(const AStrings: TStrings);
+    procedure Save(const AStrings: TStrings); overload;
+    procedure Save(const AFile: string); overload;
     procedure Load(const AStrings: TStrings); overload;
     procedure Load(const AFile: string); overload;
     procedure Sort;
