@@ -8,7 +8,6 @@ uses
 type
 
   TTtnResult = class(TInterfacedObject, ITtnResult)
-    procedure Append(const ANewTtn: ITtnList; const ADocumentsDescription: ITtnDocumentList);
   private
     FDateTtn: TDate;
     FDestinationCountry: string;
@@ -47,6 +46,7 @@ type
     property Documents: ITtnDocumentList read GetDocuments;
     property Folder: string read GetFolder write SetFolder;
     property TtnList: ITtnList read GetTtnList;
+    procedure Append(const ANewTtn: ITtnList; const ADocumentsDescription: TArray<ITtnDocumentDescription>);
   end;
 
 implementation
@@ -132,18 +132,21 @@ begin
   inherited Destroy;
 end;
 
-procedure TTtnResult.Append(const ANewTtn: ITtnList; const ADocumentsDescription: ITtnDocumentList);
+procedure TTtnResult.Append(const ANewTtn: ITtnList; const ADocumentsDescription: TArray<ITtnDocumentDescription>);
 var
   newObj: ITtnObj;
-  ttnDoc, newDoc: ITtnDocument;
+  newDoc: ITtnDocument;
+  descrDoc: ITtnDocumentDescription;
 begin
   for newObj in ANewTtn do
   begin
     TtnList.Add().AsText := newObj.AsText;
-    for ttnDoc in ADocumentsDescription do
+    for descrDoc in ADocumentsDescription do
     begin
       newDoc := Documents.Add();
-      newDoc.AsText := ttnDoc.AsText;
+      newDoc.DocumentCode := descrDoc.DocumentCode;
+      newDoc.DocumentNumber := descrDoc.DocumentNumber;
+      newDoc.DocumentDate := descrDoc.DocumentDate;
       newDoc.NumberObj := newObj.NUMBER;
     end;
   end;

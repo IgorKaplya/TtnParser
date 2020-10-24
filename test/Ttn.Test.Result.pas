@@ -37,7 +37,7 @@ end;
 
 procedure TTestTtnResult.Test_Append;
 
-  function DoUpdate(const AListTtn: ITtnList; const ADocuments: ITtnDocumentList; const ACount: Integer): TTestLocalMethod;
+  function DoUpdate(const AListTtn: ITtnList; const ADocuments: TArray<ITtnDocumentDescription>; const ACount: Integer): TTestLocalMethod;
   begin
     Result :=
     (
@@ -55,17 +55,15 @@ const
   append_count = 2;
 var
   listTtn: ITtnList;
-  listDocs: ITtnDocumentList;
+  listDocs: TArray<ITtnDocumentDescription>;
   ttn: ITtnObj;
   doc: ITtnDocument;
 begin
-
-  listDocs := TTtnResolver.Resolve<ITtnDocumentList>;
-  listDocs.Add();
-    listDocs.Last.NumberObj := 1;
-    listDocs.Last.DocumentCode := 'DocCode';
-    listDocs.Last.DocumentNumber := 'DocNum';
-    listDocs.Last.DocumentDate := Now;
+  listDocs := [TTtnResolver.Resolve<ITtnDocument>];
+  listDocs[0] := TTtnResolver.Resolve<ITtnDocument>;
+    listDocs[0].DocumentCode := 'DocCode';
+    listDocs[0].DocumentNumber := 'DocNum';
+    listDocs[0].DocumentDate := Now;
 
   listTtn := TTtnResolver.Resolve<ITtnList>;
   listTtn.Add;
@@ -87,7 +85,7 @@ begin
 
   Assert.WillNotRaise(DoUpdate(listTtn, listDocs, append_count));
   Assert.AreEqual(append_count * listTtn.Count, TtnResult.TtnList.Count);
-  Assert.AreEqual(append_count * listTtn.Count * listDocs.Count, TtnResult.Documents.Count);
+  Assert.AreEqual(append_count * listTtn.Count * length(listDocs), TtnResult.Documents.Count);
 
   for ttn in TtnResult.TtnList do
     Assert.AreEqual(
@@ -97,11 +95,11 @@ begin
     );
 
   for doc in TtnResult.Documents do
-    Assert.AreEqual(
-    listDocs.Last.AsText,
-    doc.AsText,
-    'Results were not updated.'
-  );
+  begin
+    Assert.AreEqual(listDocs[0].DocumentCode, doc.DocumentCode, 'Results were not updated.');
+    Assert.AreEqual(listDocs[0].DocumentNumber, doc.DocumentNumber, 'Results were not updated.');
+    Assert.AreEqual(listDocs[0].DocumentDate, doc.DocumentDate, 'Results were not updated.');
+  end;
 end;
 
 initialization

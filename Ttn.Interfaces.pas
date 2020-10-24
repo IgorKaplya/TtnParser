@@ -211,24 +211,29 @@ type
     property KodList: ITtnKodList read GetKodList;
   end;
 
-  ITtnDocument = interface
-  ['{1BE92079-3A87-4BCB-8C5C-54E29D18B158}']
+  ITtnDocumentDescription = interface
     {$REGION 'Property Accessors'}
-    function GetNumberObj: Integer;
-    procedure SetNumberObj(const Value: Integer);
     function GetDocumentCode: string;
     procedure SetDocumentCode(const Value: string);
     function GetDocumentNumber: string;
     procedure SetDocumentNumber(const Value: string);
     function GetDocumentDate: TDate;
     procedure SetDocumentDate(const Value: TDate);
+    {$ENDREGION}
+    property DocumentCode: string read GetDocumentCode write SetDocumentCode;
+    property DocumentNumber: string read GetDocumentNumber write SetDocumentNumber;
+    property DocumentDate: TDate read GetDocumentDate write SetDocumentDate;
+  end;
+
+  ITtnDocument = interface(ITtnDocumentDescription)
+  ['{1BE92079-3A87-4BCB-8C5C-54E29D18B158}']
+    {$REGION 'Property Accessors'}
+    function GetNumberObj: Integer;
+    procedure SetNumberObj(const Value: Integer);
     function GetAsText: string;
     procedure SetAsText(const Value: string);
     {$ENDREGION}
     property NumberObj: Integer read GetNumberObj write SetNumberObj;
-    property DocumentCode: string read GetDocumentCode write SetDocumentCode;
-    property DocumentNumber: string read GetDocumentNumber write SetDocumentNumber;
-    property DocumentDate: TDate read GetDocumentDate write SetDocumentDate;
     property AsText: string read GetAsText write SetAsText;
   end;
 
@@ -266,7 +271,8 @@ type
     property DateTtn: TDate read GetDateTtn write SetDateTtn;
     property Documents: ITtnDocumentList read GetDocuments;
     property TtnList: ITtnList read GetTtnList;
-    procedure Append(const ANewTtn: ITtnList; const ADocumentsDescription: ITtnDocumentList);
+    //procedure Append(const ANewTtn: ITtnList; const ADocumentsDescription: ITtnDocumentList);
+    procedure Append(const ANewTtn: ITtnList; const ADocumentsDescription: TArray<ITtnDocumentDescription>);
     procedure Load;
     procedure Save;
     function ResultsFileName: string;
