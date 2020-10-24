@@ -240,13 +240,16 @@ begin
 end;
 
 procedure TfrmTtnParserMain.actResultStorageAddExecute(Sender: TObject);
+var
+  newResultStorage: string;
 begin
-  ResultStorage.Add().FileName := '123.csv';
+  if InputQuery('Новая папка для результатов','Введите имя',newResultStorage) then
+    ResultStorage.CreateResult(newResultStorage);
 end;
 
 procedure TfrmTtnParserMain.actResultStorageDeleteExecute(Sender: TObject);
 begin
-  ResultStorage.DeleteResult('123.csv');
+  ResultStorage.DeleteResult(ResultStorage.ActiveResult.Folder);
 end;
 
 procedure TfrmTtnParserMain.actSettingsExecute(Sender: TObject);
