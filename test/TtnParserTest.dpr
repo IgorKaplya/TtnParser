@@ -7,6 +7,7 @@ uses
   Ttn.Test.Parser in 'Ttn.Test.Parser.pas',
   Ttn.Test.Processor in 'Ttn.Test.Processor.pas',
   Ttn.Test.ResultStorage in 'Ttn.Test.ResultStorage.pas',
+  Ttn.Test.Result in 'Ttn.Test.Result.pas',
   Ttn.Test.TtnList in 'Ttn.Test.TtnList.pas',
   Ttn.Test.TtnObj in 'Ttn.Test.TtnObj.pas',
   Ttn.Test.DocumentList in 'Ttn.Test.DocumentList.pas',

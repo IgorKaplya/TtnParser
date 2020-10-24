@@ -119,18 +119,6 @@ procedure TTtnTestResultStorage.TestCRUD;
     );
   end;
 
-  function DoUpdate(const AListTtn: ITtnList; const ADocuments: ITtnDocumentList): TTestLocalMethod;
-  begin
-    Result :=
-    (
-      procedure()
-      begin
-        ResultStorage.ActiveResult.Append(AListTtn, ADocuments);
-        ResultStorage.ActiveResult.Init();
-      end
-    );
-  end;
-
 const
   folder_root_resultsorage = '.\_TestData\TestResultsStorage\CRUD';
   folder_to_test_crud = 'CRUD Проверка';
@@ -146,53 +134,6 @@ begin
   Assert.WillNotRaise(DoCreate(folder_to_test_crud));
   Assert.IsTrue(DirectoryExists(folder_root_resultsorage+'\'+folder_to_test_crud),' Storage wasn`t created: '+folder_to_test_crud);
   Assert.AreEqual(1, ResultStorage.Count, 'Results collection wasn`t appended');
-
-  ResultStorage.ActiveResult := ResultStorage.Last;
-
-  listDocs := TTtnResolver.Resolve<ITtnDocumentList>;
-  listDocs.Add();
-    listDocs.Last.NumberObj := 1;
-    listDocs.Last.DocumentCode := 'DocCode';
-    listDocs.Last.DocumentNumber := 'DocNum';
-    listDocs.Last.DocumentDate := Now;
-
-  listTtn := TTtnResolver.Resolve<ITtnList>;
-  listTtn.Add;
-    listTtn.Last.NUMBER := 1;
-    listTtn.Last.KOD := '123';
-    listTtn.Last.STR_PR := 'Zombie-land';
-    listTtn.Last.NAME := 'Name';
-    listTtn.Last.QUANTITY := 3;
-    listTtn.Last.SIGN := 'O';
-    listTtn.Last.VAL := 'Tugr';
-    listTtn.Last.WEIGHT1 := 1.14;
-    listTtn.Last.WEIGHT2 := 2.14;
-    listTtn.Last.WEIGHT3 := 3.14;
-    listTtn.Last.DestinationCountry := 'VillaRibo';
-    listTtn.Last.DestinationCountryRegion := 'RIB';
-    listTtn.Last.DeliveryCountry := 'VillaBadgo';
-    listTtn.Last.DeliveryCountryRegion := 'BAD';
-    listTtn.Last.COST := 10.0;
-
-  Assert.WillNotRaise(DoUpdate(listTtn, listDocs));
-  Assert.IsTrue(
-    FileExists(ResultStorage.ActiveResult.ResultsFileName),
-    'Results file was not created'
-  );
-  Assert.IsTrue(
-    FileExists(ResultStorage.ActiveResult.DocumentsFileName),
-    'Documents file was not created'
-  );
-  Assert.AreEqual(
-    listTtn.Last.AsText,
-    ResultStorage.ActiveResult.TtnList.Last.AsText,
-    'Results were not updated.'
-  );
-    Assert.AreEqual(
-    listDocs.Last.AsText,
-    ResultStorage.ActiveResult.Documents.Last.AsText,
-    'Results were not updated.'
-  );
 
   Assert.WillNotRaise(DoDelete(folder_to_test_crud));
   Assert.IsFalse(DirectoryExists(folder_root_resultsorage+'\'+folder_to_test_crud),' Storage wasn`t deleted: '+folder_to_test_crud);

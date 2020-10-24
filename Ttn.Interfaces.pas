@@ -267,7 +267,8 @@ type
     property Documents: ITtnDocumentList read GetDocuments;
     property TtnList: ITtnList read GetTtnList;
     procedure Append(const ANewTtn: ITtnList; const ADocumentsDescription: ITtnDocumentList);
-    procedure Init();
+    procedure Load;
+    procedure Save;
     function ResultsFileName: string;
     function DocumentsFileName: string;
   end;

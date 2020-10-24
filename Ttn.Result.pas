@@ -31,10 +31,11 @@ type
     procedure SetShipmentCountry(const Value: string);
     procedure SetShipmentCountryRegion(const Value: StringCountryRegion);
     function GetDocuments: ITtnDocumentList;
-    procedure Init;
     function ResultsFileName: string;
     function DocumentsFileName: string;
     function GetTtnList: ITtnList;
+    procedure Load;
+    procedure Save;
   public
     constructor Create(ADocuments: ITtnDocumentList; ATtnList: ITtnList);
     destructor Destroy; override;
@@ -146,14 +147,6 @@ begin
       newDoc.NumberObj := newObj.NUMBER;
     end;
   end;
-  TtnList.Save(ResultsFileName);
-  Documents.Save(DocumentsFileName);
-end;
-
-procedure TTtnResult.Init;
-begin
-  TtnList.Load(ResultsFileName);
-  Documents.Load(DocumentsFileName);
 end;
 
 function TTtnResult.ResultsFileName: string;
@@ -169,6 +162,18 @@ end;
 function TTtnResult.GetTtnList: ITtnList;
 begin
   Result := FTtnList;
+end;
+
+procedure TTtnResult.Load;
+begin
+  TtnList.Load(ResultsFileName);
+  Documents.Load(DocumentsFileName);
+end;
+
+procedure TTtnResult.Save;
+begin
+  TtnList.Save(ResultsFileName);
+  Documents.Save(DocumentsFileName);
 end;
 
 
