@@ -285,12 +285,12 @@ procedure TTtnObj.SetAsText(const Value: string);
 var
   i: Integer;
   listFields: TStringList;
-  formatSettings: TFormatSettings;
+  fs: TFormatSettings;
 begin
   listFields := TStringList.Create();
   try
-    formatSettings := TFormatSettings.Create('Windows-1251');
-    formatSettings.ShortDateFormat := C_Date_Tovar_Format;
+    fs := TFormatSettings.Create('Windows-1251');
+    fs.ShortDateFormat := C_Date_Tovar_Format;
     listFields.StrictDelimiter := true;
     listFields.Delimiter := ';';
     listFields.DelimitedText := Value;
@@ -313,7 +313,7 @@ begin
       11 : DestinationCountryRegion := listFields[i];
       12 : DeliveryCountry := listFields[i];
       13 : DeliveryCountryRegion := listFields[i];
-      14 : DateTtn := StrToDate(listFields[i], formatSettings);
+      14 : DateTtn := StrToDate(listFields[i], fs);
       end;
     end;
   finally
