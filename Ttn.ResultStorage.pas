@@ -56,12 +56,15 @@ var
   newStorage: string;
   newResult: ITTnResult;
 begin
-  newStorage :=  TPath.Combine(RootFolder, AName);
-  TDirectory.CreateDirectory(newStorage);
-  if not FindStrorage(newStorage, iDummy) then
+  if not AName.IsEmpty then
   begin
-    newResult := Add();
-    newResult.Folder := newStorage;
+    newStorage :=  TPath.Combine(RootFolder, AName);
+    TDirectory.CreateDirectory(newStorage);
+    if not FindStrorage(newStorage, iDummy) then
+    begin
+      newResult := Add();
+      newResult.Folder := newStorage;
+    end;
   end;
 end;
 
