@@ -14,9 +14,7 @@ uses
   Ttn.Constants in 'Ttn.Constants.pas',
   Ttn.Interfaces in 'Ttn.Interfaces.pas',
   Ttn.Registration in 'Ttn.Registration.pas',
-  Ttn.Processor in 'Ttn.Processor.pas',
-  Ttn.Result.Document.Description in 'Ttn.Result.Document.Description.pas',
-  Ttn.Result.Document.DescriptionList in 'Ttn.Result.Document.DescriptionList.pas';
+  Ttn.Processor in 'Ttn.Processor.pas';
 
 {$R *.res}
 
