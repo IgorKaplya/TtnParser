@@ -5,7 +5,8 @@ interface
 uses
   Forms,IniFiles, Vcl.Controls, Vcl.StdCtrls, System.Classes, Vcl.ActnList, Vcl.StdActns, Vcl.ExtCtrls, Vcl.ComCtrls, Vcl.ImgList,
   Vcl.ToolWin, Ttn.Interfaces, VirtualTrees, Vcl.Graphics, Types, Vcl.Menus,
-  System.ImageList, System.Actions, Vcl.WinXPanels, Vcl.Mask, Vcl.Imaging.pngimage, Vcl.WinXCalendars, Vcl.WinXPickers;
+  System.ImageList, System.Actions, Vcl.WinXPanels, Vcl.Mask, Vcl.Imaging.pngimage, Vcl.WinXCalendars, Vcl.WinXPickers,
+  System.Generics.Collections;
 
 type
   TfrmTtnParserMain = class(TForm)
@@ -20,7 +21,6 @@ type
     actSettings: TAction;
     actRefresh: TAction;
     btnRefresh: TToolButton;
-    FileSaveAs: TFileSaveAs;
     btnFileSaveAs: TToolButton;
     actAddKod: TAction;
     ppmTtn: TPopupMenu;
@@ -62,17 +62,21 @@ type
     btnResultStorageAdd: TButton;
     btnResultStorageDelete: TButton;
     actResultStorageAdd: TAction;
-    actResultStorageDelete: TAction;
+    actProceedParsing: TAction;actResultStorageDelete: TAction;
+    hntBaloon: TBalloonHint;
+    actSaveResult: TAction;
     procedure actAddKodExecute(Sender: TObject);
     procedure actAddKodUpdate(Sender: TObject);
     procedure actActiveResultDocumentAddExecute(Sender: TObject);
     procedure actActiveResultDocumentDeleteExecute(Sender: TObject);
     procedure actActiveResultDocumentDeleteUpdate(Sender: TObject);
     procedure actActiveResultDocumentEditExecute(Sender: TObject);
+    procedure actProceedParsingExecute(Sender: TObject);
     procedure actRefreshExecute(Sender: TObject);
     procedure actRefreshUpdate(Sender: TObject);
     procedure actResultStorageAddExecute(Sender: TObject);
     procedure actResultStorageDeleteExecute(Sender: TObject);
+    procedure actSaveResultExecute(Sender: TObject);
     procedure actSettingsExecute(Sender: TObject);
     procedure cpNewResultDateChange(Sender: TObject);
     procedure edtDeliveryCountryChange(Sender: TObject);
@@ -80,7 +84,6 @@ type
     procedure FormDestroy(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FileOpenInpAccept(Sender: TObject);
-    procedure FileSaveAsAccept(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure medtDeliveryRegionChange(Sender: TObject);
     procedure medtShipmentRegionChange(Sender: TObject);
@@ -107,6 +110,7 @@ type
     FValuta: string;
     FProcessor: ITtnProcessor;
     FResultStorage: ITtnResultStorage;
+    FDocumentsDescription: TList<ITtnDocumentDescription>;
     procedure ClearUnNames;
     function CurTtnObj(out obj: ITtnObj): Boolean;
     procedure SetInpFile(const Value: string);
@@ -116,6 +120,7 @@ type
     property Valuta: string read FValuta;
     property Processor: ITtnProcessor read FProcessor;
     property ResultStorage: ITtnResultStorage read FResultStorage;
+    property DocumentsDescription: TList<ITtnDocumentDescription> read FDocumentsDescription;
   public
     procedure ProcessInpFile;
     procedure StartUp;
@@ -130,12 +135,12 @@ implementation
 
 uses
   Dialogs, SysUtils, Ttn.Errors, dmMain, System.Variants, DB, frmTtnSettings, System.Math, frmAddCod, Ttn.Registration,
-  Ttn.Constants;
+  Ttn.Constants, Winapi.Windows;
 
 const
+  column_doc_code = 0;
+  column_doc_number = 1;
   column_doc_date = 2;
-  column_doc_code = 1;
-  column_doc_number = 0;
   C_ERR_NO_KOD = 'не найден код';
   C_COL_NUMBER      = 0;
   C_COL_KOD         = 1;
@@ -161,10 +166,12 @@ begin
   FTtn := Parser.ParseResult;
   FProcessor := TTtnResolver.Resolve<ITtnProcessor>;
   FResultStorage := TTtnResolver.Resolve<ITtnResultStorage>;
+  FDocumentsDescription := TList<ITtnDocumentDescription>.Create();
 end;
 
 procedure TfrmTtnParserMain.FormDestroy(Sender: TObject);
 begin
+  FDocumentsDescription.Free;
   dm.conMain.Close();
   FreeAndNil(FIniFile);
 end;
@@ -201,10 +208,13 @@ begin
 end;
 
 procedure TfrmTtnParserMain.actActiveResultDocumentAddExecute(Sender: TObject);
+var
+  docDescr: ITtnDocumentDescription;
 begin
-  ResultStorage.ActiveResult.Documents.Add;
-  vstActiveDocuments.RootNodeCount := ResultStorage.ActiveResult.Documents.Count;
-  vstActiveDocuments.EditNode(vstActiveDocuments.GetLast(), column_doc_number);
+  docDescr := TTtnResolver.Resolve<ITtnDocument>;
+  DocumentsDescription.Add(docDescr);
+    vstActiveDocuments.RootNodeCount := DocumentsDescription.Count;
+    vstActiveDocuments.EditNode(vstActiveDocuments.GetLast(), column_doc_code);
 end;
 
 procedure TfrmTtnParserMain.actActiveResultDocumentDeleteExecute(Sender: TObject);
@@ -214,8 +224,8 @@ begin
   n := vstActiveDocuments.GetFirstSelected();
   if Assigned(n) then
   begin
-    ResultStorage.ActiveResult.Documents.Delete(n.Index);
-    vstActiveDocuments.RootNodeCount := ResultStorage.ActiveResult.Documents.Count;
+    DocumentsDescription.Delete(n.Index);
+    vstActiveDocuments.RootNodeCount := DocumentsDescription.Count;
   end;
 end;
 
@@ -229,6 +239,54 @@ begin
   vstActiveDocuments.EditNode(vstActiveDocuments.GetFirstSelected(), vstActiveDocuments.FocusedColumn);
 end;
 
+procedure TfrmTtnParserMain.actProceedParsingExecute(Sender: TObject);
+var
+  HintText: string;
+
+  procedure CheckCondition(const AMustBeTrueCondition: Boolean; const AText: string);
+  begin
+    if not AMustBeTrueCondition then
+      if HintText.IsEmpty then
+        HintText := AText
+      else
+        HintText := HintText + sLineBreak+ AText;
+  end;
+
+  function AllDocumentsDescribedFine(): Boolean;
+  var
+    d: ITtnDocumentDescription;
+  begin
+    for d in DocumentsDescription do
+    begin
+      Result :=
+        not d.DocumentCode.IsEmpty and
+        not d.DocumentNumber.IsEmpty and
+        (d.DocumentDate <> 0);
+      if not Result then
+        Break;
+    end;
+  end;
+
+begin
+  HintText := '';
+
+  CheckCondition(not ResultStorage.ActiveResult.DestinationCountry.IsEmpty, 'Не задана страна назначения');
+  CheckCondition(not ResultStorage.ActiveResult.ShipmentCountry.IsEmpty, 'Не задана страна отправки');
+  CheckCondition(not String(ResultStorage.ActiveResult.DestinationCountryRegion).IsEmpty, 'Не задан регион назначения');
+  CheckCondition(not String(ResultStorage.ActiveResult.ShipmentCountryRegion).IsEmpty, 'Не задан регион отправки');
+  CheckCondition(DocumentsDescription.Count > 0, 'Не заданы документы');
+  CheckCondition(AllDocumentsDescribedFine(), 'Не все документы описаны полностью');
+  CheckCondition(ResultStorage.ActiveResult.DateTtn<>0, 'Не выбрана дата ТТН');
+
+  if HintText.IsEmpty then
+    cpMain.ActiveCard := crdMainParse
+  else
+  begin
+    hntBaloon.Title := HintText;
+    hntBaloon.ShowHint(btnProceed);
+  end;
+end;
+
 procedure TfrmTtnParserMain.actRefreshExecute(Sender: TObject);
 begin
 ProcessInpFile();
@@ -240,13 +298,36 @@ begin
 end;
 
 procedure TfrmTtnParserMain.actResultStorageAddExecute(Sender: TObject);
+var
+  newResultStorage: string;
 begin
-  ResultStorage.Add().FileName := '123.csv';
+  if InputQuery('Новая папка для результатов','Введите имя',newResultStorage) then
+  begin
+    ResultStorage.CreateResult(newResultStorage);
+    vstResultStorage.RootNodeCount := ResultStorage.Count;
+  end;
 end;
 
 procedure TfrmTtnParserMain.actResultStorageDeleteExecute(Sender: TObject);
 begin
-  ResultStorage.DeleteResult('123.csv');
+  if MessageBox(0, 'Удаление выбранного хрнилища приведет к потере данных.', 'Удаление', MB_OKCANCEL + MB_ICONWARNING) = IDOK then
+  begin
+    ResultStorage.DeleteResult(ResultStorage.ActiveResult);
+    vstResultStorage.RootNodeCount := ResultStorage.Count;
+    vstResultStorage.ClearSelection;
+  end;
+end;
+
+procedure TfrmTtnParserMain.actSaveResultExecute(Sender: TObject);
+begin
+  ResultStorage.ActiveResult.Append(
+    ttn,
+    DocumentsDescription.ToArray()
+  );
+  ResultStorage.ActiveResult.Save();
+  ttn.Clear;
+  vstTtn.Clear;
+  cpMain.ActiveCard := crdMainResults;
 end;
 
 procedure TfrmTtnParserMain.actSettingsExecute(Sender: TObject);
@@ -303,20 +384,6 @@ procedure TfrmTtnParserMain.FileOpenInpAccept(Sender: TObject);
 begin
 InpFile:=(Sender as TFileOpen).Dialog.FileName;
 ProcessInpFile;
-end;
-
-procedure TfrmTtnParserMain.FileSaveAsAccept(Sender: TObject);
-{Сохранение результата в файл}
-var
-  sl: TStringList;
-begin
-sl:=TStringList.Create;
-  try
-  Ttn.Save(sl);
-  sl.SaveToFile((Sender as TFileSaveAs).Dialog.FileName);
-  finally
-  FreeAndNil(sl);
-  end;
 end;
 
 procedure TfrmTtnParserMain.FormActivate(Sender: TObject);
@@ -421,9 +488,9 @@ procedure TfrmTtnParserMain.vstActiveDocumentsGetText(Sender: TBaseVirtualTree; 
     TextType: TVSTTextType; var CellText: string);
 begin
   case Column of
-  column_doc_number: CellText := ResultStorage.ActiveResult.Documents[Node.Index].NumberObj.ToString;
-  column_doc_code: CellText := ResultStorage.ActiveResult.Documents[Node.Index].DocumentCode;
-  column_doc_date: CellText := FormatDateTime(C_Date_Tovar_Format, ResultStorage.ActiveResult.Documents[Node.Index].DocumentDate);
+  column_doc_code: CellText := DocumentsDescription[Node.Index].DocumentCode;
+  column_doc_number: CellText := DocumentsDescription[Node.Index].DocumentNumber;
+  column_doc_date: CellText := FormatDateTime(C_Date_Tovar_Format, DocumentsDescription[Node.Index].DocumentDate);
   end;
 end;
 
@@ -435,9 +502,9 @@ begin
   fs := TFormatSettings.Create();
   fs.ShortDateFormat := C_Date_Tovar_Format;
   case Column of
-  column_doc_number: ResultStorage.ActiveResult.Documents[Node.Index].NumberObj := NewText.ToInteger();
-  column_doc_code: ResultStorage.ActiveResult.Documents[Node.Index].DocumentCode := NewText;
-  column_doc_date: ResultStorage.ActiveResult.Documents[Node.Index].DocumentDate := StrToDate(NewText, fs)
+  column_doc_number: DocumentsDescription[Node.Index].DocumentNumber := NewText;
+  column_doc_code: DocumentsDescription[Node.Index].DocumentCode := NewText;
+  column_doc_date: DocumentsDescription[Node.Index].DocumentDate := StrToDate(NewText, fs)
   end;
 end;
 
@@ -448,12 +515,13 @@ begin
   else
   begin
     ResultStorage.ActiveResult := ResultStorage[Sender.GetFirstSelected().Index];
+    if ResultStorage.ActiveResult.TtnList.Count = 0 then
+      ResultStorage.ActiveResult.Load();
     cpResultStorage.ActiveCard := crdActiveResult;
     edtShipmentCountry.Text := ResultStorage.ActiveResult.ShipmentCountry;
     edtDeliveryCountry.Text := ResultStorage.ActiveResult.DestinationCountry;
     medtShipmentRegion.Text := ResultStorage.ActiveResult.ShipmentCountryRegion;
     medtDeliveryRegion.Text := ResultStorage.ActiveResult.DestinationCountryRegion;
-    vstActiveDocuments.RootNodeCount := ResultStorage.ActiveResult.Documents.Count;
     if ResultStorage.ActiveResult.DateTtn = 0 then
       ResultStorage.ActiveResult.DateTtn := Now();
     cpNewResultDate.Date := ResultStorage.ActiveResult.DateTtn;
@@ -463,7 +531,7 @@ end;
 procedure TfrmTtnParserMain.vstResultStorageGetText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex;
     TextType: TVSTTextType; var CellText: string);
 begin
-  CellText := ResultStorage[Node.Index].FileName;
+  CellText := ResultStorage[Node.Index].Folder;
 end;
 
 procedure TfrmTtnParserMain.vstTtnDrawText(Sender: TBaseVirtualTree;

@@ -71,8 +71,6 @@ object frmTtnParserMain: TfrmTtnParserMain
         Caption = 'cpResultStorage'
         ParentBackground = False
         TabOrder = 0
-        ExplicitLeft = 441
-        ExplicitWidth = 1130
         object crdActiveResultNone: TCard
           Left = 0
           Top = 0
@@ -90,7 +88,6 @@ object frmTtnParserMain: TfrmTtnParserMain
           ParentFont = False
           ShowCaption = True
           TabOrder = 0
-          ExplicitWidth = 1130
         end
         object crdActiveResult: TCard
           Left = 0
@@ -100,8 +97,6 @@ object frmTtnParserMain: TfrmTtnParserMain
           Caption = 'crdActiveResult'
           CardIndex = 1
           TabOrder = 1
-          ExplicitLeft = 6
-          ExplicitWidth = 1130
           object gpnlActiveResult: TGridPanel
             AlignWithMargins = True
             Left = 3
@@ -112,7 +107,7 @@ object frmTtnParserMain: TfrmTtnParserMain
             BevelOuter = bvNone
             ColumnCollection = <
               item
-                Value = 36.842105263157890000
+                Value = 36.842105263157900000
               end
               item
                 Value = 10.526315789473680000
@@ -121,7 +116,7 @@ object frmTtnParserMain: TfrmTtnParserMain
                 Value = 5.263157894736842000
               end
               item
-                Value = 36.842105263157890000
+                Value = 36.842105263157900000
               end
               item
                 Value = 10.526315789473680000
@@ -164,7 +159,6 @@ object frmTtnParserMain: TfrmTtnParserMain
                 Value = 100.000000000000000000
               end>
             TabOrder = 0
-            ExplicitWidth = 1124
             object edtDeliveryCountry: TEdit
               AlignWithMargins = True
               Left = 629
@@ -177,9 +171,6 @@ object frmTtnParserMain: TfrmTtnParserMain
               Color = clInactiveCaption
               TabOrder = 2
               OnChange = edtDeliveryCountryChange
-              ExplicitLeft = 594
-              ExplicitTop = 1
-              ExplicitWidth = 407
               ExplicitHeight = 30
             end
             object edtShipmentCountry: TEdit
@@ -194,8 +185,7 @@ object frmTtnParserMain: TfrmTtnParserMain
               Color = clInactiveCaption
               TabOrder = 0
               OnChange = edtShipmentCountryChange
-              ExplicitTop = 3
-              ExplicitWidth = 408
+              ExplicitHeight = 30
             end
             object imgShipment: TImage
               Left = 564
@@ -244,10 +234,7 @@ object frmTtnParserMain: TfrmTtnParserMain
               TabOrder = 3
               Text = '   '
               OnChange = medtDeliveryRegionChange
-              ExplicitLeft = 1007
-              ExplicitTop = 1
-              ExplicitWidth = 113
-              ExplicitHeight = 30
+              ExplicitTop = 3
             end
             object medtShipmentRegion: TMaskEdit
               AlignWithMargins = True
@@ -265,9 +252,7 @@ object frmTtnParserMain: TfrmTtnParserMain
               TabOrder = 1
               Text = '   '
               OnChange = medtShipmentRegionChange
-              ExplicitLeft = 417
-              ExplicitTop = 3
-              ExplicitWidth = 112
+              ExplicitHeight = 30
             end
           end
           object pnlChooseDateAndGo: TPanel
@@ -279,20 +264,18 @@ object frmTtnParserMain: TfrmTtnParserMain
             Align = alBottom
             BevelOuter = bvNone
             TabOrder = 2
-            ExplicitLeft = 6
-            ExplicitWidth = 1124
             object btnProceed: TButton
               Left = 1018
               Top = 0
               Width = 175
               Height = 41
+              Action = actProceedParsing
               Align = alRight
-              Caption = #1044#1072#1083#1077#1077
               ImageAlignment = iaRight
               ImageIndex = 0
               Images = imlMain32
               TabOrder = 1
-              ExplicitLeft = 949
+              ExplicitLeft = 1021
             end
             object cpNewResultDate: TCalendarPicker
               AlignWithMargins = True
@@ -323,9 +306,6 @@ object frmTtnParserMain: TfrmTtnParserMain
               ParentFont = False
               TabOrder = 0
               TextHint = #1042#1099#1073#1077#1088#1080#1090#1077' '#1076#1072#1090#1091
-              ExplicitLeft = 741
-              ExplicitTop = -2
-              ExplicitHeight = 39
             end
           end
           object pnlActiveDocuments: TPanel
@@ -337,10 +317,6 @@ object frmTtnParserMain: TfrmTtnParserMain
             Align = alClient
             BevelOuter = bvNone
             TabOrder = 1
-            ExplicitLeft = 472
-            ExplicitTop = 296
-            ExplicitWidth = 185
-            ExplicitHeight = 41
             object vstActiveDocuments: TVirtualStringTree
               AlignWithMargins = True
               Left = 3
@@ -369,22 +345,20 @@ object frmTtnParserMain: TfrmTtnParserMain
               TreeOptions.EditOptions = toHorizontalEdit
               OnGetText = vstActiveDocumentsGetText
               OnNewText = vstActiveDocumentsNewText
-              ExplicitTop = 0
-              ExplicitWidth = 1070
               Columns = <
                 item
                   Position = 0
-                  Width = 310
-                  WideText = #1053#1086#1084#1077#1088' '#1076#1086#1082#1091#1084#1077#1085#1090#1072
-                end
-                item
-                  Position = 1
-                  Width = 248
+                  Width = 325
                   WideText = #1050#1086#1076' '#1076#1086#1082#1091#1084#1077#1085#1090#1072
                 end
                 item
+                  Position = 1
+                  Width = 259
+                  WideText = #1053#1086#1084#1077#1088' '#1076#1086#1082#1091#1084#1077#1085#1090#1072
+                end
+                item
                   Position = 2
-                  Width = 139
+                  Width = 185
                   WideText = #1044#1072#1090#1072' '#1076#1086#1082#1091#1084#1077#1085#1090#1072
                 end>
             end
@@ -413,7 +387,6 @@ object frmTtnParserMain: TfrmTtnParserMain
                   VerticalPositioning = spvpTop
                 end>
               TabOrder = 1
-              ExplicitTop = 0
               object btnAddResultDocument: TButton
                 Left = 0
                 Top = 0
@@ -471,9 +444,10 @@ object frmTtnParserMain: TfrmTtnParserMain
           Height = 578
           Align = alLeft
           BorderStyle = bsNone
-          Color = clMenu
+          Color = clActiveBorder
           Colors.UnfocusedSelectionColor = clHighlight
           Colors.UnfocusedSelectionBorderColor = clHighlight
+          DefaultNodeHeight = 32
           Header.AutoSizeIndex = 0
           Header.MainColumn = -1
           Indent = 9
@@ -483,9 +457,6 @@ object frmTtnParserMain: TfrmTtnParserMain
           TreeOptions.PaintOptions = [toHotTrack, toShowButtons, toShowDropmark, toShowHorzGridLines, toShowRoot, toThemeAware, toUseBlendedImages]
           OnChange = vstResultStorageChange
           OnGetText = vstResultStorageGetText
-          ExplicitLeft = 0
-          ExplicitTop = 0
-          ExplicitHeight = 618
           Columns = <>
         end
         object stpResultStorageTools: TStackPanel
@@ -685,7 +656,7 @@ object frmTtnParserMain: TfrmTtnParserMain
         object btnFileSaveAs: TToolButton
           Left = 210
           Top = 0
-          Action = FileSaveAs
+          Action = actSaveResult
         end
       end
     end
@@ -716,16 +687,6 @@ object frmTtnParserMain: TfrmTtnParserMain
       OnExecute = actRefreshExecute
       OnUpdate = actRefreshUpdate
     end
-    object FileSaveAs: TFileSaveAs
-      Category = 'File'
-      Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100
-      Dialog.DefaultExt = '.csv'
-      Dialog.Filter = 'CSV|*.csv'
-      Dialog.Options = [ofOverwritePrompt, ofHideReadOnly, ofEnableSizing]
-      Hint = 'Save As|Saves the active file with a new name'
-      ImageIndex = 3
-      OnAccept = FileSaveAsAccept
-    end
     object actAddKod: TAction
       Caption = #1044#1086#1073#1072#1074#1080#1090#1100' '#1082#1086#1076
       Hint = #1044#1086#1073#1072#1074#1080#1090#1100' '#1082#1086#1076' '#1074' '#1073#1072#1079#1091' '#1076#1083#1103' '#1088#1072#1089#1087#1086#1079#1085#1072#1074#1072#1085#1080#1103
@@ -753,6 +714,15 @@ object frmTtnParserMain: TfrmTtnParserMain
     object actResultStorageDelete: TAction
       OnExecute = actResultStorageDeleteExecute
     end
+    object actProceedParsing: TAction
+      Caption = #1044#1072#1083#1077#1077
+      OnExecute = actProceedParsingExecute
+    end
+    object actSaveResult: TAction
+      Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100
+      ImageIndex = 3
+      OnExecute = actSaveResultExecute
+    end
   end
   object imlMain: TImageList
     ColorDepth = cd32Bit
@@ -760,7 +730,7 @@ object frmTtnParserMain: TfrmTtnParserMain
     Left = 336
     Top = 48
     Bitmap = {
-      494C0101050008008C0010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C010105000800A00010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000100202028F010101DF010101FF010101FF010101FF010101DF0202
@@ -1044,7 +1014,7 @@ object frmTtnParserMain: TfrmTtnParserMain
     Left = 352
     Top = 208
     Bitmap = {
-      494C010106000800300020002000FFFFFFFFFF00FFFFFFFFFFFFFFFF424D3600
+      494C010106000800440020002000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000800000004000000001002000000000000080
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -2104,7 +2074,8 @@ object frmTtnParserMain: TfrmTtnParserMain
       F9FFFC1FE3FFE07FFC03C03FFFFFE18FFF8FF03FE000007FFC00003FFFFFF01F
       FF0C007FF00000FFFFF81FFFFFFFF83FFF8C01FFFFFFFFFFFFFFFFFFFFFFFFFF
       FFFC07FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
-      FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
+      FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF00000000000000000000000000000000
+      000000000000}
   end
   object ppmActiveResultsDocuments: TPopupMenu
     Left = 626
@@ -2121,5 +2092,12 @@ object frmTtnParserMain: TfrmTtnParserMain
       Action = actActiveResultDocumentEdit
       Caption = #1048#1079#1084#1077#1085#1080#1090#1100' '#1076#1086#1082#1091#1084#1077#1085#1090' (F2)'
     end
+  end
+  object hntBaloon: TBalloonHint
+    Images = imlMain32
+    Delay = 250
+    HideAfter = 5000
+    Left = 87
+    Top = 121
   end
 end

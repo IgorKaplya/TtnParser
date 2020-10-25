@@ -14,7 +14,7 @@ type
     function GetActiveResult: ITTnResult;
     function Load(const ARootFolder: string): Boolean;
     procedure SetActiveResult(const Value: ITTnResult);
-    procedure DeleteResult(const AName: string);
+    procedure DeleteResult(const AResult: ITTnResult);
     procedure CreateResult(const AName: string);
     function FindStrorage(const AStoragePath: string; out idx: Integer): Boolean;
     property RootFolder: string read FRootFolder;
@@ -56,24 +56,26 @@ var
   newStorage: string;
   newResult: ITTnResult;
 begin
-  newStorage :=  TPath.Combine(RootFolder, AName);
-  TDirectory.CreateDirectory(newStorage);
-  if not FindStrorage(newStorage, iDummy) then
+  if not AName.IsEmpty then
   begin
-    newResult := Add();
-    newResult.Folder := newStorage;
+    newStorage :=  TPath.Combine(RootFolder, AName);
+    TDirectory.CreateDirectory(newStorage);
+    if not FindStrorage(newStorage, iDummy) then
+    begin
+      newResult := Add();
+      newResult.Folder := newStorage;
+      newResult.Save();
+    end;
   end;
 end;
 
-procedure TTtnResultStorage.DeleteResult(const AName: string);
+procedure TTtnResultStorage.DeleteResult(const AResult: ITTnResult);
 var
   i: Integer;
-  deletedStorage: string;
 begin
-  deletedStorage := TPath.Combine(RootFolder, AName);
-  TDirectory.Delete(deletedStorage, True);
+  TDirectory.Delete(AResult.Folder, True);
   for i := Count-1 downto 0 do
-    if SameText(Items[i].Folder,deletedStorage) then
+    if Items[i]=AResult then
       Delete(i);
 end;
 

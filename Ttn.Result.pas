@@ -35,6 +35,8 @@ type
     function GetTtnList: ITtnList;
     procedure Load;
     procedure Save;
+    procedure BackupHistory;
+    function GetHistoryFolder: string;
   public
     constructor Create(ADocuments: ITtnDocumentList; ATtnList: ITtnList);
     destructor Destroy; override;
@@ -46,13 +48,14 @@ type
     property Documents: ITtnDocumentList read GetDocuments;
     property Folder: string read GetFolder write SetFolder;
     property TtnList: ITtnList read GetTtnList;
+    property HistoryFolder: string read GetHistoryFolder;
     procedure Append(const ANewTtn: ITtnList; const ADocumentsDescription: TArray<ITtnDocumentDescription>);
   end;
 
 implementation
 
 uses
-  System.Classes, System.IOUtils;
+  System.Classes, System.IOUtils, System.Types, System.SysUtils, Ttn.Constants;
 
 function TTtnResult.GetDateTtn: TDate;
 begin
@@ -134,20 +137,41 @@ end;
 
 procedure TTtnResult.Append(const ANewTtn: ITtnList; const ADocumentsDescription: TArray<ITtnDocumentDescription>);
 var
-  newObj: ITtnObj;
+  newObj, appendObj: ITtnObj;
   newDoc: ITtnDocument;
   descrDoc: ITtnDocumentDescription;
+  iLastNumber: Integer;
 begin
+  if TtnList.Count>0 then
+    iLastNumber := TtnList.Last.NUMBER
+  else
+    iLastNumber := 0;
   for newObj in ANewTtn do
   begin
-    TtnList.Add().AsText := newObj.AsText;
+    appendObj := TtnList.Add();
+      appendObj.NUMBER := newObj.NUMBER + iLastNumber;
+      appendObj.COST := newObj.COST;
+      appendObj.KOD := newObj.KOD;
+      appendObj.NAME := newObj.NAME;
+      appendObj.QUANTITY := newObj.QUANTITY;
+      appendObj.SIGN := newObj.SIGN;
+      appendObj.STR_PR := newObj.STR_PR;
+      appendObj.VAL := newObj.VAL;
+      appendObj.WEIGHT1 := newObj.WEIGHT1;
+      appendObj.WEIGHT2 := newObj.WEIGHT2;
+      appendObj.WEIGHT3 := newObj.WEIGHT3;
+      appendObj.DestinationCountry := DestinationCountry;
+      appendObj.DestinationCountryRegion := DestinationCountryRegion;
+      appendObj.DeliveryCountry := ShipmentCountry;
+      appendObj.DeliveryCountryRegion := ShipmentCountryRegion;
+      appendObj.DateTtn := DateTtn;
     for descrDoc in ADocumentsDescription do
     begin
       newDoc := Documents.Add();
       newDoc.DocumentCode := descrDoc.DocumentCode;
       newDoc.DocumentNumber := descrDoc.DocumentNumber;
       newDoc.DocumentDate := descrDoc.DocumentDate;
-      newDoc.NumberObj := newObj.NUMBER;
+      newDoc.NumberObj := appendObj.NUMBER;
     end;
   end;
 end;
@@ -171,12 +195,57 @@ procedure TTtnResult.Load;
 begin
   TtnList.Load(ResultsFileName);
   Documents.Load(DocumentsFileName);
+  if TtnList.Count>0 then
+  begin
+    DestinationCountry := TtnList.Last.DestinationCountry;
+    ShipmentCountry := TtnList.Last.DeliveryCountry;
+    DestinationCountryRegion := TtnList.Last.DestinationCountryRegion;
+    ShipmentCountryRegion := TtnList.Last.DeliveryCountryRegion;
+  end;
 end;
 
 procedure TTtnResult.Save;
 begin
+  BackupHistory();
   TtnList.Save(ResultsFileName);
   Documents.Save(DocumentsFileName);
+end;
+
+procedure TTtnResult.BackupHistory;
+
+  procedure TrimFiles();
+  var
+    historyFiles: TStringDynArray;
+    i: Integer;
+  begin
+    historyFiles := TDirectory.GetFiles(HistoryFolder);
+    if length(historyFiles)>=C_Max_Files_History then
+      for i:=0 to (C_Max_Files_History div 2)-1 do
+        TFile.Delete(historyFiles[i]);
+  end;
+
+var
+  date: string;
+begin
+  if FileExists(ResultsFileName) then
+  begin
+    TDirectory.CreateDirectory(HistoryFolder);
+    TrimFiles();
+    date := FormatDateTime('YYYYMMDD_hhmmss_zzz', Now);
+    TFile.Copy(ResultsFileName, TPath.Combine(
+      HistoryFolder,
+      date+'_'+TPath.GetFileNameWithoutExtension(ResultsFileName)),
+      True);
+    TFile.Copy(DocumentsFileName, TPath.Combine(
+      HistoryFolder,
+      date+'_'+TPath.GetFileNameWithoutExtension(DocumentsFileName)),
+      True);
+  end;
+end;
+
+function TTtnResult.GetHistoryFolder: string;
+begin
+  Result := TPath.Combine(Folder, 'History');;
 end;
 
 

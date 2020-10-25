@@ -262,6 +262,7 @@ type
     procedure SetDateTtn(const Value: TDate);
     function GetDocuments: ITtnDocumentList;
     function GetTtnList: ITtnList;
+    function GetHistoryFolder(): string;
     {$ENDREGION}
     property Folder: string read GetFolder write SetFolder;
     property DestinationCountry: string read GetDestinationCountry write SetDestinationCountry;
@@ -271,12 +272,12 @@ type
     property DateTtn: TDate read GetDateTtn write SetDateTtn;
     property Documents: ITtnDocumentList read GetDocuments;
     property TtnList: ITtnList read GetTtnList;
-    //procedure Append(const ANewTtn: ITtnList; const ADocumentsDescription: ITtnDocumentList);
     procedure Append(const ANewTtn: ITtnList; const ADocumentsDescription: TArray<ITtnDocumentDescription>);
     procedure Load;
     procedure Save;
     function ResultsFileName: string;
     function DocumentsFileName: string;
+    property HistoryFolder: string read GetHistoryFolder;
   end;
 
   ITtnResultStorage = interface(ITtnListBase<ITTnResult>)
@@ -288,7 +289,7 @@ type
     property ActiveResult: ITTnResult read GetActiveResult write SetActiveResult;
     function Load(const ARootFolder: string): Boolean;
     procedure CreateResult(const AName: string);
-    procedure DeleteResult(const AName: string);
+    procedure DeleteResult(const AResult: ITTnResult);
   end;
 
 implementation
