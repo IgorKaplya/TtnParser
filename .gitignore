@@ -83,3 +83,5 @@ dunitx-results.xml
 TestInsightSettings.ini
 
 _out/results/
+
+_out/_TestData/result/save/History/

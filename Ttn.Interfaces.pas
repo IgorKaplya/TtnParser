@@ -262,6 +262,7 @@ type
     procedure SetDateTtn(const Value: TDate);
     function GetDocuments: ITtnDocumentList;
     function GetTtnList: ITtnList;
+    function GetHistoryFolder(): string;
     {$ENDREGION}
     property Folder: string read GetFolder write SetFolder;
     property DestinationCountry: string read GetDestinationCountry write SetDestinationCountry;
@@ -276,6 +277,7 @@ type
     procedure Save;
     function ResultsFileName: string;
     function DocumentsFileName: string;
+    property HistoryFolder: string read GetHistoryFolder;
   end;
 
   ITtnResultStorage = interface(ITtnListBase<ITTnResult>)

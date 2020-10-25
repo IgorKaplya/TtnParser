@@ -35,6 +35,8 @@ type
     function GetTtnList: ITtnList;
     procedure Load;
     procedure Save;
+    procedure BackupHistory;
+    function GetHistoryFolder: string;
   public
     constructor Create(ADocuments: ITtnDocumentList; ATtnList: ITtnList);
     destructor Destroy; override;
@@ -46,13 +48,14 @@ type
     property Documents: ITtnDocumentList read GetDocuments;
     property Folder: string read GetFolder write SetFolder;
     property TtnList: ITtnList read GetTtnList;
+    property HistoryFolder: string read GetHistoryFolder;
     procedure Append(const ANewTtn: ITtnList; const ADocumentsDescription: TArray<ITtnDocumentDescription>);
   end;
 
 implementation
 
 uses
-  System.Classes, System.IOUtils;
+  System.Classes, System.IOUtils, System.Types, System.SysUtils, Ttn.Constants;
 
 function TTtnResult.GetDateTtn: TDate;
 begin
@@ -203,8 +206,46 @@ end;
 
 procedure TTtnResult.Save;
 begin
+  BackupHistory();
   TtnList.Save(ResultsFileName);
   Documents.Save(DocumentsFileName);
+end;
+
+procedure TTtnResult.BackupHistory;
+
+  procedure TrimFiles();
+  var
+    historyFiles: TStringDynArray;
+    i: Integer;
+  begin
+    historyFiles := TDirectory.GetFiles(HistoryFolder);
+    if length(historyFiles)>=C_Max_Files_History then
+      for i:=0 to (C_Max_Files_History div 2)-1 do
+        TFile.Delete(historyFiles[i]);
+  end;
+
+var
+  date: string;
+begin
+  if FileExists(ResultsFileName) then
+  begin
+    TDirectory.CreateDirectory(HistoryFolder);
+    TrimFiles();
+    date := FormatDateTime('YYYYMMDD_hhmmss_zzz', Now);
+    TFile.Copy(ResultsFileName, TPath.Combine(
+      HistoryFolder,
+      date+'_'+TPath.GetFileNameWithoutExtension(ResultsFileName)),
+      True);
+    TFile.Copy(DocumentsFileName, TPath.Combine(
+      HistoryFolder,
+      date+'_'+TPath.GetFileNameWithoutExtension(DocumentsFileName)),
+      True);
+  end;
+end;
+
+function TTtnResult.GetHistoryFolder: string;
+begin
+  Result := TPath.Combine(Folder, 'History');;
 end;
 
 
