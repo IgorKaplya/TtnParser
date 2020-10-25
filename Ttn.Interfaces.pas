@@ -225,6 +225,10 @@ type
     property DocumentDate: TDate read GetDocumentDate write SetDocumentDate;
   end;
 
+  ITtnDocumentDescriptionList = interface(ITtnListBase<ITtnDocumentDescription>)
+  ['{5D807547-ED78-461F-8E92-E00EC6F583FC}']
+  end;
+
   ITtnDocument = interface(ITtnDocumentDescription)
   ['{1BE92079-3A87-4BCB-8C5C-54E29D18B158}']
     {$REGION 'Property Accessors'}
@@ -271,7 +275,6 @@ type
     property DateTtn: TDate read GetDateTtn write SetDateTtn;
     property Documents: ITtnDocumentList read GetDocuments;
     property TtnList: ITtnList read GetTtnList;
-    //procedure Append(const ANewTtn: ITtnList; const ADocumentsDescription: ITtnDocumentList);
     procedure Append(const ANewTtn: ITtnList; const ADocumentsDescription: TArray<ITtnDocumentDescription>);
     procedure Load;
     procedure Save;

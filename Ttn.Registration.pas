@@ -30,7 +30,9 @@ uses
   Ttn.Result,
   Ttn.ResultStorage,
   Ttn.Result.Document,
-  Ttn.Result.DocumentList;
+  Ttn.Result.DocumentList,
+  Ttn.Result.Document.Description,
+  Ttn.Result.Document.DescriptionList;
 
 procedure RegisterTypes();
 begin
@@ -53,6 +55,9 @@ begin
   AContainer.RegisterType<TTtnDocument>;
   AContainer.RegisterFactory<ITtnFactory<ITtnDocument>>.AsFactory;
   AContainer.RegisterType<TTtnDocumentList>;
+  AContainer.RegisterType<TTtnDocumentDescription>;
+  AContainer.RegisterFactory<ITtnFactory<ITtnDocumentDescription>>.AsFactory;
+  AContainer.RegisterType<TTtnDocumentDescriptionList>;
 
   AContainer.Build;
 end;
