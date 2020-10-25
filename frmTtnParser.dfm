@@ -234,7 +234,7 @@ object frmTtnParserMain: TfrmTtnParserMain
               TabOrder = 3
               Text = '   '
               OnChange = medtDeliveryRegionChange
-              ExplicitHeight = 30
+              ExplicitTop = 3
             end
             object medtShipmentRegion: TMaskEdit
               AlignWithMargins = True
@@ -656,7 +656,7 @@ object frmTtnParserMain: TfrmTtnParserMain
         object btnFileSaveAs: TToolButton
           Left = 210
           Top = 0
-          Action = FileSaveAs
+          Action = actSaveResult
         end
       end
     end
@@ -686,16 +686,6 @@ object frmTtnParserMain: TfrmTtnParserMain
       ImageIndex = 2
       OnExecute = actRefreshExecute
       OnUpdate = actRefreshUpdate
-    end
-    object FileSaveAs: TFileSaveAs
-      Category = 'File'
-      Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100
-      Dialog.DefaultExt = '.csv'
-      Dialog.Filter = 'CSV|*.csv'
-      Dialog.Options = [ofOverwritePrompt, ofHideReadOnly, ofEnableSizing]
-      Hint = 'Save As|Saves the active file with a new name'
-      ImageIndex = 3
-      OnAccept = FileSaveAsAccept
     end
     object actAddKod: TAction
       Caption = #1044#1086#1073#1072#1074#1080#1090#1100' '#1082#1086#1076
@@ -728,6 +718,11 @@ object frmTtnParserMain: TfrmTtnParserMain
       Caption = #1044#1072#1083#1077#1077
       OnExecute = actProceedParsingExecute
     end
+    object actSaveResult: TAction
+      Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100
+      ImageIndex = 3
+      OnExecute = actSaveResultExecute
+    end
   end
   object imlMain: TImageList
     ColorDepth = cd32Bit
@@ -735,7 +730,7 @@ object frmTtnParserMain: TfrmTtnParserMain
     Left = 336
     Top = 48
     Bitmap = {
-      494C010105000800980010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C010105000800A00010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000100202028F010101DF010101FF010101FF010101FF010101DF0202
@@ -1019,7 +1014,7 @@ object frmTtnParserMain: TfrmTtnParserMain
     Left = 352
     Top = 208
     Bitmap = {
-      494C0101060008003C0020002000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010106000800440020002000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000800000004000000001002000000000000080
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000

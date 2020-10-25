@@ -21,7 +21,6 @@ type
     actSettings: TAction;
     actRefresh: TAction;
     btnRefresh: TToolButton;
-    FileSaveAs: TFileSaveAs;
     btnFileSaveAs: TToolButton;
     actAddKod: TAction;
     ppmTtn: TPopupMenu;
@@ -65,6 +64,7 @@ type
     actResultStorageAdd: TAction;
     actProceedParsing: TAction;actResultStorageDelete: TAction;
     hntBaloon: TBalloonHint;
+    actSaveResult: TAction;
     procedure actAddKodExecute(Sender: TObject);
     procedure actAddKodUpdate(Sender: TObject);
     procedure actActiveResultDocumentAddExecute(Sender: TObject);
@@ -76,6 +76,7 @@ type
     procedure actRefreshUpdate(Sender: TObject);
     procedure actResultStorageAddExecute(Sender: TObject);
     procedure actResultStorageDeleteExecute(Sender: TObject);
+    procedure actSaveResultExecute(Sender: TObject);
     procedure actSettingsExecute(Sender: TObject);
     procedure cpNewResultDateChange(Sender: TObject);
     procedure edtDeliveryCountryChange(Sender: TObject);
@@ -83,7 +84,6 @@ type
     procedure FormDestroy(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FileOpenInpAccept(Sender: TObject);
-    procedure FileSaveAsAccept(Sender: TObject);
     procedure FormActivate(Sender: TObject);
     procedure medtDeliveryRegionChange(Sender: TObject);
     procedure medtShipmentRegionChange(Sender: TObject);
@@ -318,6 +318,18 @@ begin
   end;
 end;
 
+procedure TfrmTtnParserMain.actSaveResultExecute(Sender: TObject);
+begin
+  ResultStorage.ActiveResult.Append(
+    ttn,
+    DocumentsDescription.ToArray()
+  );
+  ResultStorage.ActiveResult.Save();
+  ttn.Clear;
+  vstTtn.Clear;
+  cpMain.ActiveCard := crdMainResults;
+end;
+
 procedure TfrmTtnParserMain.actSettingsExecute(Sender: TObject);
 begin
 if frmSett.Visible then
@@ -372,20 +384,6 @@ procedure TfrmTtnParserMain.FileOpenInpAccept(Sender: TObject);
 begin
 InpFile:=(Sender as TFileOpen).Dialog.FileName;
 ProcessInpFile;
-end;
-
-procedure TfrmTtnParserMain.FileSaveAsAccept(Sender: TObject);
-{Сохранение результата в файл}
-var
-  sl: TStringList;
-begin
-sl:=TStringList.Create;
-  try
-  Ttn.Save(sl);
-  sl.SaveToFile((Sender as TFileSaveAs).Dialog.FileName);
-  finally
-  FreeAndNil(sl);
-  end;
 end;
 
 procedure TfrmTtnParserMain.FormActivate(Sender: TObject);
@@ -517,6 +515,8 @@ begin
   else
   begin
     ResultStorage.ActiveResult := ResultStorage[Sender.GetFirstSelected().Index];
+    if ResultStorage.ActiveResult.TtnList.Count = 0 then
+      ResultStorage.ActiveResult.Load();
     cpResultStorage.ActiveCard := crdActiveResult;
     edtShipmentCountry.Text := ResultStorage.ActiveResult.ShipmentCountry;
     edtDeliveryCountry.Text := ResultStorage.ActiveResult.DestinationCountry;

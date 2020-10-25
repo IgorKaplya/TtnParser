@@ -134,20 +134,42 @@ end;
 
 procedure TTtnResult.Append(const ANewTtn: ITtnList; const ADocumentsDescription: TArray<ITtnDocumentDescription>);
 var
-  newObj: ITtnObj;
+  newObj, appendObj: ITtnObj;
   newDoc: ITtnDocument;
   descrDoc: ITtnDocumentDescription;
+  iLastNumber: Integer;
 begin
+  if TtnList.Count>0 then
+    iLastNumber := TtnList.Last.NUMBER
+  else
+    iLastNumber := 0;
+  iLastNumber := TtnList.Last.NUMBER;
   for newObj in ANewTtn do
   begin
-    TtnList.Add().AsText := newObj.AsText;
+    appendObj := TtnList.Add();
+      appendObj.NUMBER := newObj.NUMBER + iLastNumber;
+      appendObj.COST := newObj.COST;
+      appendObj.KOD := newObj.KOD;
+      appendObj.NAME := newObj.NAME;
+      appendObj.QUANTITY := newObj.QUANTITY;
+      appendObj.SIGN := newObj.SIGN;
+      appendObj.STR_PR := newObj.STR_PR;
+      appendObj.VAL := newObj.VAL;
+      appendObj.WEIGHT1 := newObj.WEIGHT1;
+      appendObj.WEIGHT2 := newObj.WEIGHT2;
+      appendObj.WEIGHT3 := newObj.WEIGHT3;
+      appendObj.DestinationCountry := DestinationCountry;
+      appendObj.DestinationCountryRegion := DestinationCountryRegion;
+      appendObj.DeliveryCountry := ShipmentCountry;
+      appendObj.DeliveryCountryRegion := ShipmentCountryRegion;
+      appendObj.DateTtn := DateTtn;
     for descrDoc in ADocumentsDescription do
     begin
       newDoc := Documents.Add();
       newDoc.DocumentCode := descrDoc.DocumentCode;
       newDoc.DocumentNumber := descrDoc.DocumentNumber;
       newDoc.DocumentDate := descrDoc.DocumentDate;
-      newDoc.NumberObj := newObj.NUMBER;
+      newDoc.NumberObj := appendObj.NUMBER;
     end;
   end;
 end;
@@ -171,6 +193,13 @@ procedure TTtnResult.Load;
 begin
   TtnList.Load(ResultsFileName);
   Documents.Load(DocumentsFileName);
+  if TtnList.Count>0 then
+  begin
+    DestinationCountry := TtnList.Last.DestinationCountry;
+    ShipmentCountry := TtnList.Last.DeliveryCountry;
+    DestinationCountryRegion := TtnList.Last.DestinationCountryRegion;
+    ShipmentCountryRegion := TtnList.Last.DeliveryCountryRegion;
+  end;
 end;
 
 procedure TTtnResult.Save;

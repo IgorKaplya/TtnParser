@@ -64,6 +64,7 @@ begin
     begin
       newResult := Add();
       newResult.Folder := newStorage;
+      newResult.Save();
     end;
   end;
 end;

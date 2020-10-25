@@ -271,7 +271,6 @@ type
     property DateTtn: TDate read GetDateTtn write SetDateTtn;
     property Documents: ITtnDocumentList read GetDocuments;
     property TtnList: ITtnList read GetTtnList;
-    //procedure Append(const ANewTtn: ITtnList; const ADocumentsDescription: ITtnDocumentList);
     procedure Append(const ANewTtn: ITtnList; const ADocumentsDescription: TArray<ITtnDocumentDescription>);
     procedure Load;
     procedure Save;
