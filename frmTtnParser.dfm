@@ -269,12 +269,13 @@ object frmTtnParserMain: TfrmTtnParserMain
               Top = 0
               Width = 175
               Height = 41
+              Action = actProceedParsing
               Align = alRight
-              Caption = #1044#1072#1083#1077#1077
               ImageAlignment = iaRight
               ImageIndex = 0
               Images = imlMain32
               TabOrder = 1
+              ExplicitLeft = 1021
             end
             object cpNewResultDate: TCalendarPicker
               AlignWithMargins = True
@@ -723,6 +724,10 @@ object frmTtnParserMain: TfrmTtnParserMain
     object actResultStorageDelete: TAction
       OnExecute = actResultStorageDeleteExecute
     end
+    object actProceedParsing: TAction
+      Caption = #1044#1072#1083#1077#1077
+      OnExecute = actProceedParsingExecute
+    end
   end
   object imlMain: TImageList
     ColorDepth = cd32Bit
@@ -730,7 +735,7 @@ object frmTtnParserMain: TfrmTtnParserMain
     Left = 336
     Top = 48
     Bitmap = {
-      494C010105000800940010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C010105000800980010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000100202028F010101DF010101FF010101FF010101FF010101DF0202
@@ -1014,7 +1019,7 @@ object frmTtnParserMain: TfrmTtnParserMain
     Left = 352
     Top = 208
     Bitmap = {
-      494C010106000800380020002000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C0101060008003C0020002000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000800000004000000001002000000000000080
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -2092,5 +2097,12 @@ object frmTtnParserMain: TfrmTtnParserMain
       Action = actActiveResultDocumentEdit
       Caption = #1048#1079#1084#1077#1085#1080#1090#1100' '#1076#1086#1082#1091#1084#1077#1085#1090' (F2)'
     end
+  end
+  object hntBaloon: TBalloonHint
+    Images = imlMain32
+    Delay = 250
+    HideAfter = 5000
+    Left = 87
+    Top = 121
   end
 end

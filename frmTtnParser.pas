@@ -63,13 +63,15 @@ type
     btnResultStorageAdd: TButton;
     btnResultStorageDelete: TButton;
     actResultStorageAdd: TAction;
-    actResultStorageDelete: TAction;
+    actProceedParsing: TAction;actResultStorageDelete: TAction;
+    hntBaloon: TBalloonHint;
     procedure actAddKodExecute(Sender: TObject);
     procedure actAddKodUpdate(Sender: TObject);
     procedure actActiveResultDocumentAddExecute(Sender: TObject);
     procedure actActiveResultDocumentDeleteExecute(Sender: TObject);
     procedure actActiveResultDocumentDeleteUpdate(Sender: TObject);
     procedure actActiveResultDocumentEditExecute(Sender: TObject);
+    procedure actProceedParsingExecute(Sender: TObject);
     procedure actRefreshExecute(Sender: TObject);
     procedure actRefreshUpdate(Sender: TObject);
     procedure actResultStorageAddExecute(Sender: TObject);
@@ -235,6 +237,54 @@ end;
 procedure TfrmTtnParserMain.actActiveResultDocumentEditExecute(Sender: TObject);
 begin
   vstActiveDocuments.EditNode(vstActiveDocuments.GetFirstSelected(), vstActiveDocuments.FocusedColumn);
+end;
+
+procedure TfrmTtnParserMain.actProceedParsingExecute(Sender: TObject);
+var
+  HintText: string;
+
+  procedure CheckCondition(const AMustBeTrueCondition: Boolean; const AText: string);
+  begin
+    if not AMustBeTrueCondition then
+      if HintText.IsEmpty then
+        HintText := AText
+      else
+        HintText := HintText + sLineBreak+ AText;
+  end;
+
+  function AllDocumentsDescribedFine(): Boolean;
+  var
+    d: ITtnDocumentDescription;
+  begin
+    for d in DocumentsDescription do
+    begin
+      Result :=
+        not d.DocumentCode.IsEmpty and
+        not d.DocumentNumber.IsEmpty and
+        (d.DocumentDate <> 0);
+      if not Result then
+        Break;
+    end;
+  end;
+
+begin
+  HintText := '';
+
+  CheckCondition(not ResultStorage.ActiveResult.DestinationCountry.IsEmpty, 'Не задана страна назначения');
+  CheckCondition(not ResultStorage.ActiveResult.ShipmentCountry.IsEmpty, 'Не задана страна отправки');
+  CheckCondition(not String(ResultStorage.ActiveResult.DestinationCountryRegion).IsEmpty, 'Не задан регион назначения');
+  CheckCondition(not String(ResultStorage.ActiveResult.ShipmentCountryRegion).IsEmpty, 'Не задан регион отправки');
+  CheckCondition(DocumentsDescription.Count > 0, 'Не заданы документы');
+  CheckCondition(AllDocumentsDescribedFine(), 'Не все документы описаны полностью');
+  CheckCondition(ResultStorage.ActiveResult.DateTtn<>0, 'Не выбрана дата ТТН');
+
+  if HintText.IsEmpty then
+    cpMain.ActiveCard := crdMainParse
+  else
+  begin
+    hntBaloon.Title := HintText;
+    hntBaloon.ShowHint(btnProceed);
+  end;
 end;
 
 procedure TfrmTtnParserMain.actRefreshExecute(Sender: TObject);
