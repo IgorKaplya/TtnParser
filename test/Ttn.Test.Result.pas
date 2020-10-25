@@ -18,12 +18,14 @@ type
     [Test]
     procedure Test_Append;
     property TtnResult: ITTnResult read FTtnResult;
+    [Test]
+    procedure Test_Save();
   end;
 
 implementation
 
 uses
-  Ttn.Registration, System.SysUtils;
+  Ttn.Registration, System.SysUtils, Ttn.Constants, System.Types, System.IOUtils;
 
 procedure TTestTtnResult.Setup;
 begin
@@ -129,6 +131,23 @@ begin
     Assert.AreEqual(listDocs[0].DocumentNumber, doc.DocumentNumber, 'Results were not updated.');
     Assert.AreEqual(listDocs[0].DocumentDate, doc.DocumentDate, 'Results were not updated.');
   end;
+end;
+
+procedure TTestTtnResult.Test_Save;
+const
+  test_save_result_folder = '_testdata\result\save';
+var
+  i: Integer;
+  historyFiles: TStringDynArray;
+begin
+  TtnResult.Folder := test_save_result_folder;
+  for i:=0 to C_Max_Files_History+1 do
+  begin
+    TtnResult.Save();
+    Sleep(1);
+  end;
+  historyFiles := TDirectory.GetFiles(TtnResult.HistoryFolder);
+  Assert.IsTrue(length(historyFiles) <= C_Max_Files_History);
 end;
 
 initialization
