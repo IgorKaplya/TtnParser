@@ -5,7 +5,8 @@ interface
 uses
   Forms,IniFiles, Vcl.Controls, Vcl.StdCtrls, System.Classes, Vcl.ActnList, Vcl.StdActns, Vcl.ExtCtrls, Vcl.ComCtrls, Vcl.ImgList,
   Vcl.ToolWin, Ttn.Interfaces, VirtualTrees, Vcl.Graphics, Types, Vcl.Menus,
-  System.ImageList, System.Actions, Vcl.WinXPanels, Vcl.Mask, Vcl.Imaging.pngimage, Vcl.WinXCalendars, Vcl.WinXPickers;
+  System.ImageList, System.Actions, Vcl.WinXPanels, Vcl.Mask, Vcl.Imaging.pngimage, Vcl.WinXCalendars, Vcl.WinXPickers,
+  System.Generics.Collections;
 
 type
   TfrmTtnParserMain = class(TForm)
@@ -107,6 +108,7 @@ type
     FValuta: string;
     FProcessor: ITtnProcessor;
     FResultStorage: ITtnResultStorage;
+    FDocumentsDescription: TList<ITtnDocumentDescription>;
     procedure ClearUnNames;
     function CurTtnObj(out obj: ITtnObj): Boolean;
     procedure SetInpFile(const Value: string);
@@ -116,6 +118,7 @@ type
     property Valuta: string read FValuta;
     property Processor: ITtnProcessor read FProcessor;
     property ResultStorage: ITtnResultStorage read FResultStorage;
+    property DocumentsDescription: TList<ITtnDocumentDescription> read FDocumentsDescription;
   public
     procedure ProcessInpFile;
     procedure StartUp;
@@ -133,9 +136,9 @@ uses
   Ttn.Constants, Winapi.Windows;
 
 const
+  column_doc_code = 0;
+  column_doc_number = 1;
   column_doc_date = 2;
-  column_doc_code = 1;
-  column_doc_number = 0;
   C_ERR_NO_KOD = 'не найден код';
   C_COL_NUMBER      = 0;
   C_COL_KOD         = 1;
@@ -161,10 +164,12 @@ begin
   FTtn := Parser.ParseResult;
   FProcessor := TTtnResolver.Resolve<ITtnProcessor>;
   FResultStorage := TTtnResolver.Resolve<ITtnResultStorage>;
+  FDocumentsDescription := TList<ITtnDocumentDescription>.Create();
 end;
 
 procedure TfrmTtnParserMain.FormDestroy(Sender: TObject);
 begin
+  FDocumentsDescription.Free;
   dm.conMain.Close();
   FreeAndNil(FIniFile);
 end;
@@ -201,10 +206,13 @@ begin
 end;
 
 procedure TfrmTtnParserMain.actActiveResultDocumentAddExecute(Sender: TObject);
+var
+  docDescr: ITtnDocumentDescription;
 begin
-  ResultStorage.ActiveResult.Documents.Add;
-  vstActiveDocuments.RootNodeCount := ResultStorage.ActiveResult.Documents.Count;
-  vstActiveDocuments.EditNode(vstActiveDocuments.GetLast(), column_doc_number);
+  docDescr := TTtnResolver.Resolve<ITtnDocument>;
+  DocumentsDescription.Add(docDescr);
+    vstActiveDocuments.RootNodeCount := DocumentsDescription.Count;
+    vstActiveDocuments.EditNode(vstActiveDocuments.GetLast(), column_doc_code);
 end;
 
 procedure TfrmTtnParserMain.actActiveResultDocumentDeleteExecute(Sender: TObject);
@@ -214,8 +222,8 @@ begin
   n := vstActiveDocuments.GetFirstSelected();
   if Assigned(n) then
   begin
-    ResultStorage.ActiveResult.Documents.Delete(n.Index);
-    vstActiveDocuments.RootNodeCount := ResultStorage.ActiveResult.Documents.Count;
+    DocumentsDescription.Delete(n.Index);
+    vstActiveDocuments.RootNodeCount := DocumentsDescription.Count;
   end;
 end;
 
@@ -432,9 +440,9 @@ procedure TfrmTtnParserMain.vstActiveDocumentsGetText(Sender: TBaseVirtualTree; 
     TextType: TVSTTextType; var CellText: string);
 begin
   case Column of
-  column_doc_number: CellText := ResultStorage.ActiveResult.Documents[Node.Index].NumberObj.ToString;
-  column_doc_code: CellText := ResultStorage.ActiveResult.Documents[Node.Index].DocumentCode;
-  column_doc_date: CellText := FormatDateTime(C_Date_Tovar_Format, ResultStorage.ActiveResult.Documents[Node.Index].DocumentDate);
+  column_doc_code: CellText := DocumentsDescription[Node.Index].DocumentCode;
+  column_doc_number: CellText := DocumentsDescription[Node.Index].DocumentNumber;
+  column_doc_date: CellText := FormatDateTime(C_Date_Tovar_Format, DocumentsDescription[Node.Index].DocumentDate);
   end;
 end;
 
@@ -446,9 +454,9 @@ begin
   fs := TFormatSettings.Create();
   fs.ShortDateFormat := C_Date_Tovar_Format;
   case Column of
-  column_doc_number: ResultStorage.ActiveResult.Documents[Node.Index].NumberObj := NewText.ToInteger();
-  column_doc_code: ResultStorage.ActiveResult.Documents[Node.Index].DocumentCode := NewText;
-  column_doc_date: ResultStorage.ActiveResult.Documents[Node.Index].DocumentDate := StrToDate(NewText, fs)
+  column_doc_number: DocumentsDescription[Node.Index].DocumentNumber := NewText;
+  column_doc_code: DocumentsDescription[Node.Index].DocumentCode := NewText;
+  column_doc_date: DocumentsDescription[Node.Index].DocumentDate := StrToDate(NewText, fs)
   end;
 end;
 
@@ -464,7 +472,6 @@ begin
     edtDeliveryCountry.Text := ResultStorage.ActiveResult.DestinationCountry;
     medtShipmentRegion.Text := ResultStorage.ActiveResult.ShipmentCountryRegion;
     medtDeliveryRegion.Text := ResultStorage.ActiveResult.DestinationCountryRegion;
-    vstActiveDocuments.RootNodeCount := ResultStorage.ActiveResult.Documents.Count;
     if ResultStorage.ActiveResult.DateTtn = 0 then
       ResultStorage.ActiveResult.DateTtn := Now();
     cpNewResultDate.Date := ResultStorage.ActiveResult.DateTtn;
