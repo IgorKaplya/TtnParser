@@ -143,7 +143,6 @@ begin
     iLastNumber := TtnList.Last.NUMBER
   else
     iLastNumber := 0;
-  iLastNumber := TtnList.Last.NUMBER;
   for newObj in ANewTtn do
   begin
     appendObj := TtnList.Add();

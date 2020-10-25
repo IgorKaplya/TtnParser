@@ -56,9 +56,18 @@ const
 var
   listTtn: ITtnList;
   listDocs: TArray<ITtnDocumentDescription>;
-  ttn: ITtnObj;
+  ttnExpected, ttnActual: ITtnObj;
   doc: ITtnDocument;
+  i: Integer;
+  j: Integer;
+  numOffsetExpected: Integer;
 begin
+  TtnResult.DestinationCountry := 'VillaRibo';
+  TtnResult.DestinationCountryRegion := 'RIB';
+  TtnResult.ShipmentCountry := 'VillaBadgo';
+  TtnResult.ShipmentCountryRegion := 'BAD';
+  TtnResult.DateTtn := now;
+
   listDocs := [TTtnResolver.Resolve<ITtnDocument>];
   listDocs[0] := TTtnResolver.Resolve<ITtnDocument>;
     listDocs[0].DocumentCode := 'DocCode';
@@ -77,22 +86,42 @@ begin
     listTtn.Last.WEIGHT1 := 1.14;
     listTtn.Last.WEIGHT2 := 2.14;
     listTtn.Last.WEIGHT3 := 3.14;
-    listTtn.Last.DestinationCountry := 'VillaRibo';
-    listTtn.Last.DestinationCountryRegion := 'RIB';
-    listTtn.Last.DeliveryCountry := 'VillaBadgo';
-    listTtn.Last.DeliveryCountryRegion := 'BAD';
     listTtn.Last.COST := 10.0;
 
   Assert.WillNotRaise(DoUpdate(listTtn, listDocs, append_count));
   Assert.AreEqual(append_count * listTtn.Count, TtnResult.TtnList.Count);
   Assert.AreEqual(append_count * listTtn.Count * length(listDocs), TtnResult.Documents.Count);
 
-  for ttn in TtnResult.TtnList do
-    Assert.AreEqual(
-      listTtn.Last.AsText,
-      ttn.AsText,
-      'Results were not updated.'
-    );
+  for i := 0 to append_count-1 do
+    begin
+      if i>0 then
+        numOffsetExpected := TtnResult.TtnList[i*listTtn.Count-1].NUMBER
+      else
+        numOffsetExpected := 0;
+      for j := 0 to listTtn.Count-1 do
+        begin
+          ttnActual := TtnResult.TtnList[i*listTtn.Count+j];
+          ttnExpected := listTtn[j];
+          //
+          Assert.AreEqual(ttnExpected.NUMBER + numOffsetExpected, ttnActual.NUMBER);
+          //
+          Assert.AreEqual(ttnExpected.COST, ttnActual.COST);
+          Assert.AreEqual(ttnExpected.KOD, ttnActual.KOD);
+          Assert.AreEqual(ttnExpected.STR_PR, ttnActual.STR_PR);
+          Assert.AreEqual(ttnExpected.NAME, ttnActual.NAME);
+          Assert.AreEqual(ttnExpected.QUANTITY, ttnActual.QUANTITY);
+          Assert.AreEqual(ttnExpected.VAL, ttnActual.VAL);
+          Assert.AreEqual(ttnExpected.WEIGHT1, ttnActual.WEIGHT1);
+          Assert.AreEqual(ttnExpected.WEIGHT2, ttnActual.WEIGHT2);
+          Assert.AreEqual(ttnExpected.WEIGHT3, ttnActual.WEIGHT3);
+          //
+          Assert.AreEqual(TtnResult.DestinationCountry, ttnActual.DestinationCountry);
+          Assert.AreEqual(TtnResult.DestinationCountryRegion, ttnActual.DestinationCountryRegion);
+          Assert.AreEqual(TtnResult.ShipmentCountry, ttnActual.DeliveryCountry);
+          Assert.AreEqual(TtnResult.ShipmentCountryRegion, ttnActual.DeliveryCountryRegion);
+          Assert.AreEqual(TtnResult.DateTtn, ttnActual.DateTtn);
+        end;
+    end;
 
   for doc in TtnResult.Documents do
   begin

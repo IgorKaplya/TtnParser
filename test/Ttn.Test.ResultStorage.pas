@@ -127,7 +127,6 @@ var
   listDocs: ITtnDocumentList;
 begin
   Assert.WillRaise(DoLoad('AbraCadabra\'), EDirectoryNotFoundException);
-  Assert.WillRaise(DoCreate(''), ENotSupportedException);
 
   Assert.WillNotRaise(DoLoad(folder_root_resultsorage));
 
