@@ -227,10 +227,10 @@ procedure TTtnResult.BackupHistory;
 var
   date: string;
 begin
-  TrimFiles();
   if FileExists(ResultsFileName) then
   begin
     TDirectory.CreateDirectory(HistoryFolder);
+    TrimFiles();
     date := FormatDateTime('YYYYMMDD_hhmmss_zzz', Now);
     TFile.Copy(ResultsFileName, TPath.Combine(
       HistoryFolder,
