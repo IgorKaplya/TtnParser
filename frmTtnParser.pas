@@ -531,7 +531,7 @@ end;
 procedure TfrmTtnParserMain.vstResultStorageGetText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex;
     TextType: TVSTTextType; var CellText: string);
 begin
-  CellText := ResultStorage[Node.Index].Folder;
+  CellText := ExtractFileName(ResultStorage[Node.Index].Folder);
 end;
 
 procedure TfrmTtnParserMain.vstTtnDrawText(Sender: TBaseVirtualTree;
