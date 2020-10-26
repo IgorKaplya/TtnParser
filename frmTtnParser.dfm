@@ -517,7 +517,7 @@ object frmTtnParserMain: TfrmTtnParserMain
       object lblInpFile: TLabel
         Left = 0
         Top = 616
-        Width = 110
+        Width = 1571
         Height = 16
         Align = alBottom
         Caption = #1042#1093#1086#1076#1085#1086#1081' '#1092#1072#1081#1083':'
@@ -527,6 +527,7 @@ object frmTtnParserMain: TfrmTtnParserMain
         Font.Name = 'MS Sans Serif'
         Font.Style = [fsBold]
         ParentFont = False
+        ExplicitWidth = 110
       end
       object vstTtn: TVirtualStringTree
         Left = 0

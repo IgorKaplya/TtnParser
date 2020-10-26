@@ -214,6 +214,9 @@ begin
   docDescr := TTtnResolver.Resolve<ITtnDocument>;
   DocumentsDescription.Add(docDescr);
     vstActiveDocuments.RootNodeCount := DocumentsDescription.Count;
+    vstActiveDocuments.ClearSelection();
+    vstActiveDocuments.FocusedColumn := column_doc_code;
+    vstActiveDocuments.Selected[vstActiveDocuments.GetLast()] := true;
     vstActiveDocuments.EditNode(vstActiveDocuments.GetLast(), column_doc_code);
 end;
 
