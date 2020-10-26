@@ -214,6 +214,9 @@ begin
   docDescr := TTtnResolver.Resolve<ITtnDocument>;
   DocumentsDescription.Add(docDescr);
     vstActiveDocuments.RootNodeCount := DocumentsDescription.Count;
+    vstActiveDocuments.ClearSelection();
+    vstActiveDocuments.FocusedColumn := column_doc_code;
+    vstActiveDocuments.Selected[vstActiveDocuments.GetLast()] := true;
     vstActiveDocuments.EditNode(vstActiveDocuments.GetLast(), column_doc_code);
 end;
 
@@ -436,31 +439,62 @@ end;
 
 procedure TfrmTtnParserMain.StartUp;
 
+  function GetBuildInfo(): string;
+  {From Steve Schafer }
+  var
+    V1, V2, V3, V4: Word;
+    VerInfoSize: DWORD;
+    VerInfo: pointer;
+    VerValueSize: DWORD;
+    VerValue: PVSFixedFileInfo;
+    Dummy: DWORD;
+  begin
+    VerInfoSize := GetFileVersionInfoSize(PChar(ParamStr(0)), Dummy);
+    GetMem(VerInfo, VerInfoSize);
+    GetFileVersionInfo(PChar(ParamStr(0)), 0, VerInfoSize, VerInfo);
+    VerQueryValue(VerInfo, '\', pointer(VerValue), VerValueSize);
+    with VerValue^ do
+      begin
+        V1 := dwFileVersionMS shr 16;
+        V2 := dwFileVersionMS and $FFFF;
+        V3 := dwFileVersionLS shr 16;
+        V4 := dwFileVersionLS and $FFFF;
+      end;
+    FreeMem(VerInfo, VerInfoSize);
+    Result := Format('%d.%d.%d.%d',[V1, V2, V3, V4])
+  end;
+
+  procedure LoadActualFileVersion();
+  begin
+    Self.Caption := Self.Caption + ' v' + GetBuildInfo();
+  end;
+
   procedure IniRead();
   {Чтение ini в память}
   var
     sIni: string;
   begin
-  sIni:=ExpandFileName('.\TtnParser.ini');
-  TestErr(FileExists(sIni),'Не найден файл настроек: '+sIni);
-  FIniFile:=TMemIniFile.Create(sIni);
-  FormatSettings.DecimalSeparator:=IniFile.ReadString('Настройки','ДесятичныйРазделитель',FormatSettings.DecimalSeparator)[1];
-  FValuta:=IniFile.ReadString('Настройки','Валюта','');
-  Processor.WeightMultiplier := IniFile.ReadFloat('Настройки','Множитель_веса',1);
-  Processor.Currency := Valuta;
-  ResultStorage.Load(IniFile.ReadString('Результаты','путь','.'));
-  vstResultStorage.RootNodeCount := ResultStorage.Count;
+    sIni := ExpandFileName('.\TtnParser.ini');
+    TestErr(FileExists(sIni), 'Не найден файл настроек: ' + sIni);
+    FIniFile := TMemIniFile.Create(sIni);
+    FormatSettings.DecimalSeparator := IniFile.ReadString('Настройки', 'ДесятичныйРазделитель', FormatSettings.DecimalSeparator)
+      [1];
+    FValuta := IniFile.ReadString('Настройки', 'Валюта', '');
+    Processor.WeightMultiplier := IniFile.ReadFloat('Настройки', 'Множитель_веса', 1);
+    Processor.Currency := Valuta;
+    ResultStorage.Load(IniFile.ReadString('Результаты', 'путь', '.'));
+    vstResultStorage.RootNodeCount := ResultStorage.Count;
   end;
 
   procedure DbConnect();
   {Соединение с БД по ADO из INI}
   begin
-  dm.conMain.ConnectionString:=IniFile.ReadString('БазаДанных','СтрокаПодключенияAdo','');
-  dm.conMain.Open();
-  TestErr(dm.conMain.Connected,'Не установлено соединение с базой данных');
-  dm.tblKod.Open();
-  dm.tblStrPr.Open();
-  dm.tblUni.Open();
+    dm.conMain.ConnectionString := IniFile.ReadString('БазаДанных', 'СтрокаПодключенияAdo', '');
+    dm.conMain.Open();
+    TestErr(dm.conMain.Connected, 'Не установлено соединение с базой данных');
+    dm.tblKod.Open();
+    dm.tblStrPr.Open();
+    dm.tblUni.Open();
   end;
 
   procedure InitTab();
@@ -471,17 +505,19 @@ procedure TfrmTtnParserMain.StartUp;
 
 begin
   if not Inited then
-    try
+  try
+    LoadActualFileVersion();
     IniRead();
     DbConnect();
     InitTab();
-    FInited:=True;
-    except on e: Exception do
-      begin
-      ShowMessage(format('Инициализация программы: %s',[e.Message]));
+    FInited := True;
+  except
+    on e: Exception do
+    begin
+      ShowMessage(format('Инициализация программы: %s', [e.Message]));
       Close();
-      end;
     end;
+  end;
 end;
 
 procedure TfrmTtnParserMain.vstActiveDocumentsGetText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex;
@@ -531,7 +567,14 @@ end;
 procedure TfrmTtnParserMain.vstResultStorageGetText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex;
     TextType: TVSTTextType; var CellText: string);
 begin
-  CellText := ResultStorage[Node.Index].Folder;
+  if ResultStorage.ActiveResult = ResultStorage[Node.Index] then
+    CellText := Format('%s: (%d / %d)',[
+        ExtractFileName(ResultStorage[Node.Index].Folder),
+        ResultStorage.ActiveResult.TtnList.Count,
+        ResultStorage.ActiveResult.Documents.Count
+      ])
+  else
+    CellText := ExtractFileName(ResultStorage[Node.Index].Folder);
 end;
 
 procedure TfrmTtnParserMain.vstTtnDrawText(Sender: TBaseVirtualTree;

@@ -234,7 +234,7 @@ object frmTtnParserMain: TfrmTtnParserMain
               TabOrder = 3
               Text = '   '
               OnChange = medtDeliveryRegionChange
-              ExplicitTop = 3
+              ExplicitHeight = 30
             end
             object medtShipmentRegion: TMaskEdit
               AlignWithMargins = True
@@ -275,7 +275,6 @@ object frmTtnParserMain: TfrmTtnParserMain
               ImageIndex = 0
               Images = imlMain32
               TabOrder = 1
-              ExplicitLeft = 1021
             end
             object cpNewResultDate: TCalendarPicker
               AlignWithMargins = True
@@ -730,7 +729,7 @@ object frmTtnParserMain: TfrmTtnParserMain
     Left = 336
     Top = 48
     Bitmap = {
-      494C010105000800A00010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C010105000800A80010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000100202028F010101DF010101FF010101FF010101FF010101DF0202
@@ -1014,7 +1013,7 @@ object frmTtnParserMain: TfrmTtnParserMain
     Left = 352
     Top = 208
     Bitmap = {
-      494C010106000800440020002000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C0101060008004C0020002000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000800000004000000001002000000000000080
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
