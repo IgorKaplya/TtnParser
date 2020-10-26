@@ -16,6 +16,8 @@ const
   F_quant = 'quant';
   F_weight = 'weight';
   C_Input_FieldNames: array[0..4] of string = (F_sign, F_name, F_cost, F_quant, F_weight);
+  C_Date_Tovar_Format = 'DD.MM.YYYY';
+  C_Max_Files_History = 20;
 
 implementation
 

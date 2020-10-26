@@ -47,7 +47,7 @@
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base)'!=''">
         <DCC_UsePackage>vcl;rtl;vclx;indy;vclie;xmlrtl;inetdbbde;inet;inetdbxpress;dbrtl;soaprtl;dsnap;VclSmp;dbexpress;vcldb;dbxcds;inetdb;bdertl;vcldbx;adortl;teedb;tee;ibxpress;visualclx;visualdbclx;vclactnband;dclOfficeXP;VirtualTreesR;EhLib70;LibMds5;$(DCC_UsePackage)</DCC_UsePackage>
-        <VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=1.4.1.0;InternalName=ttnparser;LegalCopyright=;LegalTrademarks=;OriginalFilename=TtnParser.exe;ProductName=;ProductVersion=1.0.0.0;Comments=Калпя И.В.</VerInfo_Keys>
+        <VerInfo_Keys>CompanyName=;FileDescription=;FileVersion=2.0.0.0;InternalName=ttnparser;LegalCopyright=;LegalTrademarks=;OriginalFilename=TtnParser.exe;ProductName=;ProductVersion=1.0.0.0;Comments=Калпя И.В.</VerInfo_Keys>
         <DCC_SymbolReferenceInfo>1</DCC_SymbolReferenceInfo>
         <DCC_ImageBase>00400000</DCC_ImageBase>
         <DCC_Namespace>Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;System;Xml;Data;Datasnap;Web;Soap;Data.Win;$(DCC_Namespace)</DCC_Namespace>
@@ -61,16 +61,15 @@
         <VerInfo_Locale>1049</VerInfo_Locale>
         <DCC_E>false</DCC_E>
         <SanitizedProjectName>TtnParser</SanitizedProjectName>
-        <VerInfo_MinorVer>4</VerInfo_MinorVer>
         <DCC_UnitSearchPath>Virtual-TreeView\Source;spring4D\source\core\container;spring4D\source;spring4D\source\base;spring4D\source\base\collections;spring4D\source\base\logging;spring4D\source\core\services;spring4D\source\core\Interception;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
-        <VerInfo_Release>1</VerInfo_Release>
+        <VerInfo_MajorVer>2</VerInfo_MajorVer>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
         <Icon_MainIcon>TtnParser_Icon.ico</Icon_MainIcon>
         <DCC_Namespace>Winapi;System.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;$(DCC_Namespace)</DCC_Namespace>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
-        <VerInfo_Keys>CompanyName=;FileVersion=1.4.1.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductVersion=1.0.0.0;Comments=;ProgramID=com.embarcadero.$(MSBuildProjectName);FileDescription=$(MSBuildProjectName);ProductName=$(MSBuildProjectName)</VerInfo_Keys>
+        <VerInfo_Keys>CompanyName=;FileVersion=2.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProductVersion=1.0.0.0;Comments=;ProgramID=com.embarcadero.$(MSBuildProjectName);FileDescription=$(MSBuildProjectName);ProductName=$(MSBuildProjectName)</VerInfo_Keys>
         <AppEnableRuntimeThemes>true</AppEnableRuntimeThemes>
         <UWP_DelphiLogo44>$(BDS)\bin\Artwork\Windows\UWP\delphi_UwpDefault_44.png</UWP_DelphiLogo44>
         <UWP_DelphiLogo150>$(BDS)\bin\Artwork\Windows\UWP\delphi_UwpDefault_150.png</UWP_DelphiLogo150>
@@ -88,7 +87,7 @@
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
         <DCC_AssertionsAtRuntime>false</DCC_AssertionsAtRuntime>
-        <VerInfo_Keys>CompanyName=;FileVersion=1.4.1.0;InternalName=ttnparser;LegalCopyright=;LegalTrademarks=;OriginalFilename=ttnparser.exe;ProductVersion=1.0.0.0;Comments=Капля И.В,;ProgramID=com.embarcadero.$(MSBuildProjectName);FileDescription=$(MSBuildProjectName);ProductName=$(MSBuildProjectName) Release</VerInfo_Keys>
+        <VerInfo_Keys>CompanyName=;FileVersion=2.0.0.0;InternalName=ttnparser;LegalCopyright=;LegalTrademarks=;OriginalFilename=ttnparser.exe;ProductVersion=1.0.0.0;Comments=Капля И.В,;ProgramID=com.embarcadero.$(MSBuildProjectName);FileDescription=$(MSBuildProjectName);ProductName=$(MSBuildProjectName) Release</VerInfo_Keys>
         <DCC_ImportedDataReferences>false</DCC_ImportedDataReferences>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <BT_BuildType>Debug</BT_BuildType>
@@ -100,7 +99,7 @@
         <DCC_GenerateStackFrames>true</DCC_GenerateStackFrames>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
-        <VerInfo_Keys>CompanyName=;FileVersion=1.4.1.0;InternalName=ttnparser;LegalCopyright=;LegalTrademarks=;OriginalFilename=ttnparser.exe;ProductVersion=0.0.0.0;Comments=Капля И.В,;ProgramID=com.embarcadero.$(MSBuildProjectName);FileDescription=$(MSBuildProjectName);ProductName=$(MSBuildProjectName) Debug</VerInfo_Keys>
+        <VerInfo_Keys>CompanyName=;FileVersion=2.0.0.0;InternalName=ttnparser;LegalCopyright=;LegalTrademarks=;OriginalFilename=ttnparser.exe;ProductVersion=0.0.0.0;Comments=Капля И.В,;ProgramID=com.embarcadero.$(MSBuildProjectName);FileDescription=$(MSBuildProjectName);ProductName=$(MSBuildProjectName) Debug</VerInfo_Keys>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <BT_BuildType>Debug</BT_BuildType>
         <AppEnableRuntimeThemes>true</AppEnableRuntimeThemes>

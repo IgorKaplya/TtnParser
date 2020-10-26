@@ -14,11 +14,13 @@ uses
 
 type
   TTtnList = class(TTtnEnumerableList<ITtnObj>, ITtnList)
-  private
   public
     constructor Create(ATtnObjFactory: ITtnFactory<ITtnObj>);
-    procedure Save(const AStrings: TStrings);
+    procedure Save(const AFile: string); overload;
+    procedure Save(const AStrings: TStrings); overload;
     procedure Sort;
+    procedure Load(const AFile: string); overload;
+    procedure Load(const AStrings: TStrings); overload;
   end;
 
 implementation
@@ -33,21 +35,8 @@ var
   obj: ITtnObj;
 begin
   AStrings.Clear();
-  for obj in FItems do
-    AStrings.Add(
-      Format('%d;"%s";"%s";%.3f;%.3f;%.3f;%.2f;"%s";"%s";%d;',[
-        obj.NUMBER,
-        obj.KOD ,
-        obj.NAME ,
-        obj.WEIGHT1 ,
-        obj.WEIGHT2 ,
-        obj.WEIGHT3 ,
-        obj.COST ,
-        obj.VAL ,
-        obj.STR_PR ,
-        obj.QUANTITY
-      ])
-    );
+  for obj in Self do
+    AStrings.Add(obj.AsText);
 end;
 
 procedure TTtnList.Sort;
@@ -67,6 +56,46 @@ procedure TTtnList.Sort;
 
 begin
   FItems.Sort(comarerConstruct);
+end;
+
+procedure TTtnList.Load(const AFile: string);
+var
+  fileLoad: TStringList;
+begin
+  fileLoad := TStringList.Create();
+  try
+    fileLoad.LoadFromFile(AFile, TEncoding.UTF8);
+    Load(fileLoad);
+  finally
+    fileLoad.Free();
+  end;
+end;
+
+procedure TTtnList.Load(const AStrings: TStrings);
+var
+  line: string;
+  obj: ITtnObj;
+begin
+  Clear();
+  for line in AStrings do
+    if not line.IsEmpty then
+    begin
+      obj := Add();
+      obj.AsText := line;
+    end;
+end;
+
+procedure TTtnList.Save(const AFile: string);
+var
+  sl: TStringList;
+begin
+  sl := TStringList.Create();
+  try
+    Save(sl);
+    sl.SaveToFile(AFile, TEncoding.Utf8);
+  finally
+    sl.Free()
+  end;
 end;
 
 end.

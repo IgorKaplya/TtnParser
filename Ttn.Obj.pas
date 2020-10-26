@@ -21,7 +21,23 @@ type
     FWEIGHT1: Double;
     FWEIGHT2: Double;
     FWEIGHT3: Double;
-  public
+    FDestinationCountry: string;
+    FDestinationCountryRegion: StringCountryRegion;
+    FDeliveryCountry: string;
+    FDeliveryCountryRegion: StringCountryRegion;
+    FDateTtn: TDate;
+    function GetDateTtn: TDate;
+    function GetDeliveryCountry: string;
+    function GetDeliveryCountryRegion: StringCountryRegion;
+    function GetDestinationCountry: string;
+    function GetDestinationCountryRegion: StringCountryRegion;
+    procedure SetDateTtn(const Value: TDate);
+    procedure SetDeliveryCountry(const Value: string);
+    procedure SetDeliveryCountryRegion(const Value: StringCountryRegion);
+    procedure SetDestinationCountry(const Value: string);
+    procedure SetDestinationCountryRegion(const Value: StringCountryRegion);
+    function GetAsText: string;
+    procedure SetAsText(const Value: string);
     function GetCOST: Double;
     function GetErrorMsg: string;
     function GetKOD: string;
@@ -46,9 +62,33 @@ type
     procedure SetWEIGHT1(const Value: Double);
     procedure SetWEIGHT2(const Value: Double);
     procedure SetWEIGHT3(const Value: Double);
+  public
+    property COST: Double read GetCOST write SetCOST;
+    property ErrorMsg: string read GetErrorMsg write SetErrorMsg;
+    property KOD: string read GetKOD write SetKOD;
+    property NAME: string read GetNAME write SetNAME;
+    property NUMBER: Integer read GetNUMBER write SetNUMBER;
+    property QUANTITY: Integer read GetQUANTITY write SetQUANTITY;
+    property SIGN: string read GetSIGN write SetSIGN;
+    property STR_PR: string read GetSTR_PR write SetSTR_PR;
+    property VAL: string read GetVAL write SetVAL;
+    property WEIGHT1: Double read GetWEIGHT1 write SetWEIGHT1;
+    property WEIGHT2: Double read GetWEIGHT2 write SetWEIGHT2;
+    property WEIGHT3: Double read GetWEIGHT3 write SetWEIGHT3;
+    property DestinationCountry: string read GetDestinationCountry write SetDestinationCountry;
+    property DestinationCountryRegion: StringCountryRegion read GetDestinationCountryRegion write SetDestinationCountryRegion;
+    property DeliveryCountry: string read GetDeliveryCountry write SetDeliveryCountry;
+    property DeliveryCountryRegion: StringCountryRegion read GetDeliveryCountryRegion write SetDeliveryCountryRegion;
+    property DateTtn: TDate read GetDateTtn write SetDateTtn;
   end;
 
 implementation
+
+uses
+  System.SysUtils, Ttn.Constants, System.Classes, Ttn.Errors;
+
+const
+  obj_minimum_field_count = 15;
 
 function TTtnObj.GetCOST: Double;
 begin
@@ -168,6 +208,118 @@ end;
 procedure TTtnObj.SetWEIGHT3(const Value: Double);
 begin
   FWEIGHT3 := Value;
+end;
+
+function TTtnObj.GetDateTtn: TDate;
+begin
+  Result := FDateTtn;
+end;
+
+function TTtnObj.GetDeliveryCountry: string;
+begin
+  Result := FDeliveryCountry;
+end;
+
+function TTtnObj.GetDeliveryCountryRegion: StringCountryRegion;
+begin
+  Result := FDeliveryCountryRegion;
+end;
+
+function TTtnObj.GetDestinationCountry: string;
+begin
+  Result := FDestinationCountry;
+end;
+
+function TTtnObj.GetDestinationCountryRegion: StringCountryRegion;
+begin
+  Result := FDestinationCountryRegion;
+end;
+
+procedure TTtnObj.SetDateTtn(const Value: TDate);
+begin
+  FDateTtn := Value;
+end;
+
+procedure TTtnObj.SetDeliveryCountry(const Value: string);
+begin
+  FDeliveryCountry := Value;
+end;
+
+procedure TTtnObj.SetDeliveryCountryRegion(const Value: StringCountryRegion);
+begin
+  FDeliveryCountryRegion := Value;
+end;
+
+procedure TTtnObj.SetDestinationCountry(const Value: string);
+begin
+  FDestinationCountry := Value;
+end;
+
+procedure TTtnObj.SetDestinationCountryRegion(const Value: StringCountryRegion);
+begin
+  FDestinationCountryRegion := Value;
+end;
+
+function TTtnObj.GetAsText: string;
+begin
+  Result := Format('%d;"%s";"%s";%.3f;%.3f;%.3f;%.2f;"%s";"%s";%d;"%s";"%s";"%s";"%s";"%s"',[
+    NUMBER,                                        // 0
+    KOD ,                                          // 1
+    NAME ,                                         // 2
+    WEIGHT1 ,                                      // 3
+    WEIGHT2 ,                                      // 4
+    WEIGHT3 ,                                      // 5
+    COST ,                                         // 6
+    VAL ,                                          // 7
+    STR_PR ,                                       // 8
+    QUANTITY,                                      // 9
+    DestinationCountry,                            // 10
+    DestinationCountryRegion,                      // 11
+    DeliveryCountry,                               // 12
+    DeliveryCountryRegion,                         // 13
+    FormatDateTime(C_Date_Tovar_Format, DateTtn)   // 14
+  ]);
+end;
+
+procedure TTtnObj.SetAsText(const Value: string);
+var
+  i: Integer;
+  listFields: TStringList;
+  fs: TFormatSettings;
+begin
+  listFields := TStringList.Create();
+  try
+    fs := TFormatSettings.Create('Windows-1251');
+    fs.ShortDateFormat := C_Date_Tovar_Format;
+    listFields.StrictDelimiter := true;
+    listFields.Delimiter := ';';
+    listFields.DelimitedText := Value;
+    ETtnObjAsTxtNotEnoughFields.Test(listFields.Count>=obj_minimum_field_count, 'Couldn`t load line "%s". Need %d+ fields.', [Value, obj_minimum_field_count ]);
+    for i := 0 to listFields.Count - 1 do
+    begin
+      ETtnObjAsTxtFieldIsEmpty.Test(not listFields[i].IsEmpty, 'Couldn`t load line "%s". [%d] field is empty.', [Value, i]);
+      case i of
+      0 : NUMBER := listFields[i].ToInteger;
+      1 : KOD := listFields[i];
+      2 : NAME := listFields[i];
+      3 : WEIGHT1 := listFields[i].ToDouble;
+      4 : WEIGHT2 := listFields[i].ToDouble;
+      5 : WEIGHT3 := listFields[i].ToDouble;
+      6 : COST := listFields[i].ToDouble;
+      7 : VAL := listFields[i];
+      8 : STR_PR := listFields[i];
+      9 : QUANTITY := listFields[i].ToInteger;
+      10 : DestinationCountry := listFields[i];
+      11 : DestinationCountryRegion := listFields[i];
+      12 : DeliveryCountry := listFields[i];
+      13 : DeliveryCountryRegion := listFields[i];
+      14 : DateTtn := StrToDate(listFields[i], fs);
+      end;
+    end;
+  finally
+    listFields.Free;
+    listFields := nil;
+  end;
 end;
 
 end.

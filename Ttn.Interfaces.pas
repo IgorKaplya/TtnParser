@@ -40,16 +40,27 @@ type
 
   ITtnListBase<T> = interface(ITtnEnumerable<T>)
   ['{C8ADF7F6-8F43-414E-AB41-D51DC74C59E3}']
-    function Add: T;
-    procedure Clear;
+  {$REGION 'Property accessors'}
     function GetCount: Integer;
     function GetItems(Index: Integer): T;
+    function GetLast: T;
+    function GetFirst: T;
+  {$ENDREGION}
+    function Add: T;
+    procedure Clear;
     property Count: Integer read GetCount;
     property Items[Index: Integer]: T read GetItems; default;
+    procedure Delete(const Index: Integer);
+    property Last: T read GetLast;
+    property First: T read GetFirst;
   end;
+
+
+  StringCountryRegion = string[3];
 
   ITtnObj = interface(IInvokable)
   ['{F597E2BD-3F63-4A60-AD1C-F569F116A265}']
+  {$REGION 'Property accessors'}
     function GetCOST: Double;
     function GetErrorMsg: string;
     function GetKOD: string;
@@ -74,6 +85,19 @@ type
     procedure SetWEIGHT1(const Value: Double);
     procedure SetWEIGHT2(const Value: Double);
     procedure SetWEIGHT3(const Value: Double);
+    function GetDestinationCountry: string;
+    procedure SetDestinationCountry(const Value: string);
+    function GetDestinationCountryRegion: StringCountryRegion;
+    procedure SetDestinationCountryRegion(const Value: StringCountryRegion);
+    function GetDeliveryCountry: string;
+    procedure SetDeliveryCountry(const Value: string);
+    function GetDeliveryCountryRegion: StringCountryRegion;
+    procedure SetDeliveryCountryRegion(const Value: StringCountryRegion);
+    function GetDateTtn: TDate;
+    procedure SetDateTtn(const Value: TDate);
+    function GetAsText: string;
+    procedure SetAsText(const Value: string);
+  {$ENDREGION}
     property COST: Double read GetCOST write SetCOST;
     property ErrorMsg: string read GetErrorMsg write SetErrorMsg;
     property KOD: string read GetKOD write SetKOD;
@@ -86,11 +110,20 @@ type
     property WEIGHT1: Double read GetWEIGHT1 write SetWEIGHT1;
     property WEIGHT2: Double read GetWEIGHT2 write SetWEIGHT2;
     property WEIGHT3: Double read GetWEIGHT3 write SetWEIGHT3;
+    property DestinationCountry: string read GetDestinationCountry write SetDestinationCountry;
+    property DestinationCountryRegion: StringCountryRegion read GetDestinationCountryRegion write SetDestinationCountryRegion;
+    property DeliveryCountry: string read GetDeliveryCountry write SetDeliveryCountry;
+    property DeliveryCountryRegion: StringCountryRegion read GetDeliveryCountryRegion write SetDeliveryCountryRegion;
+    property DateTtn: TDate read GetDateTtn write SetDateTtn;
+    property AsText: string read GetAsText write SetAsText;
   end;
 
   ITtnList  = interface(ITtnListBase<ITtnObj>)
   ['{C8ADF7F6-8F43-414E-AB41-D51DC74C59E3}']
-    procedure Save(const AStrings: TStrings);
+    procedure Save(const AStrings: TStrings); overload;
+    procedure Save(const AFile: string); overload;
+    procedure Load(const AStrings: TStrings); overload;
+    procedure Load(const AFile: string); overload;
     procedure Sort;
   end;
 
@@ -176,6 +209,87 @@ type
     procedure CheckWeightRange(const AKod: ITtnKod; const AObj: ITtnObj);
     property CountryList: TDictionary<string, string> read GetCountryList write SetCountryList;
     property KodList: ITtnKodList read GetKodList;
+  end;
+
+  ITtnDocumentDescription = interface
+    {$REGION 'Property Accessors'}
+    function GetDocumentCode: string;
+    procedure SetDocumentCode(const Value: string);
+    function GetDocumentNumber: string;
+    procedure SetDocumentNumber(const Value: string);
+    function GetDocumentDate: TDate;
+    procedure SetDocumentDate(const Value: TDate);
+    {$ENDREGION}
+    property DocumentCode: string read GetDocumentCode write SetDocumentCode;
+    property DocumentNumber: string read GetDocumentNumber write SetDocumentNumber;
+    property DocumentDate: TDate read GetDocumentDate write SetDocumentDate;
+  end;
+
+  ITtnDocument = interface(ITtnDocumentDescription)
+  ['{1BE92079-3A87-4BCB-8C5C-54E29D18B158}']
+    {$REGION 'Property Accessors'}
+    function GetNumberObj: Integer;
+    procedure SetNumberObj(const Value: Integer);
+    function GetAsText: string;
+    procedure SetAsText(const Value: string);
+    {$ENDREGION}
+    property NumberObj: Integer read GetNumberObj write SetNumberObj;
+    property AsText: string read GetAsText write SetAsText;
+  end;
+
+  ITtnDocumentList = interface(ITtnListBase<ITtnDocument>)
+  ['{333B36A3-8762-4E4E-B1C9-1DA7A6CEE2D1}']
+    procedure Save(const AStrings: TStrings); overload;
+    procedure Load(const AStrings: TStrings); overload;
+    procedure Save(const AFile: string); overload;
+    procedure Load(const AFile: string); overload;
+  end;
+
+  ITTnResult = interface
+  ['{DA9C32D2-ECFB-4988-8DD0-0349F56DDBD9}']
+    {$REGION 'Property Accessors'}
+    function GetFolder: string;
+    procedure SetFolder(const Value: string);
+    function GetDestinationCountry: string;
+    procedure SetDestinationCountry(const Value: string);
+    function GetDestinationCountryRegion: StringCountryRegion;
+    procedure SetDestinationCountryRegion(const Value: StringCountryRegion);
+    function GetShipmentCountry: string;
+    procedure SetShipmentCountry(const Value: string);
+    function GetShipmentCountryRegion: StringCountryRegion;
+    procedure SetShipmentCountryRegion(const Value: StringCountryRegion);
+    function GetDateTtn: TDate;
+    procedure SetDateTtn(const Value: TDate);
+    function GetDocuments: ITtnDocumentList;
+    function GetTtnList: ITtnList;
+    function GetHistoryFolder(): string;
+    {$ENDREGION}
+    property Folder: string read GetFolder write SetFolder;
+    property DestinationCountry: string read GetDestinationCountry write SetDestinationCountry;
+    property DestinationCountryRegion: StringCountryRegion read GetDestinationCountryRegion write SetDestinationCountryRegion;
+    property ShipmentCountry: string read GetShipmentCountry write SetShipmentCountry;
+    property ShipmentCountryRegion: StringCountryRegion read GetShipmentCountryRegion write SetShipmentCountryRegion;
+    property DateTtn: TDate read GetDateTtn write SetDateTtn;
+    property Documents: ITtnDocumentList read GetDocuments;
+    property TtnList: ITtnList read GetTtnList;
+    procedure Append(const ANewTtn: ITtnList; const ADocumentsDescription: TArray<ITtnDocumentDescription>);
+    procedure Load;
+    procedure Save;
+    function ResultsFileName: string;
+    function DocumentsFileName: string;
+    property HistoryFolder: string read GetHistoryFolder;
+  end;
+
+  ITtnResultStorage = interface(ITtnListBase<ITTnResult>)
+  ['{D529BBD8-6403-4E9A-856E-0C46E9ED026D}']
+    {$REGION 'Property Accessors'}
+    function GetActiveResult: ITTnResult;
+    procedure SetActiveResult(const Value: ITTnResult);
+    {$ENDREGION}
+    property ActiveResult: ITTnResult read GetActiveResult write SetActiveResult;
+    function Load(const ARootFolder: string): Boolean;
+    procedure CreateResult(const AName: string);
+    procedure DeleteResult(const AResult: ITTnResult);
   end;
 
 implementation

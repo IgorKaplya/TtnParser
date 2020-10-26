@@ -6,23 +6,26 @@ uses
   System.SysUtils;
 
 type
-  ETtnParserExc = class(exception)
+  ETtnExc = class(exception)
   public
     class procedure Test(const ATrue: Boolean; const AMsg: string); overload;
     class procedure Test(const ATrue: Boolean; const AMsgFmt: string; const AArguments: array of const); overload;
   end;
 
-  ETtnParserEmptyInput = class(ETtnParserExc);
-  ETtnParserWrongConfig = class(ETtnParserExc);
-  ETtnParserWrongHeader = class(ETtnParserExc);
-  ETtnParserWrongMotorLines = class(ETtnParserExc);
-  ETtnParserColumnNotMapped = class(ETtnParserExc);
-  ETtnParserColumnExceedInput = class(ETtnParserExc);
-  ETtnWeightProcessing = class(ETtnParserExc);
+  ETtnParserEmptyInput = class(ETtnExc);
+  ETtnParserWrongConfig = class(ETtnExc);
+  ETtnParserWrongHeader = class(ETtnExc);
+  ETtnParserWrongMotorLines = class(ETtnExc);
+  ETtnParserColumnNotMapped = class(ETtnExc);
+  ETtnParserColumnExceedInput = class(ETtnExc);
+  ETtnWeightProcessing = class(ETtnExc);
   ETtnWeightProcessingWeightStandartZero = class(ETtnWeightProcessing);
   ETtnWeightProcessingCoefficientWeightZero = class(ETtnWeightProcessing);
   ETtnWeightProcessingWeightViolatesAcceptable = class(ETtnWeightProcessing);
-
+  ETtnObjAsTxtNotEnoughFields = class(ETtnExc);
+  ETtnObjAsTxtFieldIsEmpty = class(ETtnExc);
+  ETtnDocAsTxtNotEnoughFields = class(ETtnExc);
+  ETtnDocAsTxtFieldIsEmpty = class(ETtnExc);
 
 procedure TestErr(bMustBeTrue: Boolean; AMsg: string); overload; deprecated;
 
@@ -30,10 +33,10 @@ implementation
 
 procedure TestErr(bMustBeTrue: Boolean; AMsg: string);
 begin
-  ETtnParserExc.Test(bMustBeTrue, AMsg);
+  ETtnExc.Test(bMustBeTrue, AMsg);
 end;
 
-class procedure ETtnParserExc.Test(const ATrue: Boolean; const AMsg: string);
+class procedure ETtnExc.Test(const ATrue: Boolean; const AMsg: string);
 var
   E: Exception;
 begin
@@ -45,7 +48,7 @@ begin
   end;
 end;
 
-class procedure ETtnParserExc.Test(const ATrue: Boolean; const AMsgFmt: string; const AArguments: array of const);
+class procedure ETtnExc.Test(const ATrue: Boolean; const AMsgFmt: string; const AArguments: array of const);
 begin
   Test(ATrue, Format(AMsgFmt, AArguments));
 end;

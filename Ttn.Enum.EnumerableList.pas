@@ -18,14 +18,19 @@ type
     FItems: TList<T>;
     function GetCount: Integer;
     function GetItems(Index: Integer): T;
+    function GetLast: T;
+    function GetFirst: T;
   public
     constructor Create(AItemFactory: ITtnFactory<T>);
     function GetEnumerator: ITtnEnumerator<T>;
     destructor Destroy; override;
     function Add: T;
+    procedure Delete(const Index: Integer);
     procedure Clear; virtual;
     property Count: Integer read GetCount;
     property Items[Index: Integer]: T read GetItems; default;
+    property Last: T read GetLast;
+    property First: T read GetLast;
   end;
 
 implementation
@@ -56,9 +61,24 @@ begin
   Result := TTtnEnumerator<T>.Create(FItems);
 end;
 
+function TTtnEnumerableList<T>.GetFirst: T;
+begin
+  Result := FItems.First;
+end;
+
 function TTtnEnumerableList<T>.GetItems(Index: Integer): T;
 begin
   Result := FItems[Index];
+end;
+
+function TTtnEnumerableList<T>.GetLast: T;
+begin
+  Result := FItems.Last;
+end;
+
+procedure TTtnEnumerableList<T>.Delete(const Index: Integer);
+begin
+  FItems.Delete(Index);
 end;
 
 destructor TTtnEnumerableList<T>.Destroy;
