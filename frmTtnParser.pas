@@ -567,7 +567,14 @@ end;
 procedure TfrmTtnParserMain.vstResultStorageGetText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex;
     TextType: TVSTTextType; var CellText: string);
 begin
-  CellText := ExtractFileName(ResultStorage[Node.Index].Folder);
+  if ResultStorage.ActiveResult = ResultStorage[Node.Index] then
+    CellText := Format('%s: (%d / %d)',[
+        ExtractFileName(ResultStorage[Node.Index].Folder),
+        ResultStorage.ActiveResult.TtnList.Count,
+        ResultStorage.ActiveResult.Documents.Count
+      ])
+  else
+    CellText := ExtractFileName(ResultStorage[Node.Index].Folder);
 end;
 
 procedure TfrmTtnParserMain.vstTtnDrawText(Sender: TBaseVirtualTree;
