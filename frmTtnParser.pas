@@ -435,32 +435,32 @@ if FInpFile<>Value then
 end;
 
 procedure TfrmTtnParserMain.StartUp;
-
   procedure IniRead();
   {Чтение ini в память}
   var
     sIni: string;
   begin
-  sIni:=ExpandFileName('.\TtnParser.ini');
-  TestErr(FileExists(sIni),'Не найден файл настроек: '+sIni);
-  FIniFile:=TMemIniFile.Create(sIni);
-  FormatSettings.DecimalSeparator:=IniFile.ReadString('Настройки','ДесятичныйРазделитель',FormatSettings.DecimalSeparator)[1];
-  FValuta:=IniFile.ReadString('Настройки','Валюта','');
-  Processor.WeightMultiplier := IniFile.ReadFloat('Настройки','Множитель_веса',1);
-  Processor.Currency := Valuta;
-  ResultStorage.Load(IniFile.ReadString('Результаты','путь','.'));
-  vstResultStorage.RootNodeCount := ResultStorage.Count;
+    sIni := ExpandFileName('.\TtnParser.ini');
+    TestErr(FileExists(sIni), 'Не найден файл настроек: ' + sIni);
+    FIniFile := TMemIniFile.Create(sIni);
+    FormatSettings.DecimalSeparator := IniFile.ReadString('Настройки', 'ДесятичныйРазделитель', FormatSettings.DecimalSeparator)
+      [1];
+    FValuta := IniFile.ReadString('Настройки', 'Валюта', '');
+    Processor.WeightMultiplier := IniFile.ReadFloat('Настройки', 'Множитель_веса', 1);
+    Processor.Currency := Valuta;
+    ResultStorage.Load(IniFile.ReadString('Результаты', 'путь', '.'));
+    vstResultStorage.RootNodeCount := ResultStorage.Count;
   end;
 
   procedure DbConnect();
   {Соединение с БД по ADO из INI}
   begin
-  dm.conMain.ConnectionString:=IniFile.ReadString('БазаДанных','СтрокаПодключенияAdo','');
-  dm.conMain.Open();
-  TestErr(dm.conMain.Connected,'Не установлено соединение с базой данных');
-  dm.tblKod.Open();
-  dm.tblStrPr.Open();
-  dm.tblUni.Open();
+    dm.conMain.ConnectionString := IniFile.ReadString('БазаДанных', 'СтрокаПодключенияAdo', '');
+    dm.conMain.Open();
+    TestErr(dm.conMain.Connected, 'Не установлено соединение с базой данных');
+    dm.tblKod.Open();
+    dm.tblStrPr.Open();
+    dm.tblUni.Open();
   end;
 
   procedure InitTab();
@@ -471,17 +471,18 @@ procedure TfrmTtnParserMain.StartUp;
 
 begin
   if not Inited then
-    try
+  try
     IniRead();
     DbConnect();
     InitTab();
-    FInited:=True;
-    except on e: Exception do
-      begin
-      ShowMessage(format('Инициализация программы: %s',[e.Message]));
+    FInited := True;
+  except
+    on e: Exception do
+    begin
+      ShowMessage(format('Инициализация программы: %s', [e.Message]));
       Close();
-      end;
     end;
+  end;
 end;
 
 procedure TfrmTtnParserMain.vstActiveDocumentsGetText(Sender: TBaseVirtualTree; Node: PVirtualNode; Column: TColumnIndex;
@@ -517,6 +518,7 @@ begin
     ResultStorage.ActiveResult := ResultStorage[Sender.GetFirstSelected().Index];
     if ResultStorage.ActiveResult.TtnList.Count = 0 then
       ResultStorage.ActiveResult.Load();
+    lblActiveResultInfo.Caption := Format('', []);
     cpResultStorage.ActiveCard := crdActiveResult;
     edtShipmentCountry.Text := ResultStorage.ActiveResult.ShipmentCountry;
     edtDeliveryCountry.Text := ResultStorage.ActiveResult.DestinationCountry;
