@@ -152,11 +152,6 @@ const
   C_COL_VAL         = 7;
   C_COL_STR_PR      = 8;
   C_COL_QUANTITY    = 9;
-  C_COL_STRAN_OTPR  = 10;
-  C_COL_ATD_OTPR    = 11;
-  C_COL_STRAN_NAZN  = 12;
-  C_COL_ATD_NAZN    = 13;
-  C_COL_DATE_TOVAR  = 14;
 
 {$R *.dfm}
 
@@ -610,11 +605,6 @@ begin
   C_COL_VAL: CellText:=ttn[node.Index].VAL;
   C_COL_STR_PR: CellText:=ttn[node.Index].STR_PR;
   C_COL_QUANTITY: CellText:=IntToStr(ttn[node.Index].QUANTITY);
-  C_COL_STRAN_OTPR: CellText := ttn[node.Index].DeliveryCountry;
-  C_COL_ATD_OTPR: CellText := ttn[node.Index].DeliveryCountryRegion;
-  C_COL_STRAN_NAZN: CellText := ttn[node.Index].DestinationCountry;
-  C_COL_ATD_NAZN: CellText := ttn[node.Index].DestinationCountryRegion;
-  C_COL_DATE_TOVAR: CellText := FormatDateTime(C_Date_Tovar_Format, ttn[node.Index].DateTtn)
   end;
 end;
 

@@ -3,7 +3,7 @@ object frmTtnParserMain: TfrmTtnParserMain
   Top = 0
   Caption = #1056#1072#1079#1073#1086#1088' '#1058#1058#1053
   ClientHeight = 632
-  ClientWidth = 1571
+  ClientWidth = 1116
   Color = clBtnFace
   Font.Charset = RUSSIAN_CHARSET
   Font.Color = clWindowText
@@ -21,25 +21,27 @@ object frmTtnParserMain: TfrmTtnParserMain
   object cpMain: TCardPanel
     Left = 0
     Top = 0
-    Width = 1571
+    Width = 1116
     Height = 632
     Align = alClient
     ActiveCard = crdMainResults
     BevelOuter = bvNone
     Caption = 'cpMain'
     TabOrder = 0
+    ExplicitWidth = 1571
     object crdMainWait: TCard
       Left = 0
       Top = 0
-      Width = 1571
+      Width = 1116
       Height = 632
       Caption = 'crdMainWait'
       CardIndex = 0
       TabOrder = 0
+      ExplicitWidth = 1571
       object pnlWait: TPanel
         Left = 0
         Top = 0
-        Width = 1571
+        Width = 1116
         Height = 632
         Align = alClient
         Caption = #1054#1073#1088#1072#1073#1086#1090#1082#1072'...'
@@ -50,20 +52,22 @@ object frmTtnParserMain: TfrmTtnParserMain
         Font.Style = []
         ParentFont = False
         TabOrder = 0
+        ExplicitWidth = 1571
       end
     end
     object crdMainResults: TCard
       Left = 0
       Top = 0
-      Width = 1571
+      Width = 1116
       Height = 632
       Caption = 'crdMainResults'
       CardIndex = 1
       TabOrder = 1
+      ExplicitWidth = 1571
       object cpResultStorage: TCardPanel
         Left = 372
         Top = 0
-        Width = 1199
+        Width = 744
         Height = 632
         Align = alClient
         ActiveCard = crdActiveResult
@@ -71,10 +75,11 @@ object frmTtnParserMain: TfrmTtnParserMain
         Caption = 'cpResultStorage'
         ParentBackground = False
         TabOrder = 0
+        ExplicitWidth = 1199
         object crdActiveResultNone: TCard
           Left = 0
           Top = 0
-          Width = 1199
+          Width = 744
           Height = 632
           Caption = #1042#1099#1073#1077#1088#1080#1090#1077' '#1080#1083#1080' '#1076#1086#1073#1072#1074#1100#1090#1077' '#1088#1077#1079#1091#1083#1100#1090#1072#1090
           CardIndex = 0
@@ -88,20 +93,22 @@ object frmTtnParserMain: TfrmTtnParserMain
           ParentFont = False
           ShowCaption = True
           TabOrder = 0
+          ExplicitWidth = 1199
         end
         object crdActiveResult: TCard
           Left = 0
           Top = 0
-          Width = 1199
+          Width = 744
           Height = 632
           Caption = 'crdActiveResult'
           CardIndex = 1
           TabOrder = 1
+          ExplicitWidth = 1199
           object gpnlActiveResult: TGridPanel
             AlignWithMargins = True
             Left = 3
             Top = 3
-            Width = 1193
+            Width = 738
             Height = 32
             Align = alTop
             BevelOuter = bvNone
@@ -159,11 +166,12 @@ object frmTtnParserMain: TfrmTtnParserMain
                 Value = 100.000000000000000000
               end>
             TabOrder = 0
+            ExplicitWidth = 1193
             object edtDeliveryCountry: TEdit
               AlignWithMargins = True
-              Left = 629
+              Left = 389
               Top = 0
-              Width = 433
+              Width = 265
               Height = 32
               Margins.Top = 0
               Margins.Bottom = 0
@@ -171,13 +179,15 @@ object frmTtnParserMain: TfrmTtnParserMain
               Color = clInactiveCaption
               TabOrder = 2
               OnChange = edtDeliveryCountryChange
+              ExplicitLeft = 629
+              ExplicitWidth = 433
               ExplicitHeight = 30
             end
             object edtShipmentCountry: TEdit
               AlignWithMargins = True
               Left = 3
               Top = 0
-              Width = 433
+              Width = 265
               Height = 32
               Margins.Top = 0
               Margins.Bottom = 0
@@ -185,12 +195,13 @@ object frmTtnParserMain: TfrmTtnParserMain
               Color = clInactiveCaption
               TabOrder = 0
               OnChange = edtShipmentCountryChange
+              ExplicitWidth = 433
               ExplicitHeight = 30
             end
             object imgShipment: TImage
-              Left = 564
+              Left = 348
               Top = 0
-              Width = 62
+              Width = 38
               Height = 32
               Align = alClient
               Center = True
@@ -220,9 +231,9 @@ object frmTtnParserMain: TfrmTtnParserMain
             end
             object medtDeliveryRegion: TMaskEdit
               AlignWithMargins = True
-              Left = 1068
+              Left = 660
               Top = 0
-              Width = 122
+              Width = 75
               Height = 32
               Margins.Top = 0
               Margins.Bottom = 0
@@ -234,13 +245,15 @@ object frmTtnParserMain: TfrmTtnParserMain
               TabOrder = 3
               Text = '   '
               OnChange = medtDeliveryRegionChange
+              ExplicitLeft = 1068
+              ExplicitWidth = 122
               ExplicitHeight = 30
             end
             object medtShipmentRegion: TMaskEdit
               AlignWithMargins = True
-              Left = 442
+              Left = 274
               Top = 0
-              Width = 119
+              Width = 71
               Height = 32
               Margins.Top = 0
               Margins.Bottom = 0
@@ -252,6 +265,8 @@ object frmTtnParserMain: TfrmTtnParserMain
               TabOrder = 1
               Text = '   '
               OnChange = medtShipmentRegionChange
+              ExplicitLeft = 442
+              ExplicitWidth = 119
               ExplicitHeight = 30
             end
           end
@@ -259,13 +274,14 @@ object frmTtnParserMain: TfrmTtnParserMain
             AlignWithMargins = True
             Left = 3
             Top = 588
-            Width = 1193
+            Width = 738
             Height = 41
             Align = alBottom
             BevelOuter = bvNone
             TabOrder = 2
+            ExplicitWidth = 1193
             object btnProceed: TButton
-              Left = 1018
+              Left = 563
               Top = 0
               Width = 175
               Height = 41
@@ -275,10 +291,11 @@ object frmTtnParserMain: TfrmTtnParserMain
               ImageIndex = 0
               Images = imlMain32
               TabOrder = 1
+              ExplicitLeft = 1018
             end
             object cpNewResultDate: TCalendarPicker
               AlignWithMargins = True
-              Left = 813
+              Left = 358
               Top = 0
               Width = 202
               Height = 41
@@ -305,22 +322,24 @@ object frmTtnParserMain: TfrmTtnParserMain
               ParentFont = False
               TabOrder = 0
               TextHint = #1042#1099#1073#1077#1088#1080#1090#1077' '#1076#1072#1090#1091
+              ExplicitLeft = 813
             end
           end
           object pnlActiveDocuments: TPanel
             AlignWithMargins = True
             Left = 3
             Top = 41
-            Width = 1193
+            Width = 738
             Height = 541
             Align = alClient
             BevelOuter = bvNone
             TabOrder = 1
+            ExplicitWidth = 1193
             object vstActiveDocuments: TVirtualStringTree
               AlignWithMargins = True
               Left = 3
               Top = 3
-              Width = 1145
+              Width = 690
               Height = 535
               Align = alClient
               BorderStyle = bsNone
@@ -347,7 +366,7 @@ object frmTtnParserMain: TfrmTtnParserMain
               Columns = <
                 item
                   Position = 0
-                  Width = 325
+                  Width = 234
                   WideText = #1050#1086#1076' '#1076#1086#1082#1091#1084#1077#1085#1090#1072
                 end
                 item
@@ -357,13 +376,13 @@ object frmTtnParserMain: TfrmTtnParserMain
                 end
                 item
                   Position = 2
-                  Width = 185
+                  Width = 168
                   WideText = #1044#1072#1090#1072' '#1076#1086#1082#1091#1084#1077#1085#1090#1072
                 end>
             end
             object stpActiveDocumentTools: TStackPanel
               AlignWithMargins = True
-              Left = 1154
+              Left = 699
               Top = 3
               Width = 36
               Height = 535
@@ -386,6 +405,7 @@ object frmTtnParserMain: TfrmTtnParserMain
                   VerticalPositioning = spvpTop
                 end>
               TabOrder = 1
+              ExplicitLeft = 1154
               object btnAddResultDocument: TButton
                 Left = 0
                 Top = 0
@@ -509,15 +529,16 @@ object frmTtnParserMain: TfrmTtnParserMain
     object crdMainParse: TCard
       Left = 0
       Top = 0
-      Width = 1571
+      Width = 1116
       Height = 632
       Caption = 'crdMainParse'
       CardIndex = 2
       TabOrder = 2
+      ExplicitWidth = 1571
       object lblInpFile: TLabel
         Left = 0
         Top = 616
-        Width = 1571
+        Width = 1116
         Height = 16
         Align = alBottom
         Caption = #1042#1093#1086#1076#1085#1086#1081' '#1092#1072#1081#1083':'
@@ -532,7 +553,7 @@ object frmTtnParserMain: TfrmTtnParserMain
       object vstTtn: TVirtualStringTree
         Left = 0
         Top = 39
-        Width = 1571
+        Width = 1116
         Height = 577
         Align = alClient
         Colors.FocusedSelectionColor = clSkyBlue
@@ -548,6 +569,7 @@ object frmTtnParserMain: TfrmTtnParserMain
         OnDrawText = vstTtnDrawText
         OnGetText = vstTtnGetText
         OnGetHint = vstTtnGetHint
+        ExplicitWidth = 1571
         Columns = <
           item
             Position = 0
@@ -598,37 +620,12 @@ object frmTtnParserMain: TfrmTtnParserMain
             Position = 9
             Width = 72
             WideText = 'QUANTITY'
-          end
-          item
-            Position = 10
-            Width = 103
-            WideText = 'STRAN_OTPR'
-          end
-          item
-            Position = 11
-            Width = 82
-            WideText = 'ATD_OTPR'
-          end
-          item
-            Position = 12
-            Width = 99
-            WideText = 'STRAN_NAZN'
-          end
-          item
-            Position = 13
-            Width = 79
-            WideText = 'ATD_NAZN'
-          end
-          item
-            Position = 14
-            Width = 101
-            WideText = 'DATE_TOVAR'
           end>
       end
       object tlbMain: TToolBar
         Left = 0
         Top = 0
-        Width = 1571
+        Width = 1116
         Height = 39
         AutoSize = True
         ButtonHeight = 39
@@ -637,6 +634,7 @@ object frmTtnParserMain: TfrmTtnParserMain
         Images = imlMain
         ShowCaptions = True
         TabOrder = 1
+        ExplicitWidth = 1571
         object btnInp: TToolButton
           Left = 0
           Top = 0
@@ -729,7 +727,7 @@ object frmTtnParserMain: TfrmTtnParserMain
     Left = 336
     Top = 48
     Bitmap = {
-      494C010105000800A80010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C010105000800AC0010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000100202028F010101DF010101FF010101FF010101FF010101DF0202
@@ -1013,7 +1011,7 @@ object frmTtnParserMain: TfrmTtnParserMain
     Left = 352
     Top = 208
     Bitmap = {
-      494C0101060008004C0020002000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010106000800500020002000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000800000004000000001002000000000000080
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
