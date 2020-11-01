@@ -613,7 +613,7 @@ begin
   if ResultStorage.ActiveResult = ResultStorage[Node.Index] then
     CellText := Format('%s: (%d / %d)',[
         ExtractFileName(ResultStorage[Node.Index].Folder),
-        ResultStorage.ActiveResult.TtnList.Count,
+        ResultStorage.ActiveResult.TtnList.CountObjWithUniqueNumbers,
         ResultStorage.ActiveResult.Documents.Count
       ])
   else

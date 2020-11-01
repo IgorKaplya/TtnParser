@@ -24,7 +24,7 @@ object frmTtnParserMain: TfrmTtnParserMain
     Width = 1116
     Height = 632
     Align = alClient
-    ActiveCard = crdMainParse
+    ActiveCard = crdMainResults
     BevelOuter = bvNone
     Caption = 'cpMain'
     TabOrder = 0
@@ -107,7 +107,7 @@ object frmTtnParserMain: TfrmTtnParserMain
             BevelOuter = bvNone
             ColumnCollection = <
               item
-                Value = 36.842105263157900000
+                Value = 36.842105263157890000
               end
               item
                 Value = 10.526315789473680000
@@ -116,7 +116,7 @@ object frmTtnParserMain: TfrmTtnParserMain
                 Value = 5.263157894736842000
               end
               item
-                Value = 36.842105263157900000
+                Value = 36.842105263157890000
               end
               item
                 Value = 10.526315789473680000
@@ -705,7 +705,7 @@ object frmTtnParserMain: TfrmTtnParserMain
     Left = 336
     Top = 48
     Bitmap = {
-      494C010105000800B40010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
+      494C010105000800B80010001000FFFFFFFF2110FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000100202028F010101DF010101FF010101FF010101FF010101DF0202
@@ -989,7 +989,7 @@ object frmTtnParserMain: TfrmTtnParserMain
     Left = 352
     Top = 208
     Bitmap = {
-      494C010106000800600020002000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
+      494C010106000800640020002000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000800000004000000001002000000000000080
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
