@@ -21,6 +21,8 @@ type
     procedure Load_BoundaryConditions;
     [Test]
     procedure Test_LoadSave;
+    [Test]
+    procedure Test_CountUniqueObj();
   end;
 
 implementation
@@ -51,6 +53,17 @@ procedure TTestTtnList.Load_BoundaryConditions;
 
 begin
   Assert.WillRaise(ListLoadFileDelegate('Abracadabra.csv'),EFOpenError);
+end;
+
+procedure TTestTtnList.Test_CountUniqueObj;
+begin
+  TtnList.Add().NUMBER := 1;
+  TtnList.Add().NUMBER := 1;
+  TtnList.Add().NUMBER := 2;
+  TtnList.Add().NUMBER := 3;
+  TtnList.Add().NUMBER := 3;
+  TtnList.Add().NUMBER := 3;
+  Assert.AreEqual(3, TtnList.CountObjWithUniqueNumbers);
 end;
 
 procedure TTestTtnList.Test_LoadSave;

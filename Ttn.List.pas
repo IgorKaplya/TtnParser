@@ -14,6 +14,7 @@ uses
 
 type
   TTtnList = class(TTtnEnumerableList<ITtnObj>, ITtnList)
+  private
   public
     constructor Create(ATtnObjFactory: ITtnFactory<ITtnObj>);
     procedure Save(const AFile: string); overload;
@@ -21,6 +22,7 @@ type
     procedure Sort;
     procedure Load(const AFile: string); overload;
     procedure Load(const AStrings: TStrings); overload;
+    function CountObjWithUniqueNumbers: Integer;
   end;
 
 implementation
@@ -96,6 +98,21 @@ begin
   finally
     sl.Free()
   end;
+end;
+
+function TTtnList.CountObjWithUniqueNumbers: Integer;
+var
+  obj: ITtnObj;
+  lastObjNumber: Integer;
+begin
+  Result := 0;
+  lastObjNumber := -1;
+  for obj in Self do
+    if lastObjNumber <> obj.NUMBER then
+    begin
+      Inc(Result);
+      lastObjNumber := obj.NUMBER;
+    end;
 end;
 
 end.

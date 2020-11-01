@@ -38,6 +38,9 @@ type
     procedure BackupHistory;
     function GetHistoryFolder: string;
     procedure CheckFilesWritable(const AFiles: array of string);
+    procedure AppendDocuments(const appendObj: ITtnObj; const ADocumentsDescription: TArray<ITtnDocumentDescription>);
+    function AppendTtnObj(const newObj: ITtnObj; numberOffset: Integer): ITtnObj;
+    function AppendObjNumberOffset: Integer;
   public
     constructor Create(ADocuments: ITtnDocumentList; ATtnList: ITtnList);
     destructor Destroy; override;
@@ -138,42 +141,14 @@ end;
 
 procedure TTtnResult.Append(const ANewTtn: ITtnList; const ADocumentsDescription: TArray<ITtnDocumentDescription>);
 var
-  newObj, appendObj: ITtnObj;
-  newDoc: ITtnDocument;
-  descrDoc: ITtnDocumentDescription;
-  iLastNumber: Integer;
+  newObj, appendedTtnObj: ITtnObj;
+  numberOffset: Integer;
 begin
-  if TtnList.Count>0 then
-    iLastNumber := TtnList.Last.NUMBER
-  else
-    iLastNumber := 0;
+  numberOffset := AppendObjNumberOffset;
   for newObj in ANewTtn do
   begin
-    appendObj := TtnList.Add();
-      appendObj.NUMBER := newObj.NUMBER + iLastNumber;
-      appendObj.COST := newObj.COST;
-      appendObj.KOD := newObj.KOD;
-      appendObj.NAME := newObj.NAME;
-      appendObj.QUANTITY := newObj.QUANTITY;
-      appendObj.SIGN := newObj.SIGN;
-      appendObj.STR_PR := newObj.STR_PR;
-      appendObj.VAL := newObj.VAL;
-      appendObj.WEIGHT1 := newObj.WEIGHT1;
-      appendObj.WEIGHT2 := newObj.WEIGHT2;
-      appendObj.WEIGHT3 := newObj.WEIGHT3;
-      appendObj.DestinationCountry := DestinationCountry;
-      appendObj.DestinationCountryRegion := DestinationCountryRegion;
-      appendObj.DeliveryCountry := ShipmentCountry;
-      appendObj.DeliveryCountryRegion := ShipmentCountryRegion;
-      appendObj.DateTtn := DateTtn;
-    for descrDoc in ADocumentsDescription do
-    begin
-      newDoc := Documents.Add();
-      newDoc.DocumentCode := descrDoc.DocumentCode;
-      newDoc.DocumentNumber := descrDoc.DocumentNumber;
-      newDoc.DocumentDate := descrDoc.DocumentDate;
-      newDoc.NumberObj := appendObj.NUMBER;
-    end;
+    appendedTtnObj := AppendTtnObj(newObj, numberOffset);
+    AppendDocuments(appendedTtnObj, ADocumentsDescription);
   end;
 end;
 
@@ -262,6 +237,55 @@ begin
       finally
         FreeAndNil(fs)
       end;
+end;
+
+procedure TTtnResult.AppendDocuments(const appendObj: ITtnObj; const ADocumentsDescription: TArray<ITtnDocumentDescription>);
+var
+  newDoc: ITtnDocument;
+  descrDoc: ITtnDocumentDescription;
+  lastDocumentObjNumber: Integer;
+begin
+  lastDocumentObjNumber := 0;
+  if Documents.Count > 0 then
+    lastDocumentObjNumber := Documents.Last.NumberObj;
+  if lastDocumentObjNumber<>appendObj.NUMBER then
+    for descrDoc in ADocumentsDescription do
+    begin
+      newDoc := Documents.Add();
+      newDoc.DocumentCode := descrDoc.DocumentCode;
+      newDoc.DocumentNumber := descrDoc.DocumentNumber;
+      newDoc.DocumentDate := descrDoc.DocumentDate;
+      newDoc.NumberObj := appendObj.NUMBER;
+    end;
+end;
+
+function TTtnResult.AppendTtnObj(const newObj: ITtnObj; numberOffset: Integer): ITtnObj;
+begin
+  Result := TtnList.Add();
+    Result.NUMBER := newObj.NUMBER + numberOffset;
+    Result.COST := newObj.COST;
+    Result.KOD := newObj.KOD;
+    Result.NAME := newObj.NAME;
+    Result.QUANTITY := newObj.QUANTITY;
+    Result.SIGN := newObj.SIGN;
+    Result.STR_PR := newObj.STR_PR;
+    Result.VAL := newObj.VAL;
+    Result.WEIGHT1 := newObj.WEIGHT1;
+    Result.WEIGHT2 := newObj.WEIGHT2;
+    Result.WEIGHT3 := newObj.WEIGHT3;
+    Result.DestinationCountry := DestinationCountry;
+    Result.DestinationCountryRegion := DestinationCountryRegion;
+    Result.DeliveryCountry := ShipmentCountry;
+    Result.DeliveryCountryRegion := ShipmentCountryRegion;
+    Result.DateTtn := DateTtn;
+end;
+
+function TTtnResult.AppendObjNumberOffset: Integer;
+begin
+  if TtnList.Count>0 then
+    Result := TtnList.Last.NUMBER
+  else
+    Result := 0;
 end;
 
 
