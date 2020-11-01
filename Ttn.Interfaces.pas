@@ -125,6 +125,7 @@ type
     procedure Load(const AStrings: TStrings); overload;
     procedure Load(const AFile: string); overload;
     procedure Sort;
+    function CountObjWithUniqueNumbers(): Integer;
   end;
 
   ITtnParser = interface(IInterface)
@@ -243,6 +244,7 @@ type
     procedure Load(const AStrings: TStrings); overload;
     procedure Save(const AFile: string); overload;
     procedure Load(const AFile: string); overload;
+    function DocumentsForObj(const numberObj: Integer): ITtnDocumentList;
   end;
 
   ITTnResult = interface

@@ -25,7 +25,8 @@ type
 implementation
 
 uses
-  Ttn.Registration, System.SysUtils, Ttn.Constants, System.Types, System.IOUtils;
+  Ttn.Registration, System.SysUtils, Ttn.Constants, System.Types, System.IOUtils,
+  System.Variants;
 
 procedure TTestTtnResult.Setup;
 begin
@@ -53,6 +54,22 @@ procedure TTestTtnResult.Test_Append;
     );
   end;
 
+  procedure AddTtnObj(const listTtn: ITtnList; AData: variant);
+  begin
+    listTtn.Add;
+      listTtn.Last.NUMBER := AData[0];
+      listTtn.Last.KOD := AData[1];
+      listTtn.Last.STR_PR := AData[2];
+      listTtn.Last.NAME := AData[3];
+      listTtn.Last.QUANTITY := AData[4];
+      listTtn.Last.SIGN := AData[5];
+      listTtn.Last.VAL := AData[6];
+      listTtn.Last.WEIGHT1 := AData[7];
+      listTtn.Last.WEIGHT2 := AData[8];
+      listTtn.Last.WEIGHT3 := AData[9];
+      listTtn.Last.COST := AData[10];
+  end;
+
 const
   append_count = 2;
 var
@@ -77,22 +94,14 @@ begin
     listDocs[0].DocumentDate := Now;
 
   listTtn := TTtnResolver.Resolve<ITtnList>;
-  listTtn.Add;
-    listTtn.Last.NUMBER := 1;
-    listTtn.Last.KOD := '123';
-    listTtn.Last.STR_PR := 'Zombie-land';
-    listTtn.Last.NAME := 'Name';
-    listTtn.Last.QUANTITY := 3;
-    listTtn.Last.SIGN := 'O';
-    listTtn.Last.VAL := 'Tugr';
-    listTtn.Last.WEIGHT1 := 1.14;
-    listTtn.Last.WEIGHT2 := 2.14;
-    listTtn.Last.WEIGHT3 := 3.14;
-    listTtn.Last.COST := 10.0;
+    AddTtnObj(listTtn, VarArrayOf([1,'123','Zombie-land','Name',3,'O','Tugr',1.14,2.14,3.14,10.0]));
+    AddTtnObj(listTtn, VarArrayOf([1,'321','Zombie-land','Nom',4,'P','Byn',0.14,1.14,2.14,1.0]));
+    AddTtnObj(listTtn, VarArrayOf([2,'010','Zombie-land','Èìÿ',5,'Q','USD',0.1,1.1,2.2,1.00]));
+
 
   Assert.WillNotRaise(DoUpdate(listTtn, listDocs, append_count));
   Assert.AreEqual(append_count * listTtn.Count, TtnResult.TtnList.Count);
-  Assert.AreEqual(append_count * listTtn.Count * length(listDocs), TtnResult.Documents.Count);
+  Assert.AreEqual(append_count * listTtn.CountObjWithUniqueNumbers * length(listDocs), TtnResult.Documents.Count);
 
   for i := 0 to append_count-1 do
     begin

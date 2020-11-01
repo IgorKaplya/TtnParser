@@ -53,6 +53,7 @@ begin
   AContainer.RegisterType<TTtnDocument>;
   AContainer.RegisterFactory<ITtnFactory<ITtnDocument>>.AsFactory;
   AContainer.RegisterType<TTtnDocumentList>;
+  Acontainer.RegisterType<ITtnFactory<ITtnDocumentList>>.AsFactory;
 
   AContainer.Build;
 end;

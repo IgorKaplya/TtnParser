@@ -20,6 +20,8 @@ type
     procedure Test_LoadSave;
     [Test]
     procedure Load_BoundaryConditions;
+    [Test]
+    procedure Test_DocumentsForObj();
   end;
 
 implementation
@@ -35,6 +37,24 @@ end;
 procedure TTestTtnDocumentList.TearDown;
 begin
   FDocList := nil;
+end;
+
+procedure TTestTtnDocumentList.Test_DocumentsForObj;
+var
+  lst1,lst2,lst3: ITtnDocumentList;
+begin
+  DocList.Add().NumberObj := 1;
+  DocList.Add().NumberObj := 2;
+  DocList.Add().NumberObj := 2;
+  DocList.Add().NumberObj := 3;
+  DocList.Add().NumberObj := 3;
+  DocList.Add().NumberObj := 3;
+  lst1 := DocList.DocumentsForObj(1);
+  lst2 := DocList.DocumentsForObj(2);
+  lst3 := DocList.DocumentsForObj(3);
+  Assert.AreEqual(1, lst1.Count);
+  Assert.AreEqual(2, lst2.Count);
+  Assert.AreEqual(3, lst3.Count);
 end;
 
 procedure TTestTtnDocumentList.Test_LoadSave;
