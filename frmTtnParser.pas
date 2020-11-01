@@ -142,7 +142,7 @@ const
   column_doc_code = 0;
   column_doc_number = 1;
   column_doc_date = 2;
-  C_ERR_NO_KOD = 'не найден код';
+  C_ERR_NO_KOD = 'РЅРµ РЅР°Р№РґРµРЅ РєРѕРґ';
   C_COL_NUMBER      = 0;
   C_COL_KOD         = 1;
   C_COL_NAME        = 2;
@@ -173,13 +173,13 @@ begin
 end;
 
 procedure TfrmTtnParserMain.actAddKodExecute(Sender: TObject);
-{Добавление кода в базу прямо из отчета}
+{Р”РѕР±Р°РІР»РµРЅРёРµ РєРѕРґР° РІ Р±Р°Р·Сѓ РїСЂСЏРјРѕ РёР· РѕС‚С‡РµС‚Р°}
 var
   obj: ITtnObj;
 begin
   try
-  TestErr(dm.tblKod.State=dsBrowse,'Таблица кодов в состоянии редактирования. Сохраните или отмените изменения');
-  TestErr(CurTtnObj(obj),'Не выбран элемент по которому добавить код');
+  TestErr(dm.tblKod.State=dsBrowse,'РўР°Р±Р»РёС†Р° РєРѕРґРѕРІ РІ СЃРѕСЃС‚РѕСЏРЅРёРё СЂРµРґР°РєС‚РёСЂРѕРІР°РЅРёСЏ. РЎРѕС…СЂР°РЅРёС‚Рµ РёР»Рё РѕС‚РјРµРЅРёС‚Рµ РёР·РјРµРЅРµРЅРёСЏ');
+  TestErr(CurTtnObj(obj),'РќРµ РІС‹Р±СЂР°РЅ СЌР»РµРјРµРЅС‚ РїРѕ РєРѕС‚РѕСЂРѕРјСѓ РґРѕР±Р°РІРёС‚СЊ РєРѕРґ');
   frmAddCode.CodTxt:=obj.NAME;
   frmAddCode.CodSign:=obj.SIGN;
   if frmAddCode.ShowModal=mrOk then
@@ -192,7 +192,7 @@ begin
       dm.tblKod.FieldByName(F_Kod_Weight_Koef).AsFloat:=frmAddCode.CodKoeff;
     dm.tblKod.Post;
     end;
-  except on e: Exception do ShowMessage(format('Добавление кода: %s',[e.Message]));
+  except on e: Exception do ShowMessage(format('Р”РѕР±Р°РІР»РµРЅРёРµ РєРѕРґР°: %s',[e.Message]));
   end;
 end;
 
@@ -269,13 +269,13 @@ var
 begin
   HintText := '';
 
-  CheckCondition(not ResultStorage.ActiveResult.DestinationCountry.IsEmpty, 'Не задана страна назначения');
-  CheckCondition(not ResultStorage.ActiveResult.ShipmentCountry.IsEmpty, 'Не задана страна отправки');
-  CheckCondition(not String(ResultStorage.ActiveResult.DestinationCountryRegion).IsEmpty, 'Не задан регион назначения');
-  CheckCondition(not String(ResultStorage.ActiveResult.ShipmentCountryRegion).IsEmpty, 'Не задан регион отправки');
-  CheckCondition(DocumentsDescription.Count > 0, 'Не заданы документы');
-  CheckCondition(AllDocumentsDescribedFine(), 'Не все документы описаны полностью');
-  CheckCondition(ResultStorage.ActiveResult.DateTtn<>0, 'Не выбрана дата ТТН');
+  CheckCondition(not ResultStorage.ActiveResult.DestinationCountry.IsEmpty, 'РќРµ Р·Р°РґР°РЅР° СЃС‚СЂР°РЅР° РЅР°Р·РЅР°С‡РµРЅРёСЏ');
+  CheckCondition(not ResultStorage.ActiveResult.ShipmentCountry.IsEmpty, 'РќРµ Р·Р°РґР°РЅР° СЃС‚СЂР°РЅР° РѕС‚РїСЂР°РІРєРё');
+  CheckCondition(not String(ResultStorage.ActiveResult.DestinationCountryRegion).IsEmpty, 'РќРµ Р·Р°РґР°РЅ СЂРµРіРёРѕРЅ РЅР°Р·РЅР°С‡РµРЅРёСЏ');
+  CheckCondition(not String(ResultStorage.ActiveResult.ShipmentCountryRegion).IsEmpty, 'РќРµ Р·Р°РґР°РЅ СЂРµРіРёРѕРЅ РѕС‚РїСЂР°РІРєРё');
+  CheckCondition(DocumentsDescription.Count > 0, 'РќРµ Р·Р°РґР°РЅС‹ РґРѕРєСѓРјРµРЅС‚С‹');
+  CheckCondition(AllDocumentsDescribedFine(), 'РќРµ РІСЃРµ РґРѕРєСѓРјРµРЅС‚С‹ РѕРїРёСЃР°РЅС‹ РїРѕР»РЅРѕСЃС‚СЊСЋ');
+  CheckCondition(ResultStorage.ActiveResult.DateTtn<>0, 'РќРµ РІС‹Р±СЂР°РЅР° РґР°С‚Р° РўРўРќ');
 
   if HintText.IsEmpty then
     cpMain.ActiveCard := crdMainParse
@@ -300,7 +300,7 @@ procedure TfrmTtnParserMain.actResultStorageAddExecute(Sender: TObject);
 var
   newResultStorage: string;
 begin
-  if InputQuery('Новая папка для результатов','Введите имя',newResultStorage) then
+  if InputQuery('РќРѕРІР°СЏ РїР°РїРєР° РґР»СЏ СЂРµР·СѓР»СЊС‚Р°С‚РѕРІ','Р’РІРµРґРёС‚Рµ РёРјСЏ',newResultStorage) then
   begin
     ResultStorage.CreateResult(newResultStorage);
     vstResultStorage.RootNodeCount := ResultStorage.Count;
@@ -316,13 +316,13 @@ begin
   code_confirmation_expected := format('%d%d%d%d%d',[Random(9),Random(9),Random(9),Random(9),Random(9)]);
   code_confirmation_user := '';
   user_pressed_ok := InputQuery(
-    'Удаление выбранного хрнилища приведет к потере данных.',
-    'Введите код подтверждения: '+code_confirmation_expected,
+    'РЈРґР°Р»РµРЅРёРµ РІС‹Р±СЂР°РЅРЅРѕРіРѕ С…СЂРЅРёР»РёС‰Р° РїСЂРёРІРµРґРµС‚ Рє РїРѕС‚РµСЂРµ РґР°РЅРЅС‹С….',
+    'Р’РІРµРґРёС‚Рµ РєРѕРґ РїРѕРґС‚РІРµСЂР¶РґРµРЅРёСЏ: '+code_confirmation_expected,
     code_confirmation_user
     );
   if user_pressed_ok then
     if not code_confirmation_expected.Equals(code_confirmation_user) then
-      ShowMessage('Неверно введен код подтверждения удаления')
+      ShowMessage('РќРµРІРµСЂРЅРѕ РІРІРµРґРµРЅ РєРѕРґ РїРѕРґС‚РІРµСЂР¶РґРµРЅРёСЏ СѓРґР°Р»РµРЅРёСЏ')
     else
     begin
       ResultStorage.DeleteResult(ResultStorage.ActiveResult);
@@ -357,7 +357,7 @@ else
 end;
 
 procedure TfrmTtnParserMain.ClearUnNames;
-{Нужно очистить неиспользуемые имена.}
+{РќСѓР¶РЅРѕ РѕС‡РёСЃС‚РёС‚СЊ РЅРµРёСЃРїРѕР»СЊР·СѓРµРјС‹Рµ РёРјРµРЅР°.}
 var
   lnt,nt: Integer;
   i: integer;
@@ -420,7 +420,7 @@ begin
 end;
 
 procedure TfrmTtnParserMain.ProcessInpFile;
-{Разбор входного файла, сортировка и унифткация. Основной метод программы}
+{Р Р°Р·Р±РѕСЂ РІС…РѕРґРЅРѕРіРѕ С„Р°Р№Р»Р°, СЃРѕСЂС‚РёСЂРѕРІРєР° Рё СѓРЅРёС„С‚РєР°С†РёСЏ. РћСЃРЅРѕРІРЅРѕР№ РјРµС‚РѕРґ РїСЂРѕРіСЂР°РјРјС‹}
 begin
   cpMain.ActiveCard := crdMainWait;
   try
@@ -435,19 +435,19 @@ begin
 end;
 
 procedure TfrmTtnParserMain.SetInpFile(const Value: string);
-{Выбор файла со входящими данными}
+{Р’С‹Р±РѕСЂ С„Р°Р№Р»Р° СЃРѕ РІС…РѕРґСЏС‰РёРјРё РґР°РЅРЅС‹РјРё}
 begin
 if FInpFile<>Value then
   try
-  TestErr(FileExists(Value),'Файл не найден '+Value);
+  TestErr(FileExists(Value),'Р¤Р°Р№Р» РЅРµ РЅР°Р№РґРµРЅ '+Value);
   FInpFile:=Value;
-  lblInpFile.Caption:='Входной файл: '+ExtractFileName(InpFile);
+  lblInpFile.Caption:='Р’С…РѕРґРЅРѕР№ С„Р°Р№Р»: '+ExtractFileName(InpFile);
   lblInpFile.Hint:=InpFile;
   except on e: Exception do
     begin
-    ShowMessage(Format('Открытие входных данных: %s',[e.Message]));
+    ShowMessage(Format('РћС‚РєСЂС‹С‚РёРµ РІС…РѕРґРЅС‹С… РґР°РЅРЅС‹С…: %s',[e.Message]));
     FInpFile:='';
-    lblInpFile.Caption:='Входной файл: Входные данные не выбраны';
+    lblInpFile.Caption:='Р’С…РѕРґРЅРѕР№ С„Р°Р№Р»: Р’С…РѕРґРЅС‹Рµ РґР°РЅРЅС‹Рµ РЅРµ РІС‹Р±СЂР°РЅС‹';
     end;
   end;
 end;
@@ -485,28 +485,28 @@ procedure TfrmTtnParserMain.StartUp;
   end;
 
   procedure IniRead();
-  {Чтение ini в память}
+  {Р§С‚РµРЅРёРµ ini РІ РїР°РјСЏС‚СЊ}
   var
     sIni: string;
   begin
     sIni := ExpandFileName('.\TtnParser.ini');
-    TestErr(FileExists(sIni), 'Не найден файл настроек: ' + sIni);
+    TestErr(FileExists(sIni), 'РќРµ РЅР°Р№РґРµРЅ С„Р°Р№Р» РЅР°СЃС‚СЂРѕРµРє: ' + sIni);
     FIniFile := TMemIniFile.Create(sIni);
-    FormatSettings.DecimalSeparator := IniFile.ReadString('Настройки', 'ДесятичныйРазделитель', FormatSettings.DecimalSeparator)
+    FormatSettings.DecimalSeparator := IniFile.ReadString('РќР°СЃС‚СЂРѕР№РєРё', 'Р”РµСЃСЏС‚РёС‡РЅС‹Р№Р Р°Р·РґРµР»РёС‚РµР»СЊ', FormatSettings.DecimalSeparator)
       [1];
-    FValuta := IniFile.ReadString('Настройки', 'Валюта', '');
-    Processor.WeightMultiplier := IniFile.ReadFloat('Настройки', 'Множитель_веса', 1);
+    FValuta := IniFile.ReadString('РќР°СЃС‚СЂРѕР№РєРё', 'Р’Р°Р»СЋС‚Р°', '');
+    Processor.WeightMultiplier := IniFile.ReadFloat('РќР°СЃС‚СЂРѕР№РєРё', 'РњРЅРѕР¶РёС‚РµР»СЊ_РІРµСЃР°', 1);
     Processor.Currency := Valuta;
-    ResultStorage.Load(IniFile.ReadString('Результаты', 'путь', '.'));
+    ResultStorage.Load(IniFile.ReadString('Р РµР·СѓР»СЊС‚Р°С‚С‹', 'РїСѓС‚СЊ', '.'));
     vstResultStorage.RootNodeCount := ResultStorage.Count;
   end;
 
   procedure DbConnect();
-  {Соединение с БД по ADO из INI}
+  {РЎРѕРµРґРёРЅРµРЅРёРµ СЃ Р‘Р” РїРѕ ADO РёР· INI}
   begin
-    dm.conMain.ConnectionString := IniFile.ReadString('БазаДанных', 'СтрокаПодключенияAdo', '');
+    dm.conMain.ConnectionString := IniFile.ReadString('Р‘Р°Р·Р°Р”Р°РЅРЅС‹С…', 'РЎС‚СЂРѕРєР°РџРѕРґРєР»СЋС‡РµРЅРёСЏAdo', '');
     dm.conMain.Open();
-    TestErr(dm.conMain.Connected, 'Не установлено соединение с базой данных');
+    TestErr(dm.conMain.Connected, 'РќРµ СѓСЃС‚Р°РЅРѕРІР»РµРЅРѕ СЃРѕРµРґРёРЅРµРЅРёРµ СЃ Р±Р°Р·РѕР№ РґР°РЅРЅС‹С…');
     dm.tblKod.Open();
     dm.tblStrPr.Open();
     dm.tblUni.Open();
@@ -529,7 +529,7 @@ begin
   except
     on e: Exception do
     begin
-      ShowMessage(format('Инициализация программы: %s', [e.Message]));
+      ShowMessage(format('РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ РїСЂРѕРіСЂР°РјРјС‹: %s', [e.Message]));
       Close();
     end;
   end;
@@ -567,7 +567,7 @@ begin
   begin
     ResultStorage.ActiveResult := ResultStorage[Sender.GetFirstSelected().Index];
     if ResultStorage.ActiveResult.TtnList.Count = 0 then
-      ResultStorage.ActiveResult.Load();
+      LoadActiveResult();
     cpResultStorage.ActiveCard := crdActiveResult;
     edtShipmentCountry.Text := ResultStorage.ActiveResult.ShipmentCountry;
     edtDeliveryCountry.Text := ResultStorage.ActiveResult.DestinationCountry;
@@ -595,7 +595,7 @@ end;
 procedure TfrmTtnParserMain.vstTtnDrawText(Sender: TBaseVirtualTree;
     TargetCanvas: TCanvas; Node: PVirtualNode; Column: TColumnIndex; const
     Text: string; const CellRect: TRect; var DefaultDraw: Boolean);
-{Отрисовка элементов с ошибками}
+{РћС‚СЂРёСЃРѕРІРєР° СЌР»РµРјРµРЅС‚РѕРІ СЃ РѕС€РёР±РєР°РјРё}
 begin
 if length(ttn[node.Index].ErrorMsg)>0 then
   TargetCanvas.Font.Color:=clRed;
@@ -604,7 +604,7 @@ end;
 procedure TfrmTtnParserMain.vstTtnGetHint(Sender: TBaseVirtualTree; Node:
     PVirtualNode; Column: TColumnIndex; var LineBreakStyle:
     TVTTooltipLineBreakStyle; var HintText: string);
-{Выдаем в Hint ошибки}
+{Р’С‹РґР°РµРј РІ Hint РѕС€РёР±РєРё}
 begin
 HintText:=ttn[node.Index].ErrorMsg;
 end;
@@ -612,7 +612,7 @@ end;
 procedure TfrmTtnParserMain.vstTtnGetText(Sender: TBaseVirtualTree; Node:
     PVirtualNode; Column: TColumnIndex; TextType: TVSTTextType; var CellText:
     string);
-{Вывод текста}
+{Р’С‹РІРѕРґ С‚РµРєСЃС‚Р°}
 begin
   case Column of
   C_COL_NUMBER: CellText:=IntToStr(ttn[node.Index].NUMBER);
