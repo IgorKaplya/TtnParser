@@ -575,6 +575,22 @@ end;
 
 procedure TfrmTtnParserMain.vstResultStorageChange(Sender: TBaseVirtualTree; Node: PVirtualNode);
 
+  procedure LoadLastDocuments();
+  var
+    lastTtnObjDocuments: ITtnDocumentList;
+    doc: ITtnDocument;
+  begin
+    DocumentsDescription.Clear;
+    if ResultStorage.ActiveResult.Documents.Count>0 then
+    begin
+      lastTtnObjDocuments := ResultStorage.ActiveResult.Documents.DocumentsForObj(ResultStorage.ActiveResult.TtnList.Last.NUMBER);
+      for doc in lastTtnObjDocuments do
+        DocumentsDescription.Add(doc);
+    end;
+    vstActiveDocuments.RootNodeCount := DocumentsDescription.Count;
+    vstActiveDocuments.Refresh();
+  end;
+
   procedure LoadActiveResult();
   var
     loaded: Boolean;
@@ -601,9 +617,11 @@ begin
     edtDeliveryCountry.Text := ResultStorage.ActiveResult.DestinationCountry;
     medtShipmentRegion.Text := ResultStorage.ActiveResult.ShipmentCountryRegion;
     medtDeliveryRegion.Text := ResultStorage.ActiveResult.DestinationCountryRegion;
-    if ResultStorage.ActiveResult.DateTtn = 0 then
-      ResultStorage.ActiveResult.DateTtn := Now();
+    ResultStorage.ActiveResult.DateTtn := Now;
+    if ResultStorage.ActiveResult.TtnList.Count > 0 then
+      ResultStorage.ActiveResult.DateTtn := ResultStorage.ActiveResult.TtnList.Last.DateTtn;
     cpNewResultDate.Date := ResultStorage.ActiveResult.DateTtn;
+    LoadLastDocuments();
   end;
 end;
 

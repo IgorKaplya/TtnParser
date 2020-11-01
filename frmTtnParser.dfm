@@ -107,7 +107,7 @@ object frmTtnParserMain: TfrmTtnParserMain
             BevelOuter = bvNone
             ColumnCollection = <
               item
-                Value = 36.842105263157890000
+                Value = 36.842105263157900000
               end
               item
                 Value = 10.526315789473680000
@@ -116,7 +116,7 @@ object frmTtnParserMain: TfrmTtnParserMain
                 Value = 5.263157894736842000
               end
               item
-                Value = 36.842105263157890000
+                Value = 36.842105263157900000
               end
               item
                 Value = 10.526315789473680000
