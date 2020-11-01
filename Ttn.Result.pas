@@ -37,6 +37,7 @@ type
     procedure Save;
     procedure BackupHistory;
     function GetHistoryFolder: string;
+    procedure CheckFilesWritable(const AFiles: array of string);
   public
     constructor Create(ADocuments: ITtnDocumentList; ATtnList: ITtnList);
     destructor Destroy; override;
@@ -206,6 +207,7 @@ end;
 
 procedure TTtnResult.Save;
 begin
+  CheckFilesWritable([ResultsFileName, DocumentsFileName]);
   BackupHistory();
   TtnList.Save(ResultsFileName);
   Documents.Save(DocumentsFileName);
@@ -246,6 +248,20 @@ end;
 function TTtnResult.GetHistoryFolder: string;
 begin
   Result := TPath.Combine(Folder, 'History');;
+end;
+
+procedure TTtnResult.CheckFilesWritable(const AFiles: array of string);
+var
+  oneFile: string;
+  fs: TFileStream;
+begin
+  for oneFile in AFiles do
+    if FileExists(oneFile) then
+      try
+        fs := TFile.OpenWrite(oneFile);
+      finally
+        FreeAndNil(fs)
+      end;
 end;
 
 

@@ -1,4 +1,4 @@
-unit frmTtnParser;
+﻿unit frmTtnParser;
 
 interface
 
@@ -337,12 +337,26 @@ begin
 end;
 
 procedure TfrmTtnParserMain.actSaveResultExecute(Sender: TObject);
+
+  procedure SaveActiveResult();
+  var
+    saved: Boolean;
+  begin
+    saved := False;
+    while not saved do
+    try
+      ResultStorage.ActiveResult.Save();
+      saved := true;
+    except on e: exception do ShowMessage('Не удается сохранить данные. '+e.Message);
+    end;
+  end;
+
 begin
   ResultStorage.ActiveResult.Append(
     ttn,
     DocumentsDescription.ToArray()
   );
-  ResultStorage.ActiveResult.Save();
+  SaveActiveResult();
   ttn.Clear;
   vstTtn.Clear;
   cpMain.ActiveCard := crdMainResults;
@@ -560,6 +574,20 @@ begin
 end;
 
 procedure TfrmTtnParserMain.vstResultStorageChange(Sender: TBaseVirtualTree; Node: PVirtualNode);
+
+  procedure LoadActiveResult();
+  var
+    loaded: Boolean;
+  begin
+    loaded := False;
+    while not loaded do
+    try
+      ResultStorage.ActiveResult.Load();
+      loaded := True;
+    except on E: Exception do ShowMessage('Не удалось загрузить данные. '+e.Message);
+    end;
+  end;
+
 begin
   if not Assigned(Sender.GetFirstSelected()) then
     cpResultStorage.ActiveCard := crdActiveResultNone
