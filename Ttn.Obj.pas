@@ -273,10 +273,10 @@ begin
     VAL ,                                          // 7
     STR_PR ,                                       // 8
     QUANTITY,                                      // 9
-    DestinationCountry,                            // 10
-    DestinationCountryRegion,                      // 11
     DeliveryCountry,                               // 12
-    DeliveryCountryRegion,                         // 13
+    String(DeliveryCountryRegion).Replace(' ','0'),                         // 13
+    DestinationCountry,                            // 10
+    String(DestinationCountryRegion).Replace(' ','0'),                      // 11
     FormatDateTime(C_Date_Tovar_Format, DateTtn)   // 14
   ]);
 end;
@@ -309,10 +309,10 @@ begin
       7 : VAL := listFields[i];
       8 : STR_PR := listFields[i];
       9 : QUANTITY := listFields[i].ToInteger;
-      10 : DestinationCountry := listFields[i];
-      11 : DestinationCountryRegion := listFields[i];
-      12 : DeliveryCountry := listFields[i];
-      13 : DeliveryCountryRegion := listFields[i];
+      10 : DeliveryCountry := listFields[i];
+      11 : DeliveryCountryRegion := listFields[i];
+      12 : DestinationCountry := listFields[i];
+      13 : DestinationCountryRegion := listFields[i];
       14 : DateTtn := StrToDate(listFields[i], fs);
       end;
     end;

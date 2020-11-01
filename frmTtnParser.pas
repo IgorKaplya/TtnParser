@@ -76,6 +76,7 @@ type
     procedure actRefreshUpdate(Sender: TObject);
     procedure actResultStorageAddExecute(Sender: TObject);
     procedure actResultStorageDeleteExecute(Sender: TObject);
+    procedure actResultStorageDeleteUpdate(Sender: TObject);
     procedure actSaveResultExecute(Sender: TObject);
     procedure actSettingsExecute(Sender: TObject);
     procedure cpNewResultDateChange(Sender: TObject);
@@ -152,11 +153,6 @@ const
   C_COL_VAL         = 7;
   C_COL_STR_PR      = 8;
   C_COL_QUANTITY    = 9;
-  C_COL_STRAN_OTPR  = 10;
-  C_COL_ATD_OTPR    = 11;
-  C_COL_STRAN_NAZN  = 12;
-  C_COL_ATD_NAZN    = 13;
-  C_COL_DATE_TOVAR  = 14;
 
 {$R *.dfm}
 
@@ -312,13 +308,32 @@ begin
 end;
 
 procedure TfrmTtnParserMain.actResultStorageDeleteExecute(Sender: TObject);
+var
+  code_confirmation_expected, code_confirmation_user: string;
+  user_pressed_ok: Boolean;
 begin
-  if MessageBox(0, 'Удаление выбранного хрнилища приведет к потере данных.', 'Удаление', MB_OKCANCEL + MB_ICONWARNING) = IDOK then
-  begin
-    ResultStorage.DeleteResult(ResultStorage.ActiveResult);
-    vstResultStorage.RootNodeCount := ResultStorage.Count;
-    vstResultStorage.ClearSelection;
-  end;
+  Randomize();
+  code_confirmation_expected := format('%d%d%d%d%d',[Random(9),Random(9),Random(9),Random(9),Random(9)]);
+  code_confirmation_user := '';
+  user_pressed_ok := InputQuery(
+    'Удаление выбранного хрнилища приведет к потере данных.',
+    'Введите код подтверждения: '+code_confirmation_expected,
+    code_confirmation_user
+    );
+  if user_pressed_ok then
+    if not code_confirmation_expected.Equals(code_confirmation_user) then
+      ShowMessage('Неверно введен код подтверждения удаления')
+    else
+    begin
+      ResultStorage.DeleteResult(ResultStorage.ActiveResult);
+      vstResultStorage.RootNodeCount := ResultStorage.Count;
+      vstResultStorage.ClearSelection;
+    end;
+end;
+
+procedure TfrmTtnParserMain.actResultStorageDeleteUpdate(Sender: TObject);
+begin
+  (Sender as TAction).Enabled := Assigned(ResultStorage.ActiveResult);
 end;
 
 procedure TfrmTtnParserMain.actSaveResultExecute(Sender: TObject);
@@ -610,11 +625,6 @@ begin
   C_COL_VAL: CellText:=ttn[node.Index].VAL;
   C_COL_STR_PR: CellText:=ttn[node.Index].STR_PR;
   C_COL_QUANTITY: CellText:=IntToStr(ttn[node.Index].QUANTITY);
-  C_COL_STRAN_OTPR: CellText := ttn[node.Index].DeliveryCountry;
-  C_COL_ATD_OTPR: CellText := ttn[node.Index].DeliveryCountryRegion;
-  C_COL_STRAN_NAZN: CellText := ttn[node.Index].DestinationCountry;
-  C_COL_ATD_NAZN: CellText := ttn[node.Index].DestinationCountryRegion;
-  C_COL_DATE_TOVAR: CellText := FormatDateTime(C_Date_Tovar_Format, ttn[node.Index].DateTtn)
   end;
 end;
 
