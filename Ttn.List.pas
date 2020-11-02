@@ -66,7 +66,7 @@ var
 begin
   fileLoad := TStringList.Create();
   try
-    fileLoad.LoadFromFile(AFile, TEncoding.UTF8);
+    fileLoad.LoadFromFile(AFile);
     Load(fileLoad);
   finally
     fileLoad.Free();
