@@ -94,7 +94,7 @@ begin
   sl := TStringList.Create();
   try
     Save(sl);
-    sl.SaveToFile(AFile, TEncoding.Utf8);
+    sl.SaveToFile(AFile);
   finally
     sl.Free()
   end;
