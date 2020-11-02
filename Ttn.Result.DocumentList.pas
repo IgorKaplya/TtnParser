@@ -27,7 +27,7 @@ var
 begin
   listFile := TStringList.Create();
   try
-    listFile.LoadFromFile(AFile, TEncoding.UTF8);
+    listFile.LoadFromFile(AFile);
     Load(listFile);
   finally
     listFile.Free();
