@@ -58,7 +58,7 @@ begin
   listFile := TStringList.Create();
   try
     Save(listFile);
-    listFile.SaveToFile(AFile, TEncoding.UTF8);
+    listFile.SaveToFile(AFile);
   finally
     listFile.Free();
   end;
