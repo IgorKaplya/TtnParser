@@ -85,3 +85,5 @@ TestInsightSettings.ini
 _out/results/
 
 _out/_TestData/result/save/History/
+
+_out/_TestData/TestExcel/Append/
