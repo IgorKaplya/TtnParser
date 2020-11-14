@@ -11,7 +11,8 @@ uses
   Ttn.Test.TtnList in 'Ttn.Test.TtnList.pas',
   Ttn.Test.TtnObj in 'Ttn.Test.TtnObj.pas',
   Ttn.Test.DocumentList in 'Ttn.Test.DocumentList.pas',
-  Ttn.Test.Document in 'Ttn.Test.Document.pas';
+  Ttn.Test.Document in 'Ttn.Test.Document.pas',
+  Ttn.Test.Excel in 'Ttn.Test.Excel.pas';
 
 begin
   RunTests();

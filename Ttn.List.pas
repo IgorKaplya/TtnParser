@@ -66,7 +66,7 @@ var
 begin
   fileLoad := TStringList.Create();
   try
-    fileLoad.LoadFromFile(AFile);
+    fileLoad.LoadFromFile(AFile, TEncoding.GetEncoding('Windows-1251'));
     Load(fileLoad);
   finally
     fileLoad.Free();
@@ -94,7 +94,7 @@ begin
   sl := TStringList.Create();
   try
     Save(sl);
-    sl.SaveToFile(AFile);
+    sl.SaveToFile(AFile, TEncoding.GetEncoding('Windows-1251'));
   finally
     sl.Free()
   end;

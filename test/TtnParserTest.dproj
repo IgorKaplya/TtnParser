@@ -155,6 +155,7 @@ begin
         <DCCReference Include="Ttn.Test.TtnObj.pas"/>
         <DCCReference Include="Ttn.Test.DocumentList.pas"/>
         <DCCReference Include="Ttn.Test.Document.pas"/>
+        <DCCReference Include="Ttn.Test.Excel.pas"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
