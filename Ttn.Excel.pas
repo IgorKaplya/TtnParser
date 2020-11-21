@@ -3,29 +3,23 @@ unit Ttn.Excel;
 interface
 
 uses
-  System.Classes;
+  System.Classes, zexmlss, zexlsx;
 
 type
 
-  TExcelAppenderErr = procedure(Sender: TObject; AMsg: string) of object;
+  TExcelAdapterErr = procedure(Sender: TObject; AMsg: string) of object;
 
-  TExcelAppender = class(TObject)
+  TExcelAdapter = class(TObject)
   private
-    MyExcel: OleVariant;
     FLastError: string;
-    FOnError: TExcelAppenderErr;
-    function CheckExcelInstalled: Boolean;
-    procedure RunExcel(DisableAlerts: Boolean = False; Visible: boolean = false);
-    function StopExcel: boolean;
+    FOnError: TExcelAdapterErr;
   protected
     procedure DoError(AMsg: string);
   public
-    constructor Create;
-    destructor Destroy; override;
-    procedure Append(AFile: string; const AData: TStrings);
+    procedure Save(AFile: string; const AData: TStrings);
     procedure Load(AFile: string; const AData: TStrings);
     property LastError: string read FLastError;
-    property OnError: TExcelAppenderErr read FOnError write FOnError;
+    property OnError: TExcelAdapterErr read FOnError write FOnError;
   end;
 
 implementation
@@ -35,55 +29,38 @@ uses
   System.Variants, System.IOUtils;
 
 type
-  EExcelComparerException = Exception;
-
-const ExcelApp = 'Excel.Application';
+  EExcelAdapterException = Exception;
 
 procedure TestErr(AMustBeTrue: Boolean; AMsg: string);
 begin
 if not AMustBeTrue then
-  raise EExcelComparerException.Create(AMsg);
+  raise EExcelAdapterException.Create(AMsg);
 end;
 
-constructor TExcelAppender.Create;
-begin
-  inherited;
-  MyExcel:= Unassigned;
-end;
+procedure TExcelAdapter.Save(AFile: string; const AData: TStrings);
 
-destructor TExcelAppender.Destroy;
-begin
-  MyExcel:= Unassigned;
-  inherited Destroy;
-end;
-
-function TExcelAppender.CheckExcelInstalled: Boolean;
-{Searching CLSID OLE Excel}
-var
-  ClassID: TCLSID;
-begin
-  Result:=CLSIDFromProgID(PWideChar(WideString(ExcelApp)),ClassID)=S_OK;
-  TestErr(Result,'Found no installed MS Excel on this machine.');
-end;
-
-procedure TExcelAppender.Append(AFile: string; const AData: TStrings);
-
-  procedure TransferData(const AWorkSheet: OleVariant);
+  procedure TransferData(const AWorkSheet: TZSheet);
   var
-    i,j: Integer;
     iCol,iRow: integer;
     sLine: string;
+    lineData: TArray<string>;
     val: string;
+    iVal: Integer;
+    dVal: Double;
+    cell: TZCell;
   begin
-    iRow := 1;
+    AWorkSheet.RowCount := AData.Count;
+    iRow := 0;
     for sLine in AData do
     begin
-      iCol := 1;
-      for val in sLine.Split([';']) do
+      iCol := 0;
+      lineData := sLine.Split([';']);
+      for val in lineData do
       begin
-        if val.StartsWith('0') then
-          AWorkSheet.Columns[iCol].NumberFormat := AnsiChar('@');
-        AWorkSheet.Cells[iRow,iCol].Value2 := val;
+        if iRow = 0 then
+          AWorkSheet.ColCount := Length(lineData);
+        cell := AWorkSheet.Cell[iCol,iRow];
+        cell.AsString := val;
         inc(iCol);
       end;
       inc(iRow);
@@ -91,103 +68,65 @@ procedure TExcelAppender.Append(AFile: string; const AData: TStrings);
   end;
 
 var
-  WB: OleVariant; //WorkBook
-  WS: OleVariant; //WorkSheet
   expandedFile: string;
+  MyExcel: TZEXMLSS;
 begin
   FLastError:='';
-  RunExcel();
+  MyExcel := TZEXMLSS.Create(nil);
   try
     expandedFile := ExpandFileName(AFile);
-    if FileExists(expandedFile) then
-      WB := MyExcel.Workbooks.Open(expandedFile)
-    else
-      WB := MyExcel.Workbooks.Add;
-    WS := WB.Sheets[1];
-    WS.Cells.Clear;
-    TransferData(WS);
-    WB.SaveAs(expandedFile);
+    MyExcel.Sheets.Count := 1;
+    TransferData(MyExcel.Sheets[0]);
+    SaveXmlssToXLSX(MyExcel, expandedFile,	[0], [], nil, 'UTF-8');
   except on e: exception do DoError('Appending excel. '+e.Message);
   end;
-  StopExcel();
+  MyExcel.Free();
 end;
 
-procedure TExcelAppender.Load(AFile: string; const AData: TStrings);
+procedure TExcelAdapter.Load(AFile: string; const AData: TStrings);
 
-  procedure ReadRange(const ARange: Variant);
+  procedure ReadSheet(const ASheet: TZSheet);
   var
-    i,j: Integer;
     iCol,iRow: integer;
     sLine: string;
   begin
-    iCol:= ARange.Columns.Count;
-    iRow:= ARange.Rows.Count;
-    for i:=1 to iRow do
+    iRow:= 0;
+    while (iRow < ASheet.RowCount) and (not ASheet.Cell[0,iRow].AsString.IsEmpty()) do
     begin
-      for j:=1 to iCol do
+      iCol:= 0;
+      while (iCol < ASheet.ColCount)  and (not ASheet.Cell[iCol,iRow].AsString.IsEmpty()) do
       begin
-        if j = 1 then
-          sLine := ARange.Cells[i,j].Text
+        if iCol = 0 then
+          sLine := ASheet.Cell[iCol,iRow].AsString
         else
-          sLine := sLine + ';'+ ARange.Cells[i,j].Text
+          sLine := sLine + ';'+ ASheet.Cell[iCol,iRow].AsString;
+        inc(iCol);
       end;
       AData.Add(sLine);
+      inc(iRow);
     end;
   end;
 
 var
-  WB: OleVariant; //WorkBook
-  WS: OleVariant; //WorkSheet
-  Rng: OleVariant;//Used ranges on WorkSheet
+  MyExcel: TZEXMLSS;
 begin
   FLastError:='';
-  RunExcel();
+  MyExcel := TZEXMLSS.Create(nil);
   try
-    WB := MyExcel.Workbooks.Open(ExpandFileName(AFile));
-    WS := WB.Sheets[1];
-    Rng := WS.UsedRange;
-    AData.Clear();
-    ReadRange(Rng);
+    ReadXLSX(MyExcel, ExpandFileName(AFile));
+    ReadSheet(MyExcel.Sheets[0]);
   except on e: exception do DoError('Loading excel. '+e.Message);
   end;
-StopExcel();
+  MyExcel.Free();
 end;
 
-procedure TExcelAppender.DoError(AMsg: string);
+procedure TExcelAdapter.DoError(AMsg: string);
 begin
   FLastError:=AMsg;
   if Assigned(FOnError) then
     begin
     FOnError(Self, AMsg);
     end;
-end;
-
-procedure TExcelAppender.RunExcel(DisableAlerts: Boolean = False; Visible: boolean = false);
-{Just run if installed}
-begin
-  try
-  CheckExcelInstalled();
-  MyExcel:=CreateOleObject(ExcelApp);
-    MyExcel.Application.EnableEvents:=DisableAlerts;
-    MyExcel.Application.DisplayAlerts:= DisableAlerts;
-    MyExcel.Visible:=Visible;
-  except on e: exception do DoError(format('Starting excel. %s.',[e.Message]));
-  end;
-end;
-
-function TExcelAppender.StopExcel: boolean;
-{Stop if there is assigned one}
-begin
-Result:=false;
-if not VarIsEmpty(MyExcel) then
-  try
-  if MyExcel.Visible then
-    MyExcel.Visible:=false;
-  MyExcel.Quit;
-  MyExcel:=Unassigned;
-  Result:=True;
-  except  on e: exception do DoError(format('Stopping excel. %s.',[e.Message]));
-  end;
 end;
 
 end.

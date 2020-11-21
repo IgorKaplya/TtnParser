@@ -1,4 +1,4 @@
-﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup>
         <ProjectGuid>{3DCE3285-6A72-4235-8311-4ECCB9FD6AEF}</ProjectGuid>
         <ProjectVersion>18.4</ProjectVersion>
@@ -80,7 +80,7 @@
         <VerInfo_Locale>1049</VerInfo_Locale>
         <DCC_ExeOutput>..\_out\</DCC_ExeOutput>
         <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
-        <DCC_UnitSearchPath>..;..\spring4d\Source;..\spring4d\Source\Base;..\spring4d\Source\Base\Collections;..\spring4d\Source\Base\Logging;..\spring4d\Source\Base\Patches;..\spring4d\Source\Core\Container;..\spring4d\Source\Core\Interception;..\spring4d\Source\Core\Logging;..\spring4d\Source\Core\Services;..\spring4d\Source\Data\ObjectDataSet;..\spring4d\Source\Persistence\Adapters;..\spring4d\Source\Persistence\Core;..\spring4d\Source\Persistence\Criteria;..\spring4d\Source\Persistence\Mapping;..\spring4d\Source\Persistence\SQL;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+        <DCC_UnitSearchPath>..;..\spring4d\Source;..\spring4d\Source\Base;..\spring4d\Source\Base\Collections;..\spring4d\Source\Base\Logging;..\spring4d\Source\Base\Patches;..\spring4d\Source\Core\Container;..\spring4d\Source\Core\Interception;..\spring4d\Source\Core\Logging;..\spring4d\Source\Core\Services;..\spring4d\Source\Data\ObjectDataSet;..\spring4d\Source\Persistence\Adapters;..\spring4d\Source\Persistence\Core;..\spring4d\Source\Persistence\Criteria;..\spring4d\Source\Persistence\Mapping;..\spring4d\Source\Persistence\SQL;..\zexmlss\zexmlss\src;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Android)'!=''">
         <DCC_UsePackage>DBXSqliteDriver;IndyIPCommon;bindcompdbx;DBXInterBaseDriver;IndyIPServer;IndySystem;tethering;fmxFireDAC;bindcompfmx;ibmonitor;FMXTee;DbxCommonDriver;FmxTeeUI;ibxpress;fmx;xmlrtl;ibxbindings;rtl;DbxClientDriver;CustomIPTransport;dbexpress;IndyCore;bindcomp;dsnap;IndyIPClient;dbxcds;bindengine;dsnapxml;dbrtl;IndyProtocols;$(DCC_UsePackage)</DCC_UsePackage>
