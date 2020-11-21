@@ -3,13 +3,13 @@ unit Ttn.Excel;
 interface
 
 uses
-  System.Classes, zexmlss, zexlsx;
+  System.Classes, zexmlss, zexlsx, Ttn.Interfaces;
 
 type
 
   TExcelAdapterErr = procedure(Sender: TObject; AMsg: string) of object;
 
-  TExcelAdapter = class(TObject)
+  TTtnExcelAdapter = class(TInterfacedObject, ITtnExcelAdapter)
   private
     FLastError: string;
     FOnError: TExcelAdapterErr;
@@ -37,7 +37,7 @@ if not AMustBeTrue then
   raise EExcelAdapterException.Create(AMsg);
 end;
 
-procedure TExcelAdapter.Save(AFile: string; const AData: TStrings);
+procedure TTtnExcelAdapter.Save(AFile: string; const AData: TStrings);
 
   procedure TransferData(const AWorkSheet: TZSheet);
   var
@@ -83,7 +83,7 @@ begin
   MyExcel.Free();
 end;
 
-procedure TExcelAdapter.Load(AFile: string; const AData: TStrings);
+procedure TTtnExcelAdapter.Load(AFile: string; const AData: TStrings);
 
   procedure ReadSheet(const ASheet: TZSheet);
   var
@@ -120,7 +120,7 @@ begin
   MyExcel.Free();
 end;
 
-procedure TExcelAdapter.DoError(AMsg: string);
+procedure TTtnExcelAdapter.DoError(AMsg: string);
 begin
   FLastError:=AMsg;
   if Assigned(FOnError) then

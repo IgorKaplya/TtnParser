@@ -9,8 +9,8 @@ type
   [TestFixture]
   TTestTtnExcel = class(TObject)
   private
-    FExcel: TExcelAdapter;
-    property Excel: TExcelAdapter read FExcel;
+    FExcel: ITtnExcelAdapter;
+    property Excel: ITtnExcelAdapter read FExcel;
   public
     [Setup]
     procedure Setup;
@@ -23,18 +23,18 @@ type
 implementation
 
 uses
-  System.Classes;
+  System.Classes,
+  Ttn.Registration;
 
 { TTestTtnExcel }
 
 procedure TTestTtnExcel.Setup;
 begin
-  FExcel := TExcelAdapter.Create();
+  FExcel := TTtnResolver.Resolve<ITtnExcelAdapter>;
 end;
 
 procedure TTestTtnExcel.TearDown;
 begin
-  FExcel.Free;
   FExcel := nil;
 end;
 

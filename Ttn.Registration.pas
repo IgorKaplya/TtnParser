@@ -30,7 +30,8 @@ uses
   Ttn.Result,
   Ttn.ResultStorage,
   Ttn.Result.Document,
-  Ttn.Result.DocumentList;
+  Ttn.Result.DocumentList,
+  Ttn.Excel;
 
 procedure RegisterTypes();
 begin
@@ -54,6 +55,7 @@ begin
   AContainer.RegisterFactory<ITtnFactory<ITtnDocument>>.AsFactory;
   AContainer.RegisterType<TTtnDocumentList>;
   Acontainer.RegisterType<ITtnFactory<ITtnDocumentList>>.AsFactory;
+  AContainer.RegisterType<TTtnExcelAdapter>;
 
   AContainer.Build;
 end;

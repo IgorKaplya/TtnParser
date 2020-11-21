@@ -295,6 +295,12 @@ type
     procedure DeleteResult(const AResult: ITTnResult);
   end;
 
+  ITtnExcelAdapter = interface
+  ['{B4BD08D6-C1A2-4650-8B3D-63C82287313A}']
+    procedure Save(AFile: string; const AData: TStrings);
+    procedure Load(AFile: string; const AData: TStrings);
+  end;
+
 implementation
 
 end.
