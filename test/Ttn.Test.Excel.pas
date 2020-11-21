@@ -9,15 +9,15 @@ type
   [TestFixture]
   TTestTtnExcel = class(TObject)
   private
-    FExcel: TExcelAppender;
-    property Excel: TExcelAppender read FExcel;
+    FExcel: TExcelAdapter;
+    property Excel: TExcelAdapter read FExcel;
   public
     [Setup]
     procedure Setup;
     [TearDown]
     procedure TearDown;
     [Test]
-    procedure Test_;
+    procedure Test_Append;
   end;
 
 implementation
@@ -29,7 +29,7 @@ uses
 
 procedure TTestTtnExcel.Setup;
 begin
-  FExcel := TExcelAppender.Create();
+  FExcel := TExcelAdapter.Create();
 end;
 
 procedure TTestTtnExcel.TearDown;
@@ -38,17 +38,24 @@ begin
   FExcel := nil;
 end;
 
-procedure TTestTtnExcel.Test_;
+procedure TTestTtnExcel.Test_Append;
+const
+  line_count = 10;
+  one_line =
+    '7;"3926909709";"œ–Œ◊»≈ ◊¿—“» œÀ¿—“Ã¿——Œ¬€≈ ¡/”";0.001;0.001;0.001;780.00;"USD";"eu";1;"BY";030;"RU";"140";"24.06.1987"';
 var
+  i: Integer;
   sl: TStringList;
 begin
   sl := TStringList.Create();
   try
-    sl.Text := '001;Text;1;3.14;24.06.1987';
-    Excel.Append('.\_TestData\TestExcel\Append\123.xlsx', sl);
+    for i := 1 to line_count do
+      sl.Add(one_line);
+    Excel.Save('.\_TestData\TestExcel\Append\123.xlsx', sl);
     sl.Clear;
     Excel.Load('.\_TestData\TestExcel\Append\123.xlsx', sl);
-    Assert.AreEqual('001;Text;1;3.14;24.06.1987',sl[0]);
+    for i := 0 to line_count-1 do
+      Assert.AreEqual(one_line,sl[i]);
   finally
     sl.Free;
   end;
