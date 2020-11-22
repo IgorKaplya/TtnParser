@@ -162,17 +162,27 @@ begin
 end;
 
 procedure TTestTtnResult.Save_Fails_IfFileIsLocked;
+
+  function SaveDelegate(): TTestLocalMethod;
+  begin
+    Result := procedure()
+    begin
+      TtnResult.Save();
+    end;
+  end;
+
 const
-  test_save_result_folder = '_testdata\result\save';
+  test_save_result_folder = '_testdata\result\save_locked';
 var
   fs: TFileStream;
 begin
   TtnResult.Folder := test_save_result_folder;
-  fs := TFile.Open(TtnResult.ResultsFileName, TFileMode.fmOpenOrCreate, TFileAccess.faReadWrite);
+  fs := nil;
   try
-    TtnResult.Save();
+    fs := TFile.Open(TtnResult.ResultsFileName, TFileMode.fmOpenOrCreate, TFileAccess.faReadWrite);
+    Assert.WillRaiseAny(SaveDelegate());
   finally
-    fs.Free;
+    FreeAndNil(fs);
   end;
 end;
 
