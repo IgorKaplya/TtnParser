@@ -337,29 +337,19 @@ begin
 end;
 
 procedure TfrmTtnParserMain.actSaveResultExecute(Sender: TObject);
-
-  procedure SaveActiveResult();
-  var
-    saved: Boolean;
-  begin
-    saved := False;
-    while not saved do
-    try
-      ResultStorage.ActiveResult.Save();
-      saved := true;
-    except on e: exception do ShowMessage('Не удается сохранить данные. '+e.Message);
-    end;
-  end;
-
 begin
-  ResultStorage.ActiveResult.Append(
-    ttn,
-    DocumentsDescription.ToArray()
-  );
-  SaveActiveResult();
-  ttn.Clear;
-  vstTtn.Clear;
-  cpMain.ActiveCard := crdMainResults;
+  try
+    ResultStorage.ActiveResult.CheckResultFilesWritable();
+    ResultStorage.ActiveResult.Append(
+      ttn,
+      DocumentsDescription.ToArray()
+    );
+    ResultStorage.ActiveResult.Save();
+    ttn.Clear;
+    vstTtn.Clear;
+    cpMain.ActiveCard := crdMainResults;
+  except on e: exception do ShowMessage('Не удается сохранить данные. '+e.Message);
+  end;
 end;
 
 procedure TfrmTtnParserMain.actSettingsExecute(Sender: TObject);
@@ -591,26 +581,13 @@ procedure TfrmTtnParserMain.vstResultStorageChange(Sender: TBaseVirtualTree; Nod
     vstActiveDocuments.Refresh();
   end;
 
-  procedure LoadActiveResult();
-  begin
-    try
-      ResultStorage.ActiveResult.Load();
-    except on E: Exception do
-      begin
-        ShowMessage('Не удалось загрузить данные. '+e.Message);
-        vstResultStorage.ClearSelection;
-      end;
-    end;
-  end;
-
 begin
   if not Assigned(Sender.GetFirstSelected()) then
     cpResultStorage.ActiveCard := crdActiveResultNone
   else
-  begin
+  try
     ResultStorage.ActiveResult := ResultStorage[Sender.GetFirstSelected().Index];
-    if ResultStorage.ActiveResult.TtnList.Count = 0 then
-      LoadActiveResult();
+    ResultStorage.ActiveResult.Load();
     cpResultStorage.ActiveCard := crdActiveResult;
     edtShipmentCountry.Text := ResultStorage.ActiveResult.ShipmentCountry;
     edtDeliveryCountry.Text := ResultStorage.ActiveResult.DestinationCountry;
@@ -621,6 +598,11 @@ begin
       ResultStorage.ActiveResult.DateTtn := ResultStorage.ActiveResult.TtnList.Last.DateTtn;
     cpNewResultDate.Date := ResultStorage.ActiveResult.DateTtn;
     LoadLastDocuments();
+  except on e: Exception do
+    begin
+      ShowMessage('Не удалось загрузить данные: '+e.Message);
+      vstResultStorage.ClearSelection();
+    end;
   end;
 end;
 

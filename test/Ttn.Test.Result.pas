@@ -20,6 +20,8 @@ type
     property TtnResult: ITTnResult read FTtnResult;
     [Test]
     procedure Test_Save();
+    [Test]
+    procedure Save_Fails_IfFileIsLocked;
   end;
 
 implementation
@@ -157,6 +159,21 @@ begin
   end;
   historyFiles := TDirectory.GetFiles(TtnResult.HistoryFolder);
   Assert.IsTrue(length(historyFiles) <= C_Max_Files_History);
+end;
+
+procedure TTestTtnResult.Save_Fails_IfFileIsLocked;
+const
+  test_save_result_folder = '_testdata\result\save';
+var
+  fs: TFileStream;
+begin
+  TtnResult.Folder := test_save_result_folder;
+  fs := TFile.Open(TtnResult.ResultsFileName, TFileMode.fmOpenOrCreate, TFileAccess.faReadWrite);
+  try
+    TtnResult.Save();
+  finally
+    fs.Free;
+  end;
 end;
 
 initialization

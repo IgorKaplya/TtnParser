@@ -26,8 +26,6 @@ procedure TTtnExcelAdapter.Save(AFile: string; const AData: TStrings);
     sLine: string;
     lineData: TStringList;
     val: string;
-    iVal: Integer;
-    dVal: Double;
     cell: TZCell;
   begin
     lineData := TStringList.Create('"',';',[soStrictDelimiter]);
@@ -56,13 +54,16 @@ procedure TTtnExcelAdapter.Save(AFile: string; const AData: TStrings);
 var
   expandedFile: string;
   MyExcel: TZEXMLSS;
+  res: Integer;
 begin
   MyExcel := TZEXMLSS.Create(nil);
   try
     expandedFile := ExpandFileName(AFile);
     MyExcel.Sheets.Count := 1;
     TransferData(MyExcel.Sheets[0]);
-    SaveXmlssToXLSX(MyExcel, expandedFile,	[0], [], nil, 'UTF-8');
+    res := SaveXmlssToXLSX(MyExcel, expandedFile,	[0], [], nil, 'UTF-8');
+    ETtnExcelAdapterFSaveError.Test(res = 0, 'Не удалось сохранить %s. Код ошибки: %d.', [expandedFile, res]);
+    ETtnExcelAdapterFSaveError.Test(FileExists(expandedFile), 'Не удалось сохранить "%s"', [expandedFile]);
   finally
     MyExcel.Free();
   end;
@@ -95,12 +96,15 @@ procedure TTtnExcelAdapter.Load(AFile: string; const AData: TStrings);
 var
   expandedFile: string;
   MyExcel: TZEXMLSS;
+  res: integer;
 begin
   MyExcel := TZEXMLSS.Create(nil);
   try
     expandedFile := ExpandFileName(AFile);
     ETtnExcelAdapterFOpenError.Test(FileExists(expandedFile), 'Файл не найден: "%s"', [expandedFile]);
-    ReadXLSX(MyExcel, expandedFile);
+    res := ReadXLSX(MyExcel, expandedFile);
+    ETtnExcelAdapterFOpenError.Test(res = 0, 'Не удалось зазгрузить %s. Код ошибки: %d.', [expandedFile, res]);
+    ;
     if MyExcel.Sheets.Count>0 then
       ReadSheet(MyExcel.Sheets[0]);
   finally

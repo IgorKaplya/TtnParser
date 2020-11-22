@@ -10,6 +10,8 @@ type
   TTestTtnExcel = class(TObject)
   private
     FExcel: ITtnExcelAdapter;
+    function LoadFile(const AFile: string): TTestLocalMethod;
+    function SaveFile(const AFile: string): TTestLocalMethod;
     property Excel: ITtnExcelAdapter read FExcel;
   public
     [Setup]
@@ -18,13 +20,22 @@ type
     procedure TearDown;
     [Test]
     procedure Test_Append;
+    [Test]
+    procedure FailLoad_IfFileNotExist;
+    [Test]
+    procedure FailLoad_IfFileLocked;
+    [Test]
+    procedure FaiSave_IfFileLocked;
+    [Test]
+    procedure FaiSave_IfPathWrong;
   end;
 
 implementation
 
 uses
   System.Classes,
-  Ttn.Registration;
+  Ttn.Registration,
+  System.IOUtils;
 
 { TTestTtnExcel }
 
@@ -61,6 +72,78 @@ begin
   finally
     sl.Free;
   end;
+end;
+
+procedure TTestTtnExcel.FailLoad_IfFileNotExist;
+begin
+  Assert.WillRaiseAny(LoadFile('Abracadabra.xlsx'));
+end;
+
+function TTestTtnExcel.LoadFile(const AFile: string): TTestLocalMethod;
+begin
+  Result := procedure()
+  var
+    sl: TStringList;
+  begin
+    sl := TStringList.Create();
+    try
+      Excel.Load(AFile, sl);
+    finally
+      sl.Free
+    end;
+  end
+end;
+
+procedure TTestTtnExcel.FailLoad_IfFileLocked;
+const
+  test_file = '.\_TestData\TestExcel\LockedFile.xlsx';
+var
+  fs: TFileStream;
+begin
+  fs := TFile.Open(test_file, TFileMode.fmOpenOrCreate, TFileAccess.faReadWrite);
+  try
+    Assert.WillRaiseAny(LoadFile(test_file));
+  finally
+    fs.Free;
+    TFile.Delete(test_file);
+  end;
+end;
+
+function TTestTtnExcel.SaveFile(const AFile: string): TTestLocalMethod;
+begin
+  Result := procedure()
+  var
+    sl: TStringList;
+  begin
+    sl := TStringList.Create();
+    try
+      Excel.Save(AFile, sl);
+    finally
+      sl.Free
+    end;
+  end
+end;
+
+procedure TTestTtnExcel.FaiSave_IfFileLocked;
+const
+  test_file = '.\_TestData\TestExcel\LockedFile.xlsx';
+var
+  fs: TFileStream;
+begin
+  fs := TFile.Open(test_file, TFileMode.fmOpenOrCreate, TFileAccess.faReadWrite);
+  try
+    Assert.WillRaiseAny(SaveFile(test_file));
+  finally
+    fs.Free;
+    TFile.Delete(test_file);
+  end;
+end;
+
+procedure TTestTtnExcel.FaiSave_IfPathWrong;
+const
+  test_file = '_:\_TestData\TestExcel\FaiSave_IfPathWrong.xlsx';
+begin
+  Assert.WillRaiseAny(SaveFile(test_file));
 end;
 
 initialization

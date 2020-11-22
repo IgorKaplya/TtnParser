@@ -24,7 +24,7 @@ object frmTtnParserMain: TfrmTtnParserMain
     Width = 1116
     Height = 632
     Align = alClient
-    ActiveCard = crdMainResults
+    ActiveCard = crdMainParse
     BevelOuter = bvNone
     Caption = 'cpMain'
     TabOrder = 0
