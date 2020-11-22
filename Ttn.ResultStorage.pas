@@ -17,13 +17,14 @@ type
     procedure DeleteResult(const AResult: ITTnResult);
     procedure CreateResult(const AName: string);
     function FindStrorage(const AStoragePath: string; out idx: Integer): Boolean;
+    procedure Backup;
     property RootFolder: string read FRootFolder;
   end;
 
 implementation
 
 uses
-  System.IOUtils, System.Types, System.SysUtils, System.Classes, Ttn.Constants;
+  System.IOUtils, System.Types, System.SysUtils, System.Classes, Ttn.Constants, System.DateUtils, System.Zip;
 
 function TTtnResultStorage.GetActiveResult: ITTnResult;
 begin
@@ -86,6 +87,40 @@ begin
     Dec(idx);
   until (idx<0) or SameText(Items[idx].Folder, AStoragePath);
   Result := idx >= 0;
+end;
+
+procedure TTtnResultStorage.Backup;
+
+  procedure CreateBackup(const ABckupZip: string; AFiles: array of string);
+  var
+    fileToBackup: string;
+    zipFile: TZipFile;
+  begin
+    zipFile := TZipFile.Create();
+    try
+      zipFile.Open(ABckupZip, zmWrite);
+      for fileToBackup in AFiles do
+        zipFile.Add(fileToBackup);
+      zipFile.Close();
+    finally
+      zipFile.Free();
+    end;
+  end;
+
+var
+  backupFile: string;
+  result: ITTnResult;
+  needBackup: Boolean;
+begin
+  for result in Self do
+  begin
+    backupFile := TPath.Combine(result.Folder,'backup.zip');
+    needBackup :=
+      not FileExists(backupFile) or
+      (DateOf(Now) <> DateOf(TFile.GetLastWriteTime(backupFile)));
+    if needBackup then
+      CreateBackup(backupFile, [result.ResultsFileName, result.DocumentsFileName]);
+  end;
 end;
 
 end.

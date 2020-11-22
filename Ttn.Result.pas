@@ -41,6 +41,7 @@ type
     procedure AppendDocuments(const appendObj: ITtnObj; const ADocumentsDescription: TArray<ITtnDocumentDescription>);
     function AppendTtnObj(const newObj: ITtnObj; numberOffset: Integer): ITtnObj;
     function AppendObjNumberOffset: Integer;
+    function BackupFileName: string;
   public
     constructor Create(ADocuments: ITtnDocumentList; ATtnList: ITtnList);
     destructor Destroy; override;
@@ -292,6 +293,11 @@ begin
     Result := TtnList.Last.NUMBER
   else
     Result := 0;
+end;
+
+function TTtnResult.BackupFileName: string;
+begin
+  Result := TPath.Combine(Folder, 'backup.zip');
 end;
 
 

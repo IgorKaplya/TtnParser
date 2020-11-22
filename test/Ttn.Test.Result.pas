@@ -28,7 +28,7 @@ implementation
 
 uses
   Ttn.Registration, System.SysUtils, Ttn.Constants, System.Types, System.IOUtils,
-  System.Variants;
+  System.Variants, System.Classes;
 
 procedure TTestTtnResult.Setup;
 begin

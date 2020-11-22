@@ -282,6 +282,7 @@ type
     procedure CheckResultFilesWritable();
     function ResultsFileName: string;
     function DocumentsFileName: string;
+    function BackupFileName: string;
     property HistoryFolder: string read GetHistoryFolder;
   end;
 
@@ -295,6 +296,7 @@ type
     function Load(const ARootFolder: string): Boolean;
     procedure CreateResult(const AName: string);
     procedure DeleteResult(const AResult: ITTnResult);
+    procedure Backup();
   end;
 
   ITtnExcelAdapter = interface
