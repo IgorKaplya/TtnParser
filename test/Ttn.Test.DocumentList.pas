@@ -27,7 +27,7 @@ type
 implementation
 
 uses
-  Ttn.Registration, System.Classes, System.SysUtils;
+  Ttn.Registration, System.Classes, System.SysUtils, Ttn.Errors;
 
 procedure TTestTtnDocumentList.Setup;
 begin
@@ -104,7 +104,7 @@ procedure TTestTtnDocumentList.Load_BoundaryConditions;
   end;
 
 begin
-  Assert.WillRaise(ListLoadFileDelegate('Abracadabra.csv'),EFOpenError);
+  Assert.WillRaise(ListLoadFileDelegate('Abracadabra.csv'), ETtnExcelAdapterFOpenError);
 end;
 
 initialization

@@ -61,7 +61,7 @@
         <VerInfo_Locale>1049</VerInfo_Locale>
         <DCC_E>false</DCC_E>
         <SanitizedProjectName>TtnParser</SanitizedProjectName>
-        <DCC_UnitSearchPath>Virtual-TreeView\Source;spring4D\source\core\container;spring4D\source;spring4D\source\base;spring4D\source\base\collections;spring4D\source\base\logging;spring4D\source\core\services;spring4D\source\core\Interception;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+        <DCC_UnitSearchPath>Virtual-TreeView\Source;spring4D\source\core\container;spring4D\source;spring4D\source\base;spring4D\source\base\collections;spring4D\source\base\logging;spring4D\source\core\services;spring4D\source\core\Interception;zexmlss\zexmlss\src;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <VerInfo_MajorVer>2</VerInfo_MajorVer>
         <VerInfo_Release>4</VerInfo_Release>
     </PropertyGroup>
