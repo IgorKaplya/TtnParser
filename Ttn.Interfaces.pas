@@ -127,6 +127,7 @@ type
     procedure Load(const AFile: string); overload;
     procedure Sort;
     function CountObjWithUniqueNumbers(): Integer;
+    procedure FormatOutput();
   end;
 
   ITtnParser = interface(IInterface)

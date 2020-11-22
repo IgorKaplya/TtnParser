@@ -25,6 +25,7 @@ type
     procedure Load(const AFile: string); overload;
     procedure Load(const AStrings: TStrings); overload;
     function CountObjWithUniqueNumbers: Integer;
+    procedure FormatOutput;
   end;
 
 implementation
@@ -35,11 +36,25 @@ begin
   FExcelAdapter := AExcelAdapter;
 end;
 
+procedure TTtnList.FormatOutput;
+var
+  obj: ITtnObj;
+  lastObjNumber: Integer;
+begin
+  lastObjNumber := 0;
+  for obj in Self do
+    if lastObjNumber <> obj.NUMBER then
+      lastObjNumber := obj.NUMBER
+    else
+      obj.NAME := '';
+end;
+
 procedure TTtnList.Save(const AStrings: TStrings);
 var
   obj: ITtnObj;
 begin
   AStrings.Clear();
+  FormatOutput();
   for obj in Self do
     AStrings.Add(obj.AsText);
 end;

@@ -282,8 +282,10 @@ begin
 end;
 
 procedure TTtnObj.SetAsText(const Value: string);
+const
+  allowed_empty: set of byte = [2];
 var
-  i: Integer;
+  i: Byte;
   listFields: TStringList;
   fs: TFormatSettings;
 begin
@@ -297,7 +299,8 @@ begin
     ETtnObjAsTxtNotEnoughFields.Test(listFields.Count>=obj_minimum_field_count, 'Couldn`t load line "%s". Need %d+ fields.', [Value, obj_minimum_field_count ]);
     for i := 0 to listFields.Count - 1 do
     begin
-      ETtnObjAsTxtFieldIsEmpty.Test(not listFields[i].IsEmpty, 'Couldn`t load line "%s". [%d] field is empty.', [Value, i]);
+      if not (i in allowed_empty) then
+        ETtnObjAsTxtFieldIsEmpty.Test(not listFields[i].IsEmpty, 'Couldn`t load line "%s". [%d] field is empty.', [Value, i]);
       case i of
       0 : NUMBER := listFields[i].ToInteger;
       1 : KOD := listFields[i];

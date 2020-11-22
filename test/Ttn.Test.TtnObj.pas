@@ -39,13 +39,21 @@ end;
 
 procedure TTestTtnObj.TestAsText;
 const
-  text_obj = '7;"3926909709";"œ–Œ◊»≈ ◊¿—“» œÀ¿—“Ã¿——Œ¬€≈ ¡/”";0.001;0.001;0.001;780.00;"USD";"eu";1;"BY";"030";"RU";"140";"24.06.1987"';
-begin
-  TtnObj.AsText := text_obj;
-  Assert.AreEqual(
-    text_obj,
-    TtnObj.AsText
+  text_obj_array: array[0..1] of string = (
+    '7;"3926909709";"œ–Œ◊»≈ ◊¿—“» œÀ¿—“Ã¿——Œ¬€≈ ¡/”";0.001;0.001;0.001;780.00;"USD";"eu";1;"BY";"030";"RU";"140";"24.06.1987"',
+    '7;"3926909709";"";0.001;0.001;0.001;780.00;"USD";"eu";1;"BY";"030";"RU";"140";"24.06.1987"'
   );
+var
+  text_obj: string;
+begin
+  for text_obj in text_obj_array do
+  begin
+    TtnObj.AsText := text_obj;
+    Assert.AreEqual(
+      text_obj,
+      TtnObj.AsText
+    );
+  end;
 end;
 
 procedure TTestTtnObj.TestAsText_BoundaryConditions;

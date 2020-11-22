@@ -11,6 +11,7 @@ type
   TTestTtnList = class(TObject)
   private
     FTtnList: ITtnList;
+    procedure AddItems(const addCount: Integer; duplicatesCount: Integer);
     property TtnList: ITtnList read FTtnList;
   public
     [Setup]
@@ -23,6 +24,8 @@ type
     procedure Test_LoadSave;
     [Test]
     procedure Test_CountUniqueObj();
+    [Test]
+    procedure Test_OutputFormat();
   end;
 
 implementation
@@ -67,12 +70,60 @@ begin
 end;
 
 procedure TTestTtnList.Test_LoadSave;
+const
+  items_count = 5;
+  duplicates_count = 2;
+var
+  sl: TStringList;
+begin
+  sl := TStringList.Create();
+  try
+    AddItems(items_count, duplicates_count);
+    TtnList.Save(sl);
+    TtnList.Load(sl);
+    Assert.AreEqual(
+      items_count * duplicates_count,
+      TtnList.Count
+    );
+  finally
+    sl.Free();
+  end;
+end;
 
-  procedure AddItems(const Count: Integer);
-  var
-    idx: Integer;
-  begin
-    for idx := 1 to Count do
+procedure TTestTtnList.Test_OutputFormat;
+const
+  items_count = 5;
+  duplicates_count = 2;
+var
+  i: Integer;
+  name: string;
+  sl: TStringList;
+begin
+  sl := TStringList.Create();
+  try
+    AddItems(items_count, duplicates_count);
+    TtnList.FormatOutput();
+    TtnList.Save(sl);
+    for i := 0 to TtnList.Count-1 do
+    begin
+      name := TtnList[i].NAME;
+      if not Odd(i) then
+        Assert.IsNotEmpty(name, name)
+      else
+        Assert.IsEmpty(name, name);
+    end;
+  finally
+    sl.Free();
+  end;
+end;
+
+procedure TTestTtnList.AddItems(const addCount: Integer; duplicatesCount: Integer);
+var
+  i: Integer;
+  idx: Integer;
+begin
+  for idx := 1 to addCount do
+    for i := 1 to duplicatesCount do
     begin
       TtnList.Add();
         TtnList.Last.COST := idx / 10;
@@ -87,30 +138,11 @@ procedure TTestTtnList.Test_LoadSave;
         TtnList.Last.WEIGHT2 := idx / 10;
         TtnList.Last.WEIGHT3 := idx / 10;
         TtnList.Last.DestinationCountry := 'Dest '+idx.ToString;
-        TtnList.Last.DestinationCountryRegion :='D'+idx.ToString;
+        TtnList.Last.DestinationCountryRegion := StringCountryRegion('D'+idx.ToString);
         TtnList.Last.DeliveryCountry := 'Dlv '+idx.ToString;
-        TtnList.Last.DeliveryCountryRegion :='S'+idx.ToString;
+        TtnList.Last.DeliveryCountryRegion := StringCountryRegion('S'+idx.ToString);
         TtnList.Last.DateTtn := Now;
     end;
-  end;
-
-const
-  items_count = 5;
-var
-  sl: TStringList;
-begin
-  sl := TStringList.Create();
-  try
-    AddItems(items_count);
-    TtnList.Save(sl);
-    TtnList.Load(sl);
-    Assert.AreEqual(
-      items_count,
-      TtnList.Count
-    );
-  finally
-    sl.Free();
-  end;
 end;
 
 initialization

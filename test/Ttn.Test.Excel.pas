@@ -40,22 +40,24 @@ end;
 
 procedure TTestTtnExcel.Test_Append;
 const
-  line_count = 10;
-  one_line =
-    '7;3926909709;œ–Œ◊»≈ ◊¿—“» œÀ¿—“Ã¿——Œ¬€≈ ¡/”;0.001;0.001;0.001;780.00;USD;eu;1;BY;030;RU;140;24.06.1987';
+  text_obj_array: array[0..1] of string = (
+    '"7";"3926909709";"Õ‡Á‚‡ÌËÂ";"0.001";"24.06.1987"',
+    '"7";"3926909709";"";"0.001";"24.06.1987"'
+  );
 var
   i: Integer;
   sl: TStringList;
+  text: string;
 begin
   sl := TStringList.Create();
   try
-    for i := 1 to line_count do
-      sl.Add(one_line);
+    for text in text_obj_array do
+      sl.Add(text);
     Excel.Save('.\_TestData\TestExcel\Append\123.xlsx', sl);
     sl.Clear;
     Excel.Load('.\_TestData\TestExcel\Append\123.xlsx', sl);
-    for i := 0 to line_count-1 do
-      Assert.AreEqual(one_line,sl[i]);
+    for i := 0 to sl.Count-1 do
+      Assert.AreEqual(text_obj_array[i], sl[i]);
   finally
     sl.Free;
   end;

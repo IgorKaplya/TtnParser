@@ -13,13 +13,13 @@ type
   TTtnEnumerableList<T> = class(TInterfacedObject, ITtnListBase<T>)
   private
     FItemFactory: ITtnFactory<T>;
-    property ItemFactory: ITtnFactory<T> read FItemFactory write FItemFactory;
   protected
     FItems: TList<T>;
     function GetCount: Integer;
     function GetItems(Index: Integer): T;
     function GetLast: T;
     function GetFirst: T;
+    property ItemFactory: ITtnFactory<T> read FItemFactory write FItemFactory;
   public
     constructor Create(AItemFactory: ITtnFactory<T>);
     function GetEnumerator: ITtnEnumerator<T>;
