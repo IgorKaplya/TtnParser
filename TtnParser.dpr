@@ -14,7 +14,8 @@ uses
   Ttn.Constants in 'Ttn.Constants.pas',
   Ttn.Interfaces in 'Ttn.Interfaces.pas',
   Ttn.Registration in 'Ttn.Registration.pas',
-  Ttn.Processor in 'Ttn.Processor.pas';
+  Ttn.Processor in 'Ttn.Processor.pas',
+  Ttn.Excel in 'Ttn.Excel.pas';
 
 {$R *.res}
 

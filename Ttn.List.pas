@@ -15,8 +15,10 @@ uses
 type
   TTtnList = class(TTtnEnumerableList<ITtnObj>, ITtnList)
   private
+    FExcelAdapter: ITtnExcelAdapter;
+    property ExcelAdapter: ITtnExcelAdapter read FExcelAdapter;
   public
-    constructor Create(ATtnObjFactory: ITtnFactory<ITtnObj>);
+    constructor Create(ATtnObjFactory: ITtnFactory<ITtnObj>; AExcelAdapter: ITtnExcelAdapter);
     procedure Save(const AFile: string); overload;
     procedure Save(const AStrings: TStrings); overload;
     procedure Sort;
@@ -27,9 +29,10 @@ type
 
 implementation
 
-constructor TTtnList.Create(ATtnObjFactory: ITtnFactory<ITtnObj>);
+constructor TTtnList.Create(ATtnObjFactory: ITtnFactory<ITtnObj>; AExcelAdapter: ITtnExcelAdapter);
 begin
   inherited Create(ATtnObjFactory);
+  FExcelAdapter := AExcelAdapter;
 end;
 
 procedure TTtnList.Save(const AStrings: TStrings);
@@ -66,7 +69,7 @@ var
 begin
   fileLoad := TStringList.Create();
   try
-    fileLoad.LoadFromFile(AFile);
+    ExcelAdapter.Load(AFile, fileLoad);
     Load(fileLoad);
   finally
     fileLoad.Free();
@@ -94,7 +97,7 @@ begin
   sl := TStringList.Create();
   try
     Save(sl);
-    sl.SaveToFile(AFile);
+    ExcelAdapter.Save(AFile, sl);
   finally
     sl.Free()
   end;

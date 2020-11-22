@@ -154,12 +154,12 @@ end;
 
 function TTtnResult.ResultsFileName: string;
 begin
-  Result := TPath.Combine(Folder, 'Results.csv');
+  Result := TPath.Combine(Folder, 'Results.xlsx');
 end;
 
 function TTtnResult.DocumentsFileName: string;
 begin
-  Result := TPath.Combine(Folder, 'Documents.csv');
+  Result := TPath.Combine(Folder, 'Documents.xlsx');
 end;
 
 function TTtnResult.GetTtnList: ITtnList;
