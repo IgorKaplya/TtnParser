@@ -24,12 +24,14 @@ type
     procedure TestLoadInvalidFolder;
     [Test]
     procedure TestCRUD;
+    [Test]
+    procedure TestBackup;
   end;
 
 implementation
 
 uses
-  Ttn.Registration, System.SysUtils;
+  Ttn.Registration, System.SysUtils, System.IOUtils, DateUtils;
 
 procedure TTtnTestResultStorage.Setup;
 begin
@@ -82,6 +84,32 @@ procedure TTtnTestResultStorage.TestLoadInvalidFolder;
 
 begin
   Assert.WillRaise(LoadFolder('AbraCadabra'), EDirectoryNotFoundException);
+end;
+
+procedure TTtnTestResultStorage.TestBackup;
+const
+  folder_root_resultsorage = '.\_TestData\TestResultsStorage\Backup';
+var
+  lastWriteTime: TDateTime;
+begin
+  ResultStorage.Load(folder_root_resultsorage);
+  ResultStorage.CreateResult('TestBackup');
+  try
+    ResultStorage.Backup();
+    Assert.IsTrue(FileExists(ResultStorage.First.BackupFileName()));
+
+    lastWriteTime := TFile.GetLastWriteTime(ResultStorage.First.BackupFileName());
+    Sleep(100);
+    ResultStorage.Backup();
+    Assert.AreEqual(lastWriteTime, TFile.GetLastWriteTime(ResultStorage.First.BackupFileName()));
+
+    TFile.SetLastWriteTime(ResultStorage.First.BackupFileName(), YesterDay);
+    Sleep(100);
+    ResultStorage.Backup();
+    Assert.AreNotEqual(lastWriteTime, TFile.GetLastWriteTime(ResultStorage.First.BackupFileName()));
+  finally
+    ResultStorage.DeleteResult(ResultStorage.First);
+  end;
 end;
 
 procedure TTtnTestResultStorage.TestCRUD;

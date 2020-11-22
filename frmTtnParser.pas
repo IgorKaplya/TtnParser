@@ -502,6 +502,7 @@ procedure TfrmTtnParserMain.StartUp;
     Processor.WeightMultiplier := IniFile.ReadFloat('Настройки', 'Множитель_веса', 1);
     Processor.Currency := Valuta;
     ResultStorage.Load(IniFile.ReadString('Результаты', 'путь', '.'));
+    ResultStorage.Backup();
     vstResultStorage.RootNodeCount := ResultStorage.Count;
   end;
 
