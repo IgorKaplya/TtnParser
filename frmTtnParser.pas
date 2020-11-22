@@ -592,15 +592,14 @@ procedure TfrmTtnParserMain.vstResultStorageChange(Sender: TBaseVirtualTree; Nod
   end;
 
   procedure LoadActiveResult();
-  var
-    loaded: Boolean;
   begin
-    loaded := False;
-    while not loaded do
     try
       ResultStorage.ActiveResult.Load();
-      loaded := True;
-    except on E: Exception do ShowMessage('Не удалось загрузить данные. '+e.Message);
+    except on E: Exception do
+      begin
+        ShowMessage('Не удалось загрузить данные. '+e.Message);
+        vstResultStorage.ClearSelection;
+      end;
     end;
   end;
 
