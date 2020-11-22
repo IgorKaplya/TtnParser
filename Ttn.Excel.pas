@@ -79,12 +79,12 @@ procedure TTtnExcelAdapter.Load(AFile: string; const AData: TStrings);
     while (iRow < ASheet.RowCount) and (not ASheet.Cell[0,iRow].AsString.IsEmpty()) do
     begin
       iCol:= 0;
-      while (iCol < ASheet.ColCount)  and (not ASheet.Cell[iCol,iRow].AsString.IsEmpty()) do
+      while (iCol < ASheet.ColCount-1){  and (not ASheet.Cell[iCol,iRow].AsString.IsEmpty()) }do
       begin
         if iCol = 0 then
-          sLine := ASheet.Cell[iCol,iRow].AsString
+          sLine := ASheet.Cell[iCol,iRow].AsString.QuotedString('"')
         else
-          sLine := sLine + ';'+ ASheet.Cell[iCol,iRow].AsString;
+          sLine := sLine + ';'+ ASheet.Cell[iCol,iRow].AsString.QuotedString('"');
         inc(iCol);
       end;
       AData.Add(sLine);
