@@ -37,7 +37,7 @@ type
     procedure Save;
     procedure BackupHistory;
     function GetHistoryFolder: string;
-    procedure CheckFilesWritable(const AFiles: array of string);
+    procedure CheckResultFilesWritable;
     procedure AppendDocuments(const appendObj: ITtnObj; const ADocumentsDescription: TArray<ITtnDocumentDescription>);
     function AppendTtnObj(const newObj: ITtnObj; numberOffset: Integer): ITtnObj;
     function AppendObjNumberOffset: Integer;
@@ -182,7 +182,7 @@ end;
 
 procedure TTtnResult.Save;
 begin
-  CheckFilesWritable([ResultsFileName, DocumentsFileName]);
+  CheckResultFilesWritable();
   BackupHistory();
   TtnList.Save(ResultsFileName);
   Documents.Save(DocumentsFileName);
@@ -225,18 +225,24 @@ begin
   Result := TPath.Combine(Folder, 'History');;
 end;
 
-procedure TTtnResult.CheckFilesWritable(const AFiles: array of string);
+procedure TTtnResult.CheckResultFilesWritable;
 var
   oneFile: string;
   fs: TFileStream;
+  AFiles: array[0..1] of string;
 begin
+  AFiles[0] := ResultsFileName;
+  AFiles[1] := DocumentsFileName;
   for oneFile in AFiles do
     if FileExists(oneFile) then
+    begin
+      fs := nil;
       try
         fs := TFile.OpenWrite(oneFile);
       finally
         FreeAndNil(fs)
       end;
+    end;
 end;
 
 procedure TTtnResult.AppendDocuments(const appendObj: ITtnObj; const ADocumentsDescription: TArray<ITtnDocumentDescription>);

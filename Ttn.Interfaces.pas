@@ -279,6 +279,7 @@ type
     procedure Append(const ANewTtn: ITtnList; const ADocumentsDescription: TArray<ITtnDocumentDescription>);
     procedure Load;
     procedure Save;
+    procedure CheckResultFilesWritable();
     function ResultsFileName: string;
     function DocumentsFileName: string;
     property HistoryFolder: string read GetHistoryFolder;

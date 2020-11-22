@@ -27,6 +27,7 @@ type
   ETtnDocAsTxtNotEnoughFields = class(ETtnExc);
   ETtnDocAsTxtFieldIsEmpty = class(ETtnExc);
   ETtnExcelAdapterFOpenError = class(ETtnExc);
+  ETtnExcelAdapterFSaveError = class(ETtnExc);
 
 procedure TestErr(bMustBeTrue: Boolean; AMsg: string); overload; deprecated;
 
