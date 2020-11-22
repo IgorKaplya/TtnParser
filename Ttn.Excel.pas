@@ -3,67 +3,53 @@ unit Ttn.Excel;
 interface
 
 uses
-  System.Classes, zexmlss, zexlsx;
+  System.Classes, zexmlss, zexlsx, Ttn.Interfaces, System.SysUtils;
 
 type
-
-  TExcelAdapterErr = procedure(Sender: TObject; AMsg: string) of object;
-
-  TExcelAdapter = class(TObject)
-  private
-    FLastError: string;
-    FOnError: TExcelAdapterErr;
-  protected
-    procedure DoError(AMsg: string);
+  TTtnExcelAdapter = class(TInterfacedObject, ITtnExcelAdapter)
   public
     procedure Save(AFile: string; const AData: TStrings);
     procedure Load(AFile: string; const AData: TStrings);
-    property LastError: string read FLastError;
-    property OnError: TExcelAdapterErr read FOnError write FOnError;
   end;
 
 implementation
 
 uses
-  System.SysUtils, Vcl.Dialogs, Winapi.ActiveX, System.Win.ComObj,
-  System.Variants, System.IOUtils;
+  Vcl.Dialogs, Winapi.ActiveX, System.Win.ComObj,
+  System.Variants, System.IOUtils, Ttn.Errors;
 
-type
-  EExcelAdapterException = Exception;
-
-procedure TestErr(AMustBeTrue: Boolean; AMsg: string);
-begin
-if not AMustBeTrue then
-  raise EExcelAdapterException.Create(AMsg);
-end;
-
-procedure TExcelAdapter.Save(AFile: string; const AData: TStrings);
+procedure TTtnExcelAdapter.Save(AFile: string; const AData: TStrings);
 
   procedure TransferData(const AWorkSheet: TZSheet);
   var
     iCol,iRow: integer;
     sLine: string;
-    lineData: TArray<string>;
+    lineData: TStringList;
     val: string;
     iVal: Integer;
     dVal: Double;
     cell: TZCell;
   begin
-    AWorkSheet.RowCount := AData.Count;
-    iRow := 0;
-    for sLine in AData do
-    begin
-      iCol := 0;
-      lineData := sLine.Split([';']);
-      for val in lineData do
+    lineData := TStringList.Create('"',';',[soStrictDelimiter]);
+    try
+      AWorkSheet.RowCount := AData.Count;
+      iRow := 0;
+      for sLine in AData do
       begin
-        if iRow = 0 then
-          AWorkSheet.ColCount := Length(lineData);
-        cell := AWorkSheet.Cell[iCol,iRow];
-        cell.AsString := val;
-        inc(iCol);
+        iCol := 0;
+        lineData.DelimitedText := sLine;
+        for val in lineData do
+        begin
+          if AWorkSheet.ColCount < lineData.Count then
+            AWorkSheet.ColCount := lineData.Count;
+          cell := AWorkSheet.Cell[iCol,iRow];
+          cell.AsString := val;
+          inc(iCol);
+        end;
+        inc(iRow);
       end;
-      inc(iRow);
+    finally
+      lineData.Free();
     end;
   end;
 
@@ -71,19 +57,18 @@ var
   expandedFile: string;
   MyExcel: TZEXMLSS;
 begin
-  FLastError:='';
   MyExcel := TZEXMLSS.Create(nil);
   try
     expandedFile := ExpandFileName(AFile);
     MyExcel.Sheets.Count := 1;
     TransferData(MyExcel.Sheets[0]);
     SaveXmlssToXLSX(MyExcel, expandedFile,	[0], [], nil, 'UTF-8');
-  except on e: exception do DoError('Appending excel. '+e.Message);
+  finally
+    MyExcel.Free();
   end;
-  MyExcel.Free();
 end;
 
-procedure TExcelAdapter.Load(AFile: string; const AData: TStrings);
+procedure TTtnExcelAdapter.Load(AFile: string; const AData: TStrings);
 
   procedure ReadSheet(const ASheet: TZSheet);
   var
@@ -108,25 +93,19 @@ procedure TExcelAdapter.Load(AFile: string; const AData: TStrings);
   end;
 
 var
+  expandedFile: string;
   MyExcel: TZEXMLSS;
 begin
-  FLastError:='';
   MyExcel := TZEXMLSS.Create(nil);
   try
-    ReadXLSX(MyExcel, ExpandFileName(AFile));
-    ReadSheet(MyExcel.Sheets[0]);
-  except on e: exception do DoError('Loading excel. '+e.Message);
+    expandedFile := ExpandFileName(AFile);
+    ETtnExcelAdapterFOpenError.Test(FileExists(expandedFile), 'Файл не найден: "%s"', [expandedFile]);
+    ReadXLSX(MyExcel, expandedFile);
+    if MyExcel.Sheets.Count>0 then
+      ReadSheet(MyExcel.Sheets[0]);
+  finally
+    MyExcel.Free();
   end;
-  MyExcel.Free();
-end;
-
-procedure TExcelAdapter.DoError(AMsg: string);
-begin
-  FLastError:=AMsg;
-  if Assigned(FOnError) then
-    begin
-    FOnError(Self, AMsg);
-    end;
 end;
 
 end.

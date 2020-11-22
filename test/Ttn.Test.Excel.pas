@@ -9,8 +9,8 @@ type
   [TestFixture]
   TTestTtnExcel = class(TObject)
   private
-    FExcel: TExcelAdapter;
-    property Excel: TExcelAdapter read FExcel;
+    FExcel: ITtnExcelAdapter;
+    property Excel: ITtnExcelAdapter read FExcel;
   public
     [Setup]
     procedure Setup;
@@ -23,18 +23,18 @@ type
 implementation
 
 uses
-  System.Classes;
+  System.Classes,
+  Ttn.Registration;
 
 { TTestTtnExcel }
 
 procedure TTestTtnExcel.Setup;
 begin
-  FExcel := TExcelAdapter.Create();
+  FExcel := TTtnResolver.Resolve<ITtnExcelAdapter>;
 end;
 
 procedure TTestTtnExcel.TearDown;
 begin
-  FExcel.Free;
   FExcel := nil;
 end;
 
@@ -42,7 +42,7 @@ procedure TTestTtnExcel.Test_Append;
 const
   line_count = 10;
   one_line =
-    '7;"3926909709";"œ–Œ◊»≈ ◊¿—“» œÀ¿—“Ã¿——Œ¬€≈ ¡/”";0.001;0.001;0.001;780.00;"USD";"eu";1;"BY";030;"RU";"140";"24.06.1987"';
+    '7;3926909709;œ–Œ◊»≈ ◊¿—“» œÀ¿—“Ã¿——Œ¬€≈ ¡/”;0.001;0.001;0.001;780.00;USD;eu;1;BY;030;RU;140;24.06.1987';
 var
   i: Integer;
   sl: TStringList;
