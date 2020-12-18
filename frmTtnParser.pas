@@ -434,8 +434,8 @@ begin
     vstTtn.RootNodeCount:=Ttn.Count;
   finally
     dm.TablesFirst;
+    cpMain.ActiveCard := crdMainParse;
   end;
-  cpMain.ActiveCard := crdMainParse;
 end;
 
 procedure TfrmTtnParserMain.SetInpFile(const Value: string);
