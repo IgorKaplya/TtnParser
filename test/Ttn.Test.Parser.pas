@@ -75,19 +75,45 @@ begin
 end;
 
 procedure TTestParser.TestParseMotor;
+
+  function callParseMotor(const AInput: string): TTestLocalMethod;
+  begin
+    Result :=
+    (
+      procedure()
+      var
+        inputTest: TStringList;
+      begin
+        inputTest := TStringList.Create();
+        try
+          inputTest.Text := AInput;
+          Parser.Parse(inputTest);
+        finally
+          inputTest.Free;
+        end;
+      end
+    );
+  end;
+
 const
-  C_File_Type_Motor =
+  C_File_Type_Motor_Hdr =
     '#MOTOR'+sLineBreak+
-    C_Default_Header+sLineBreak+
-    '*;Автомагнитола;1260.01;1;0.002'+sLineBreak+
-    ';страна происхождения-Соединенные Штаты;;;';
+    C_Default_Header+sLineBreak;
+
+  C_Input_Normal =
+    '*;Автомагнитола;1260.01;1;0.002'+sLineBreak+';страна происхождения-Соединенные Штаты;;;';
+
+  C_Input_Convert_Error: array[0..2] of string = (
+    '*;Автомагнитола;126z0.01;1;0.002'+sLineBreak+';страна происхождения-Соединенные Штаты;;;',
+    '*;Автомагнитола;1260.01;1z;0.002'+sLineBreak+';страна происхождения-Соединенные Штаты;;;',
+    '*;Автомагнитола;1260.01;1;0.0z02'+sLineBreak+';страна происхождения-Соединенные Штаты;;;'
+  );
 var
-  SampleInput: TStringList;
+  input: string;
 begin
-  SampleInput := TStringList.Create();
-  try
-    SampleInput.Text := C_File_Type_Motor;
-    Parser.Parse(SampleInput);
+  for input in C_Input_Convert_Error do
+    Assert.WillRaise(callParseMotor(C_File_Type_Motor_Hdr + input), ETtnParseLine);
+  Assert.WillNotRaise(callParseMotor(C_File_Type_Motor_Hdr + C_Input_Normal));
     Assert.AreEqual(1, Parser.ParseResult.Count, 'Не соотвествует количество элементов.');
     Assert.AreEqual('*', Parser.ParseResult[0].SIGN);
     Assert.AreEqual('Автомагнитола', Parser.ParseResult[0].NAME);
@@ -95,9 +121,6 @@ begin
     Assert.AreEqual(1, Parser.ParseResult[0].QUANTITY);
     Assert.AreEqual('0.002',Parser.ParseResult[0].WEIGHT1.ToString);
     Assert.AreEqual('страна происхождения-Соединенные Штаты',Parser.ParseResult[0].STR_PR);
-  finally
-    SampleInput.Free();
-  end;
 end;
 
 procedure TTestParser.TestParseAbsentFile(const AFile: string);
@@ -401,6 +424,7 @@ const
   C_File_Type_AutoStrong_Hdr =
     '#ASTRONG'+sLineBreak+
     'sign;name;;;;;;;;;;;;;;;;;quant;;;cost;;;;weight;;;;;;;;;;;;;;;;;;;;'+sLineBreak;
+
   C_Input_Normal =
     '****;Авто *Великобритания;;;;;;;;;;;;;;;;;12 345;;;1.01;;;;24.375;;;;;;;;;;;;;;;;;;;;';
 
@@ -413,7 +437,7 @@ var
   inputConvertError: string;
 begin
   for inputConvertError in C_Input_Convert_Error do
-    Assert.WillRaise(callParseAStrong(C_File_Type_AutoStrong_Hdr + inputConvertError), EConvertError);
+    Assert.WillRaise(callParseAStrong(C_File_Type_AutoStrong_Hdr + inputConvertError), ETtnParseLine);
   Assert.WillNotRaise(callParseAStrong(C_File_Type_AutoStrong_Hdr + C_Input_Normal));
   Assert.AreEqual(1, Parser.ParseResult.Count, 'Не соотвествует количество элементов.');
   Assert.AreEqual('****', Parser.ParseResult[0].SIGN);

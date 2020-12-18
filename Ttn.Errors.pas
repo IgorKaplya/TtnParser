@@ -28,6 +28,7 @@ type
   ETtnDocAsTxtFieldIsEmpty = class(ETtnExc);
   ETtnExcelAdapterFOpenError = class(ETtnExc);
   ETtnExcelAdapterFSaveError = class(ETtnExc);
+  ETtnParseLine = class(ETtnExc);
 
 procedure TestErr(bMustBeTrue: Boolean; AMsg: string); overload; deprecated;
 

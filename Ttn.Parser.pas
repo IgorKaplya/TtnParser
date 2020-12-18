@@ -130,12 +130,12 @@ begin
     Configure(AFile);
     i := C_Input_First_Data_Line;
     while i < AFile.Count do
-    begin
+    try
       inpLine.DelimitedText := AFile[i];
       case Configuration of
       tpcMotor:
         begin
-          ETtnParserWrongMotorLines.Test(i < AFile.Count-1, 'Строка %d: Нет страны происхождения ', [i]);
+          ETtnParserWrongMotorLines.Test(i < AFile.Count-1, 'Нет страны происхождения ');
           inpLineCountry.DelimitedText := AFile[i+1];
           ParseMotor(inpLine, inpLineCountry);
           i := i + 2;
@@ -148,6 +148,8 @@ begin
       else
         ETtnParserWrongConfig.Test(False, 'Неизвестаня конфигурация.');
       end;
+    except on e: Exception do
+      ETtnParseLine.Test(False, 'Строка %d: %s', [i+1, e.Message]);
     end;
   finally
     inpLineCountry.Free;
