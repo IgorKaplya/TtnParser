@@ -183,13 +183,15 @@ const
     (Kodsign: ''; KodTxt:  'Амортизатор капота'; KodVal: '555'),
     (Kodsign: ''; KodTxt:  'Капот'; KodVal: '666')
   );
-  valid_input: array[0..5] of RKodTest = (
+  valid_input: array[0..7] of RKodTest = (
     (inputSign: ''; inputName:  'Двигатель'; expectedKod: '111'),
     (inputSign: 'Д'; inputName: 'Двигатель'; expectedKod: '222'),
     (inputSign: 'Б'; inputName: 'Двигатель'; expectedKod: '333'),
     (inputSign: 'д'; inputName: 'двигатель'; expectedKod: '222'),
     (inputSign: 'б'; inputName: 'ДвигАтель'; expectedKod: '333'),
-    (inputSign: ''; inputName: 'Капот'; expectedKod: '666')
+    (inputSign: ''; inputName: 'Капот'; expectedKod: '666'),
+    (inputSign: ' '; inputName:  ' Двигатель '; expectedKod: '111'),
+    (inputSign: ' Д '; inputName: ' Двигатель '; expectedKod: '222')
   );
   wrong_input: array[0..0] of RKodTest = (
     (inputName: 'AbraCadabra'; expectedKod: '')

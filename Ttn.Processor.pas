@@ -182,8 +182,8 @@ var
 begin
   kodFound := false;
   AObj.KOD := '';
-  inputName := AObj.NAME;
-  inputSign := AObj.SIGN;
+  inputName := Trim(AObj.NAME);
+  inputSign := Trim(AObj.SIGN);
   for kod in KodList do
     if AnsiSameText(inputName, kod.KodTxt) and AnsiSameText(kod.Kodsign, inputSign) then
     begin
